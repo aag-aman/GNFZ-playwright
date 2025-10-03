@@ -303,4 +303,17 @@ public class ProjectSelectionPage {
     public String getAddNewOptionText() {
         return addNewOption.textContent();
     }
+
+    /**
+     * General Methods
+     */
+    public boolean isProjectOptionsVisible() {
+        page.waitForLoadState();
+        return page.locator("#project-categories").isVisible();
+    }
+
+    public int getVisibleOptionsCount() {
+        page.waitForLoadState();
+        return page.locator("#project-categories > div").count();
+    }
 }

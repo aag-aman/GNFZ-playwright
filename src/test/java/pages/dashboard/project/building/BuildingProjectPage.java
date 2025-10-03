@@ -40,14 +40,14 @@ public class BuildingProjectPage {
         this.pageHeader = page.locator("BOILERPLATE_PAGE_HEADER");
 
         // Initialize tab locators - TODO: Update with actual selectors
-        this.overviewTab = page.locator("BOILERPLATE_OVERVIEW_TAB");
-        this.basicInfoTab = page.locator("BOILERPLATE_BASIC_INFO_TAB");
-        this.assessmentTab = page.locator("BOILERPLATE_ASSESSMENT_TAB");
-        this.netZeroPlanTab = page.locator("BOILERPLATE_NET_ZERO_PLAN_TAB");
-        this.carbonOffsetTab = page.locator("BOILERPLATE_CARBON_OFFSET_TAB");
-        this.netZeroMilestoneTab = page.locator("BOILERPLATE_NET_ZERO_MILESTONE_TAB");
-        this.summaryOfEmissionsTab = page.locator("BOILERPLATE_SUMMARY_OF_EMISSIONS_TAB");
-        this.projectFilesTab = page.locator("BOILERPLATE_PROJECT_FILES_TAB");
+        this.overviewTab = page.locator("#gnfz-overview > label");
+        this.basicInfoTab = page.locator("#gnfz-basicInfo > label");
+        this.assessmentTab = page.locator("#gnfz-assessment > label");
+        this.netZeroPlanTab = page.locator("#gnfz-nzp > label");
+        this.carbonOffsetTab = page.locator("#gnfz-carbon-offset > label");
+        this.netZeroMilestoneTab = page.locator("#gnfz-nzm > label");
+        this.summaryOfEmissionsTab = page.locator("#gnfz-summary-of-emission > label");
+        this.projectFilesTab = page.locator("#gnfz-project-files > label");
     }
 
     /**

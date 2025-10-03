@@ -1,5 +1,7 @@
 package pages.authentication;
 
+import java.util.regex.Pattern;
+
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
@@ -22,9 +24,14 @@ public class SignUpPage {
     private final Locator passwordField;
     private final Locator confirmPasswordField;
     private final Locator signUpButton;
-    private final Locator errorMessage;
     private final Locator successMessage;
     private final Locator loginLink;
+
+    // Field errors
+    private final Locator firstNameError;
+    private final Locator emailError;
+    private final Locator passwordError;
+    private final Locator confirmPasswordError;
 
     public SignUpPage(Page page) {
         this.page = page;
@@ -38,7 +45,17 @@ public class SignUpPage {
         this.passwordField = page.locator("#gnfz-register-password");
         this.confirmPasswordField = page.locator("#gnfz-register-confirmPassword");
         this.signUpButton = page.locator("#gnfz-sign-up-button");
-        this.errorMessage = page.locator(".error-message, .alert-danger, small.text-danger");
+
+        this.firstNameError = page.locator("div")
+                .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^First name$"))).locator("small");
+        this.emailError = page.locator("div").filter(new Locator.FilterOptions().setHasText(Pattern.compile("^Email$")))
+                .locator("small");
+        this.passwordError = page.locator("div")
+                .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^Password$"))).locator("small");
+        this.confirmPasswordError = page.locator("div")
+                .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^Confirm Password$"))).locator("small");
+        // this.errorMessage = page.locator(".error-message, .alert-danger,
+        // small.text-danger");
         this.successMessage = page.locator(".success-message, .alert-success");
         this.loginLink = page.locator("a[href*='login'], a:has-text('Login')");
     }
@@ -160,8 +177,32 @@ public class SignUpPage {
         return confirmPasswordField.inputValue();
     }
 
-    public String getErrorMessage() {
-        return errorMessage.textContent();
+    public String getFirstNameError() {
+        return firstNameError.textContent();
+    }
+
+    public String getEmailError() {
+        return emailError.textContent();
+    }
+
+    public String getPasswordError() {
+        return passwordError.textContent();
+    }
+
+    public String getConfirmPasswordError() {
+        return confirmPasswordError.textContent();
+    }
+
+    public boolean getEmailErrorVisible() {
+        return emailError.isVisible();
+    }
+
+    public boolean getPasswordErrorVisible() {
+        return passwordError.isVisible();
+    }
+
+    public boolean getConfirmPasswordErrorVisible() {
+        return confirmPasswordError.isVisible();
     }
 
     public String getSuccessMessage() {
@@ -215,10 +256,6 @@ public class SignUpPage {
 
     public boolean isSignUpButtonEnabled() {
         return signUpButton.isEnabled();
-    }
-
-    public boolean isErrorMessageDisplayed() {
-        return errorMessage.isVisible();
     }
 
     public boolean isSuccessMessageDisplayed() {

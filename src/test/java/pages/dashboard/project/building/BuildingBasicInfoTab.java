@@ -2,6 +2,7 @@ package pages.dashboard.project.building;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 
 /**
  * BuildingBasicInfoTab - Basic Info tab for Building project
@@ -10,9 +11,7 @@ import com.microsoft.playwright.Page;
 public class BuildingBasicInfoTab {
     private final Page page;
 
-    // Form field locators - TODO: Add actual fields
-    private final Locator basicInfoTab;
-    private final Locator buildingInfoTab;
+    // Form field locators
     private final Locator projectTitleField;
     private final Locator targetCertificationArea;
     private final Locator grossArea;
@@ -22,22 +21,21 @@ public class BuildingBasicInfoTab {
     public BuildingBasicInfoTab(Page page) {
         this.page = page;
 
-        // Initialize locators - TODO: Update with actual selectors
-        this.basicInfoTab = page.locator("#gnfz-basicInfo");
-        this.buildingInfoTab = page.locator("#buildingInfo");
+        // Initialize form field locators
         this.projectTitleField = page.locator("#building_spaceTitle");
         this.targetCertificationArea = page.locator("#gnfz-basic-info-form-targetCertArea");
-        this.grossArea = page.locator("#grossArea");
+        this.grossArea = page.locator("#gnfz-basic-info-form-grossArea");
         this.startDate = page.locator("#startDate");
-        this.saveButton = page.locator("#gnfz-save");
+        this.saveButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Save"));
     }
 
     /**
-     * Tab visibility
+     * Form field visibility
      */
-    public boolean isTabDisplayed() {
+    public boolean isFormDisplayed() {
         page.waitForLoadState();
-        return buildingInfoTab.isVisible();
+        projectTitleField.waitFor();
+        return projectTitleField.isVisible();
     }
 
     public void enterProjectTitle(String title) {
@@ -72,7 +70,40 @@ public class BuildingBasicInfoTab {
 
     public void enterStartDate(String date) {
         page.waitForLoadState();
-        startDate.fill(date);
+        startDate.waitFor();
+
+        // Focus and click to trigger datepicker
+        page.waitForTimeout(2000);
+        startDate.focus();
+        page.waitForTimeout(2000);
+        startDate.click();
+        page.waitForTimeout(1100);
+
+        // Wait for datepicker to appear
+        Locator datepicker = page.locator("#ui-datepicker-div");
+        datepicker.waitFor();
+
+        // Parse date (format: MM/DD/YYYY)
+        String[] dateParts = date.split("/");
+        String monthValue = String.valueOf(Integer.parseInt(dateParts[0]) - 1); // Month is 0-indexed (0=Jan, 11=Dec)
+        String year = dateParts[2];
+        String day = String.valueOf(Integer.parseInt(dateParts[1])); // Remove leading zero
+
+        // Select month from dropdown
+        Locator monthDropdown = page.locator(".ui-datepicker-month");
+        monthDropdown.selectOption(monthValue);
+        page.waitForTimeout(200);
+
+        // Select year from dropdown
+        Locator yearDropdown = page.locator(".ui-datepicker-year");
+        yearDropdown.selectOption(year);
+        page.waitForTimeout(200);
+
+        // Click on the day in the calendar
+        Locator dayButton = page.locator(".ui-datepicker-calendar td a");
+        dayButton.filter(new Locator.FilterOptions().setHasText(day)).first().click();
+
+        page.waitForTimeout(300);
     }
 
     public String getStartDate() {

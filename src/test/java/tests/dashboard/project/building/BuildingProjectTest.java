@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import pages.authentication.LoginPage;
 import pages.dashboard.ProjectListPage;
 import pages.dashboard.ProjectSelectionPage;
+import pages.dashboard.project.building.BuildingProjectPage;
+import pages.dashboard.project.building.BuildingBasicInfoTab;
 import tests.base.BaseTest;
 import utils.TestDataManager;
 
@@ -41,7 +43,7 @@ public class BuildingProjectTest extends BaseTest {
         Map<String, String> user = TestDataManager.getSmokeUser();
         Allure.step("Login and navigate to project selection", () -> {
             loginPage.navigateToLogin();
-            loginPage.enterEmail(user.get("email"));
+            loginPage.enterEmail(user.get("username"));
             loginPage.enterPassword(user.get("password"));
             loginPage.clickSignInButton();
             projectListPage.clickCreateNewProject();
@@ -74,7 +76,7 @@ public class BuildingProjectTest extends BaseTest {
         Map<String, String> user = TestDataManager.getSmokeUser();
         Allure.step("Login and navigate to project selection", () -> {
             loginPage.navigateToLogin();
-            loginPage.enterEmail(user.get("email"));
+            loginPage.enterEmail(user.get("username"));
             loginPage.enterPassword(user.get("password"));
             loginPage.clickSignInButton();
             projectListPage.clickCreateNewProject();
@@ -112,7 +114,7 @@ public class BuildingProjectTest extends BaseTest {
         Map<String, String> user = TestDataManager.getSmokeUser();
         Allure.step("Login and navigate to project selection", () -> {
             loginPage.navigateToLogin();
-            loginPage.enterEmail(user.get("email"));
+            loginPage.enterEmail(user.get("username"));
             loginPage.enterPassword(user.get("password"));
             loginPage.clickSignInButton();
             projectListPage.clickCreateNewProject();
@@ -127,5 +129,59 @@ public class BuildingProjectTest extends BaseTest {
         });
 
         takeScreenshot("Building Option Text");
+    }
+
+    /**
+     * Test complete Building creation flow with Basic Info
+     */
+    @Test
+    @DisplayName("Create Building with Basic Info")
+    @Description("Complete flow: Login -> Create Project -> Select Building -> Enter Basic Info -> Save")
+    @Story("Building Project Creation")
+    @Severity(SeverityLevel.CRITICAL)
+    void testCreateBuildingWithBasicInfo() throws IOException {
+        // Get page objects
+        LoginPage loginPage = pageManager.getLoginPage();
+        ProjectListPage projectListPage = pageManager.getProjectListPage();
+        ProjectSelectionPage projectSelectionPage = pageManager.getProjectSelectionPage();
+        BuildingProjectPage buildingProjectPage = pageManager.getBuildingProjectPage();
+        BuildingBasicInfoTab buildingBasicInfoTab = pageManager.getBuildingBasicInfoTab();
+
+        // Login and navigate to project selection
+        Map<String, String> user = TestDataManager.getSmokeUser();
+        Allure.step("Login and navigate to project selection", () -> {
+            loginPage.navigateToLogin();
+            loginPage.enterEmail(user.get("username"));
+            loginPage.enterPassword(user.get("password"));
+            loginPage.clickSignInButton();
+            projectListPage.clickCreateNewProject();
+        });
+
+        // Select Building project type
+        Allure.step("Select Building project type", () -> {
+            projectSelectionPage.selectBuilding();
+        });
+
+        // Navigate to Basic Info tab
+        Allure.step("Navigate to Basic Info tab", () -> {
+            buildingProjectPage.goToBasicInfoTab();
+        });
+
+        // Enter project title and save
+        String projectTitle = "Test Building - " + System.currentTimeMillis();
+        Allure.step("Enter project title and save", () -> {
+            buildingBasicInfoTab.enterProjectTitle(projectTitle);
+            buildingBasicInfoTab.clickSave();
+            page.waitForTimeout(1000); // Wait for save to complete
+        });
+
+        // Verify save success - title should persist
+        Allure.step("Verify project was saved successfully", () -> {
+            String savedTitle = buildingBasicInfoTab.getProjectTitle();
+            assertEquals(projectTitle, savedTitle,
+                "Project title should persist after save");
+        });
+
+        takeScreenshot("Building Created with Basic Info");
     }
 }

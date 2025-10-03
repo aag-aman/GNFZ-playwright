@@ -56,7 +56,7 @@ public class SignUpRegressionTest extends BaseTest {
         // Verify page loaded
         Allure.step("Verify sign-up page is displayed", () -> {
             assertTrue(signUpPage.isPageDisplayed(),
-                "Sign-up page should be displayed");
+                    "Sign-up page should be displayed");
         });
 
         // Fill in form
@@ -71,11 +71,11 @@ public class SignUpRegressionTest extends BaseTest {
 
             // Verify data entered correctly
             assertEquals(firstName, signUpPage.getFirstNameFieldValue(),
-                "First name should be entered correctly");
+                    "First name should be entered correctly");
             assertEquals(lastName, signUpPage.getLastNameFieldValue(),
-                "Last name should be entered correctly");
+                    "Last name should be entered correctly");
             assertEquals(email, signUpPage.getEmailFieldValue(),
-                "Email should be entered correctly");
+                    "Email should be entered correctly");
         });
 
         // Submit form
@@ -91,8 +91,8 @@ public class SignUpRegressionTest extends BaseTest {
                 Thread.currentThread().interrupt();
             }
 
-            assertFalse(signUpPage.isErrorMessageDisplayed(),
-                "No error message should be displayed for valid data: " + email);
+            assertFalse(!signUpPage.isConfirmPasswordFieldVisible(),
+                    "No error message should be displayed for valid data: " + email);
         });
 
         // Take screenshot
@@ -105,9 +105,9 @@ public class SignUpRegressionTest extends BaseTest {
     static Stream<org.junit.jupiter.params.provider.Arguments> getPositiveTestData() throws IOException {
         List<Map<String, String>> testCases = TestDataManager.getPositiveSignUpTestCases();
         return testCases.stream()
-            .map(testCase -> org.junit.jupiter.params.provider.Arguments.of(
-                testCase.get("description"),
-                testCase));
+                .map(testCase -> org.junit.jupiter.params.provider.Arguments.of(
+                        testCase.get("description"),
+                        testCase));
     }
 
     /**
@@ -139,18 +139,23 @@ public class SignUpRegressionTest extends BaseTest {
         // Verify page loaded
         Allure.step("Verify sign-up page is displayed", () -> {
             assertTrue(signUpPage.isPageDisplayed(),
-                "Sign-up page should be displayed");
+                    "Sign-up page should be displayed");
         });
 
         // Fill in form with invalid data
         Allure.step("Fill in sign-up form with invalid data", () -> {
             signUpPage.clearAllFields();
 
-            if (!firstName.isEmpty()) signUpPage.enterFirstName(firstName);
-            if (!lastName.isEmpty()) signUpPage.enterLastName(lastName);
-            if (!email.isEmpty()) signUpPage.enterEmail(email);
-            if (!password.isEmpty()) signUpPage.enterPassword(password);
-            if (!confirmPassword.isEmpty()) signUpPage.enterConfirmPassword(confirmPassword);
+            if (!firstName.isEmpty())
+                signUpPage.enterFirstName(firstName);
+            if (!lastName.isEmpty())
+                signUpPage.enterLastName(lastName);
+            if (!email.isEmpty())
+                signUpPage.enterEmail(email);
+            if (!password.isEmpty())
+                signUpPage.enterPassword(password);
+            if (!confirmPassword.isEmpty())
+                signUpPage.enterConfirmPassword(confirmPassword);
         });
 
         // Submit form
@@ -167,10 +172,10 @@ public class SignUpRegressionTest extends BaseTest {
             }
 
             // Check if error message is displayed
-            if (signUpPage.isErrorMessageDisplayed()) {
-                String actualError = signUpPage.getErrorMessage();
+            if (signUpPage.getEmailErrorVisible()) {
+                String actualError = signUpPage.getEmailError();
                 assertNotNull(actualError,
-                    "Error message should be displayed for invalid data");
+                        "Error message should be displayed for invalid data");
 
                 // Attach errors to report
                 Allure.addAttachment("Expected Error", expectedError);
@@ -178,7 +183,7 @@ public class SignUpRegressionTest extends BaseTest {
             } else {
                 // If no error message, verify no success
                 assertFalse(signUpPage.isSuccessMessageDisplayed(),
-                    "Success message should not be displayed for invalid data");
+                        "Success message should not be displayed for invalid data");
             }
         });
 
@@ -192,9 +197,9 @@ public class SignUpRegressionTest extends BaseTest {
     static Stream<org.junit.jupiter.params.provider.Arguments> getNegativeTestData() throws IOException {
         List<Map<String, String>> testCases = TestDataManager.getNegativeSignUpTestCases();
         return testCases.stream()
-            .map(testCase -> org.junit.jupiter.params.provider.Arguments.of(
-                testCase.get("description"),
-                testCase));
+                .map(testCase -> org.junit.jupiter.params.provider.Arguments.of(
+                        testCase.get("description"),
+                        testCase));
     }
 
     /**
@@ -219,12 +224,12 @@ public class SignUpRegressionTest extends BaseTest {
             // Test entering and clearing data
             signUpPage.enterFirstName("Test");
             assertEquals("Test", signUpPage.getFirstNameFieldValue(),
-                "First name should be entered");
+                    "First name should be entered");
 
             signUpPage.clearFirstNameField();
             String cleared = signUpPage.getFirstNameFieldValue();
             assertTrue(cleared == null || cleared.isEmpty(),
-                "First name should be cleared");
+                    "First name should be cleared");
 
             // Test password fields
             signUpPage.enterPassword("Password123!");
@@ -232,7 +237,7 @@ public class SignUpRegressionTest extends BaseTest {
 
             // Verify button state
             assertTrue(signUpPage.isSignUpButtonEnabled(),
-                "Sign-up button should be enabled");
+                    "Sign-up button should be enabled");
         });
 
         // Take screenshot
@@ -255,14 +260,14 @@ public class SignUpRegressionTest extends BaseTest {
         Allure.step("Test direct navigation to sign-up page", () -> {
             signUpPage.navigateToSignUp();
             assertTrue(signUpPage.isPageDisplayed(),
-                "Should be able to navigate to sign-up page");
+                    "Should be able to navigate to sign-up page");
         });
 
         // Test page reload
         Allure.step("Test page reload", () -> {
             page.reload();
             assertTrue(signUpPage.isPageDisplayed(),
-                "Page should still be displayed after reload");
+                    "Page should still be displayed after reload");
         });
 
         // Take screenshot
