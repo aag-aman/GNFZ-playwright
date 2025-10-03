@@ -1,0 +1,11 @@
+[
+  {
+    "description": "Valid sign-up with all fields",
+    "firstName": "Test",
+    "lastName": "User",
+    "email": "testuser+smoke@example.com",
+    "password": "TestPassword123!",
+    "confirmPassword": "TestPassword123!",
+    "testType": "positive"
+  }
+]

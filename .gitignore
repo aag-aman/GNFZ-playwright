@@ -1,0 +1,53 @@
+# Maven build files
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Test results and reports
+test-results/
+allure-results/
+allure-report/
+*.log
+
+# Playwright traces and screenshots
+traces/
+screenshots/
+videos/
+
+# Allure CLI (if locally installed)
+.allure/
+
+# Claude Code workspace
+.claude/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Node modules (if any npm packages are used)
+node_modules/
+package-lock.json
+CLAUDE.md

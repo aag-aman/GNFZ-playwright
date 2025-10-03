@@ -1,0 +1,102 @@
+[
+  {
+    "description": "Valid sign-up with standard email",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "johndoe+test@example.com",
+    "password": "SecurePass123!",
+    "confirmPassword": "SecurePass123!",
+    "testType": "positive",
+    "expectedError": ""
+  },
+  {
+    "description": "Valid sign-up with plus addressing",
+    "firstName": "Jane",
+    "lastName": "Smith",
+    "email": "janesmith+regression@example.com",
+    "password": "AnotherPass456!",
+    "confirmPassword": "AnotherPass456!",
+    "testType": "positive",
+    "expectedError": ""
+  },
+  {
+    "description": "Valid sign-up with numbers in name",
+    "firstName": "User123",
+    "lastName": "Test456",
+    "email": "user123test+reg@example.com",
+    "password": "MyPassword789!",
+    "confirmPassword": "MyPassword789!",
+    "testType": "positive",
+    "expectedError": ""
+  },
+  {
+    "description": "Invalid email format",
+    "firstName": "Invalid",
+    "lastName": "Email",
+    "email": "notanemail",
+    "password": "ValidPass123!",
+    "confirmPassword": "ValidPass123!",
+    "testType": "negative",
+    "expectedError": "Invalid email"
+  },
+  {
+    "description": "Password mismatch",
+    "firstName": "Mismatch",
+    "lastName": "Password",
+    "email": "mismatch+test@example.com",
+    "password": "Password123!",
+    "confirmPassword": "DifferentPass456!",
+    "testType": "negative",
+    "expectedError": "Passwords do not match"
+  },
+  {
+    "description": "Weak password",
+    "firstName": "Weak",
+    "lastName": "Pass",
+    "email": "weakpass+test@example.com",
+    "password": "weak",
+    "confirmPassword": "weak",
+    "testType": "negative",
+    "expectedError": "Password too weak"
+  },
+  {
+    "description": "Empty first name",
+    "firstName": "",
+    "lastName": "NoFirst",
+    "email": "nofirst+test@example.com",
+    "password": "ValidPass123!",
+    "confirmPassword": "ValidPass123!",
+    "testType": "negative",
+    "expectedError": "First name required"
+  },
+  {
+    "description": "Empty last name",
+    "firstName": "NoLast",
+    "lastName": "",
+    "email": "nolast+test@example.com",
+    "password": "ValidPass123!",
+    "confirmPassword": "ValidPass123!",
+    "testType": "negative",
+    "expectedError": "Last name required"
+  },
+  {
+    "description": "Empty email",
+    "firstName": "No",
+    "lastName": "Email",
+    "email": "",
+    "password": "ValidPass123!",
+    "confirmPassword": "ValidPass123!",
+    "testType": "negative",
+    "expectedError": "Email required"
+  },
+  {
+    "description": "Empty password",
+    "firstName": "No",
+    "lastName": "Password",
+    "email": "nopass+test@example.com",
+    "password": "",
+    "confirmPassword": "",
+    "testType": "negative",
+    "expectedError": "Password required"
+  }
+]

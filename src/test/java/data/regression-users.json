@@ -1,0 +1,36 @@
+[
+  {
+    "username": "aman.gupta@promantusinc.com",
+    "password": "Vrishabh@@2025",
+    "expectedSuccess": "List of projects",
+    "description": "Valid user - happy path"
+  },
+  {
+    "username": "invalid@test.com",
+    "password": "wrongpassword",
+    "expectedSuccess": "error",
+    "expectedError": "Invalid credentials",
+    "description": "Invalid credentials test"
+  },
+  {
+    "username": "",
+    "password": "Vrishabh@@2025",
+    "expectedSuccess": "error",
+    "expectedError": "Email is required",
+    "description": "Empty email field"
+  },
+  {
+    "username": "aman.gupta@promantusinc.com",
+    "password": "",
+    "expectedSuccess": "error",
+    "expectedError": "Password is required",
+    "description": "Empty password field"
+  },
+  {
+    "username": "notanemail",
+    "password": "Vrishabh@@2025",
+    "expectedSuccess": "error",
+    "expectedError": "Invalid email format",
+    "description": "Invalid email format"
+  }
+]
