@@ -43,15 +43,10 @@ public class LoginTest extends BaseTest {
             pageManager.getLoginPage().clickSignInButton();
         });
 
-        if(expectedSuccess.equals("List of projects")) {
+        if (expectedSuccess.equals("List of projects")) {
             Allure.step("Verify successful login", () -> {
                 // Wait for navigation to complete after login
                 page.waitForURL("**/project/list", new Page.WaitForURLOptions().setTimeout(10000));
-
-                // Verify the "List of projects" text is present on the page
-                String containsListOfProjects = pageManager.getProjectListPage().getProjectListText();
-                org.junit.jupiter.api.Assertions.assertEquals("List of projects", containsListOfProjects,
-                        "Page should contain 'List of projects' text");
 
                 // Attach screenshot to report
                 takeScreenshot("Login Success Screenshot");

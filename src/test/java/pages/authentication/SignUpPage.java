@@ -32,6 +32,7 @@ public class SignUpPage {
     private final Locator emailError;
     private final Locator passwordError;
     private final Locator confirmPasswordError;
+    private final Locator errorMessage;
 
     public SignUpPage(Page page) {
         this.page = page;
@@ -54,8 +55,8 @@ public class SignUpPage {
                 .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^Password$"))).locator("small");
         this.confirmPasswordError = page.locator("div")
                 .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^Confirm Password$"))).locator("small");
-        // this.errorMessage = page.locator(".error-message, .alert-danger,
-        // small.text-danger");
+        this.errorMessage = page.locator(
+                "body > app-root > gnfz-sign-up-design > div > div > div > div.col-12.col-lg-5.form-column > section > div > div > div:nth-child(2) > form > div:nth-child(4) > div:nth-child(2) > small");
         this.successMessage = page.locator(".success-message, .alert-success");
         this.loginLink = page.locator("a[href*='login'], a:has-text('Login')");
     }
@@ -203,6 +204,10 @@ public class SignUpPage {
 
     public boolean getConfirmPasswordErrorVisible() {
         return confirmPasswordError.isVisible();
+    }
+
+    public String getErrorMessage() {
+        return errorMessage.textContent();
     }
 
     public String getSuccessMessage() {

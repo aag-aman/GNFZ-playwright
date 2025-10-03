@@ -20,6 +20,7 @@ public class ProjectListPage {
 
     public boolean isProjectListVisible() {
         page.waitForLoadState();
+        projectListHeader.waitFor();
         return projectListHeader.isVisible();
     }
 

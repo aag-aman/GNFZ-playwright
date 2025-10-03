@@ -12,6 +12,7 @@ public class BuildingBasicInfoTab {
     private final Page page;
 
     // Form field locators
+    private final Locator projectIdField;
     private final Locator projectTitleField;
     private final Locator targetCertificationArea;
     private final Locator grossArea;
@@ -22,6 +23,7 @@ public class BuildingBasicInfoTab {
         this.page = page;
 
         // Initialize form field locators
+        this.projectIdField = page.locator("#building_spaceId");
         this.projectTitleField = page.locator("#building_spaceTitle");
         this.targetCertificationArea = page.locator("#gnfz-basic-info-form-targetCertArea");
         this.grossArea = page.locator("#gnfz-basic-info-form-grossArea");
@@ -114,5 +116,19 @@ public class BuildingBasicInfoTab {
     public void clickSave() {
         page.waitForLoadState();
         saveButton.click();
+    }
+
+    /**
+     * Wait for Project ID field to be visible (indicates project has been created)
+     */
+    public boolean isProjectIdFieldVisible() {
+        page.waitForLoadState();
+        projectIdField.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+        return projectIdField.isVisible();
+    }
+
+    public String getProjectId() {
+        page.waitForLoadState();
+        return projectIdField.inputValue();
     }
 }

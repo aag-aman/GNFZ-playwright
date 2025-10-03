@@ -2,6 +2,8 @@ package pages.dashboard.project.building.assessment;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+
+import pages.dashboard.project.building.BuildingAssessmentTab;
 import pages.dashboard.project.building.assessment.tables.*;
 
 /**
@@ -18,7 +20,7 @@ import pages.dashboard.project.building.assessment.tables.*;
  * emissions.tableA().enterEmissionFactor(0, "2.68");
  * emissions.tableB().enterFuel(0, "Coal");
  */
-public class NetZeroEmissionsSection {
+public class NetZeroEmissionsSection extends BuildingAssessmentTab {
     private final Page page;
 
     // Header and common locators

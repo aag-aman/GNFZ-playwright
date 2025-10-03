@@ -8,11 +8,13 @@ import pages.dashboard.ProjectListPage;
 import pages.dashboard.ProjectSelectionPage;
 import pages.dashboard.project.building.BuildingProjectPage;
 import pages.dashboard.project.building.BuildingBasicInfoTab;
+import pages.dashboard.project.building.BuildingAssessmentTab;
 import tests.base.BaseTest;
 import utils.TestDataManager;
 
 import java.io.IOException;
 import java.util.Map;
+import com.microsoft.playwright.Page;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,7 +40,9 @@ public class BuildingProjectTest extends BaseTest {
         LoginPage loginPage = pageManager.getLoginPage();
         ProjectListPage projectListPage = pageManager.getProjectListPage();
         ProjectSelectionPage projectSelectionPage = pageManager.getProjectSelectionPage();
-
+        BuildingProjectPage buildingProjectPage = pageManager.getBuildingProjectPage();
+        BuildingBasicInfoTab buildingBasicInfoTab = pageManager.getBuildingBasicInfoTab();
+        BuildingAssessmentTab buildingAssessmentTab = pageManager.getBuildingAssessmentTab();
         // Login and navigate to project selection
         Map<String, String> user = TestDataManager.getSmokeUser();
         Allure.step("Login and navigate to project selection", () -> {
@@ -56,6 +60,47 @@ public class BuildingProjectTest extends BaseTest {
         });
 
         takeScreenshot("Building Option Visible");
+
+        Allure.step("Select Building project type", () -> {
+            projectSelectionPage.selectBuilding();
+        });
+
+        Allure.step("Navigate to Building project form and enter details", () -> {
+            buildingProjectPage.goToBasicInfoTab();
+            String projectTitle = "Test Building - " + System.currentTimeMillis();
+            buildingBasicInfoTab.enterProjectTitle(projectTitle);
+            buildingBasicInfoTab.clickSave();
+            //Wait for url to update baseUrl/project/building/projectId format, get projectID from url
+            page.waitForURL("**/project/building/**", new Page.WaitForURLOptions().setTimeout(5000));
+            String projectId = page.url().split("/")[5];
+            System.out.println("Created Building project with ID: " + projectId);
+            //Wait for Project ID field to be visible
+            assertTrue(buildingBasicInfoTab.isProjectIdFieldVisible());
+
+            String savedId = buildingBasicInfoTab.getProjectId();
+            assertEquals(projectId, savedId,
+                "Project ID should persist after save");
+
+            String savedTitle = buildingBasicInfoTab.getProjectTitle();
+            assertEquals(projectTitle, savedTitle,
+                "Project title should persist after save");
+
+
+        });
+
+        takeScreenshot("Building Project Form");
+
+        Allure.step("Navigate to Assessment tab and enter Net Zero Emission details", () -> {
+            buildingProjectPage.goToAssessmentTab();
+            assertTrue(buildingAssessmentTab.isTabDisplayed(),
+                "Assessment tab form should be displayed");
+
+            assertTrue(buildingAssessmentTab.isNetZeroEmissionsSubTabActive(),
+                "Net Zero Emissions sub-tab should be active by default");
+            
+            
+            
+        });
     }
 
     /**

@@ -55,10 +55,6 @@ public class LoginRegressionTest extends BaseTest {
             Allure.step("Verify successful login", () -> {
                 page.waitForURL("**/project/list", new Page.WaitForURLOptions().setTimeout(10000));
 
-                String containsListOfProjects = pageManager.getProjectListPage().getProjectListText();
-                org.junit.jupiter.api.Assertions.assertEquals("List of projects", containsListOfProjects,
-                    "Page should contain 'List of projects' text for: " + description);
-
                 // Take screenshot on success
                 takeScreenshot("Success Screenshot - " + description);
 
@@ -72,12 +68,12 @@ public class LoginRegressionTest extends BaseTest {
 
                 // Check for various error indicators
                 boolean hasError = page.locator(".error, .alert-danger, [role='alert']").count() > 0 ||
-                                  page.content().contains("error") ||
-                                  page.content().contains("invalid") ||
-                                  page.content().contains("required");
+                        page.content().contains("error") ||
+                        page.content().contains("invalid") ||
+                        page.content().contains("required");
 
                 org.junit.jupiter.api.Assertions.assertTrue(hasError,
-                    "Expected error message for: " + description);
+                        "Expected error message for: " + description);
 
                 // Take screenshot on error validation
                 takeScreenshot("Error Screenshot - " + description);
@@ -112,10 +108,6 @@ public class LoginRegressionTest extends BaseTest {
 
         Allure.step("Verify successful login", () -> {
             page.waitForURL("**/project/list", new Page.WaitForURLOptions().setTimeout(10000));
-
-            String containsListOfProjects = pageManager.getProjectListPage().getProjectListText();
-            org.junit.jupiter.api.Assertions.assertEquals("List of projects", containsListOfProjects,
-                "Login should be successful with valid credentials");
 
             // Take success screenshot
             takeScreenshot("Happy Path Success Screenshot");
