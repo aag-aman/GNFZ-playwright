@@ -11,24 +11,29 @@ import com.microsoft.playwright.Page;
 public class Scope3TableH {
     protected final Page page;
 
-    // Locator patterns defined once
+    // Locator patterns (defined once, reused for all rows)
     private static final String TYPE_OF_WASTE_INPUT_PATTERN = "input[ftestcaseref='scope3_waste_recycled_type_of_waste_%d']";
     private static final String EMISSION_FACTOR_INPUT_PATTERN = "input[ftestcaseref='scope3_waste_recycled_emission_factor_(kgco2e)_%d']";
     private static final String QUANTITY_RECYCLED_INPUT_PATTERN = "input[ftestcaseref='scope3_waste_recycled_quantity_of_waste_recycled_%d']";
     private static final String UNIT_SELECT_PATTERN = "select[ftestcaseref='scope3_waste_recycled_unit_%d']";
     private static final String ROW_TOTAL_PATTERN = "input[ftestcaseref='scope3_waste_recycled_total_emissions_(kgco2e)_%d']";
+    private static final String ADD_ROW_BUTTON_PATTERN = "#scope3_WasteRecycled_table_tr_row_add_%d";
+    private static final String ATTACH_BUTTON_PATTERN = "#scope3_WasteRecycled_table_tr_row_attach_%d";
+    private static final String REMOVE_ROW_BUTTON_PATTERN = "#scope3_WasteRecycled_table_tr_row_trash_%d";
 
-    // Table-level locators
+    // Table-level locators (not row-specific)
     private final Locator tableTotal;
 
+    // Constructor
     public Scope3TableH(Page page) {
         this.page = page;
+        // Initialize only table-level locators (table total is shared across all rows)
         this.tableTotal = page.locator("input[ftestcaseref='scope3_waste_recycled_total']");
     }
 
-    // ========================================
-    // Helper methods - return locators for dynamic rows
-    // ========================================
+    /**
+     * Helper methods to build dynamic locators based on row index
+     */
     private Locator getTypeOfWasteInput(int rowIndex) {
         return page.locator(String.format(TYPE_OF_WASTE_INPUT_PATTERN, rowIndex));
     }
@@ -49,9 +54,21 @@ public class Scope3TableH {
         return page.locator(String.format(ROW_TOTAL_PATTERN, rowIndex));
     }
 
-    // ========================================
-    // Public action methods (slower inputs with more wait time)
-    // ========================================
+    private Locator getAddRowButton(int rowIndex) {
+        return page.locator(String.format(ADD_ROW_BUTTON_PATTERN, rowIndex));
+    }
+
+    private Locator getAttachButton(int rowIndex) {
+        return page.locator(String.format(ATTACH_BUTTON_PATTERN, rowIndex));
+    }
+
+    private Locator getRemoveRowButton(int rowIndex) {
+        return page.locator(String.format(REMOVE_ROW_BUTTON_PATTERN, rowIndex));
+    }
+
+    /**
+     * Enter methods for specific columns
+     */
     public void enterTypeOfWaste(int rowIndex, String value) {
         page.waitForLoadState();
         Locator typeOfWasteInput = getTypeOfWasteInput(rowIndex);
@@ -109,9 +126,9 @@ public class Scope3TableH {
         page.waitForTimeout(500);
     }
 
-    // ========================================
-    // Public getter methods
-    // ========================================
+    /**
+     * Get values
+     */
     public String getTypeOfWaste(int rowIndex) {
         return getTypeOfWasteInput(rowIndex).inputValue();
     }
@@ -133,22 +150,32 @@ public class Scope3TableH {
     }
 
     public String getTableTotal() {
-        return tableTotal.inputValue();
+        return this.tableTotal.inputValue();
     }
 
-    // ========================================
-    // Row operations
-    // ========================================
-    public void addRow() {
-        page.locator("[ftestcaseref='scope3_waste_recycled_add']").click();
+    /**
+     * Row operations
+     */
+    public void addRow(int currentRowIndex) {
+        page.waitForLoadState();
+        Locator addButton = getAddRowButton(currentRowIndex);
+        addButton.waitFor();
+        addButton.click();
+        page.waitForTimeout(500); // Wait for new row to be added
     }
 
     public void removeRow(int rowIndex) {
-        page.locator(String.format("[ftestcaseref='scope3_waste_recycled_remove_%d']", rowIndex)).click();
+        page.waitForLoadState();
+        Locator removeButton = getRemoveRowButton(rowIndex);
+        removeButton.waitFor();
+        removeButton.click();
     }
 
-    public void attach() {
-        page.locator("[ftestcaseref='scope3_waste_recycled_attach']").click();
+    public void attach(int rowIndex) {
+        page.waitForLoadState();
+        Locator attachButton = getAttachButton(rowIndex);
+        attachButton.waitFor();
+        attachButton.click();
     }
 
     /**

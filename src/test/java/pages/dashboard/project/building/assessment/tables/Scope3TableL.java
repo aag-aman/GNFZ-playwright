@@ -1,7 +1,7 @@
 package pages.dashboard.project.building.assessment.tables;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
 
 /**
  * Scope3TableL - Table L for Scope 3 Emissions (Business Travel)
@@ -11,93 +11,195 @@ import com.microsoft.playwright.options.AriaRole;
 public class Scope3TableL {
     protected final Page page;
 
+    // Locator patterns defined once
+    private static final String VEHICLE_TYPE_INPUT_PATTERN = "input[ftestcaseref='scope3_business_travel_vehicle_type_%d']";
+    private static final String VEHICLE_SIZE_INPUT_PATTERN = "input[ftestcaseref='scope3_business_travel_vehicle_size_%d']";
+    private static final String FUEL_INPUT_PATTERN = "input[ftestcaseref='scope3_business_travel_fuel_%d']";
+    private static final String EMISSION_FACTOR_INPUT_PATTERN = "input[ftestcaseref='scope3_business_travel_emission_factor_(kgco2e)_%d']";
+    private static final String TOTAL_DISTANCE_INPUT_PATTERN = "input[ftestcaseref='scope3_business_travel_total_distance_%d']";
+    private static final String UNITS_SELECT_PATTERN = "select[ftestcaseref='scope3_business_travel_units_%d']";
+    private static final String ROW_TOTAL_PATTERN = "input[ftestcaseref='scope3_business_travel_total_emissions_(kgco2e)_%d']";
+
+    // Table-level locators
+    private final Locator tableTotal;
+
     public Scope3TableL(Page page) {
         this.page = page;
+        this.tableTotal = page.locator("input[ftestcaseref='scope3_business_travel_total']");
     }
 
-    /**
-     * Enter methods for specific columns
-     */
+    // ========================================
+    // Helper methods - return locators for dynamic rows
+    // ========================================
+    private Locator getVehicleTypeInput(int rowIndex) {
+        return page.locator(String.format(VEHICLE_TYPE_INPUT_PATTERN, rowIndex));
+    }
+
+    private Locator getVehicleSizeInput(int rowIndex) {
+        return page.locator(String.format(VEHICLE_SIZE_INPUT_PATTERN, rowIndex));
+    }
+
+    private Locator getFuelInput(int rowIndex) {
+        return page.locator(String.format(FUEL_INPUT_PATTERN, rowIndex));
+    }
+
+    private Locator getEmissionFactorInput(int rowIndex) {
+        return page.locator(String.format(EMISSION_FACTOR_INPUT_PATTERN, rowIndex));
+    }
+
+    private Locator getTotalDistanceInput(int rowIndex) {
+        return page.locator(String.format(TOTAL_DISTANCE_INPUT_PATTERN, rowIndex));
+    }
+
+    private Locator getUnitsSelect(int rowIndex) {
+        return page.locator(String.format(UNITS_SELECT_PATTERN, rowIndex));
+    }
+
+    private Locator getRowTotalLocator(int rowIndex) {
+        return page.locator(String.format(ROW_TOTAL_PATTERN, rowIndex));
+    }
+
+    // ========================================
+    // Public action methods (slower inputs with more wait time)
+    // ========================================
     public void enterVehicleType(int rowIndex, String value) {
         page.waitForLoadState();
-        page.locator(String.format("'scope3_business_travel_vehicle_type_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).waitFor();
-        page.locator(String.format("'scope3_business_travel_vehicle_type_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).fill(value);
+        Locator vehicleTypeInput = getVehicleTypeInput(rowIndex);
+        vehicleTypeInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
+        vehicleTypeInput.scrollIntoViewIfNeeded();
+
+        // Slower input - type character by character
+        vehicleTypeInput.click();
+        vehicleTypeInput.clear();
+        vehicleTypeInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
+
+        // Defocus and wait longer
+        vehicleTypeInput.blur();
+        page.waitForTimeout(1500);
     }
 
     public void enterVehicleSize(int rowIndex, String value) {
         page.waitForLoadState();
-        page.locator(String.format("'scope3_business_travel_vehicle_size_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).waitFor();
-        page.locator(String.format("'scope3_business_travel_vehicle_size_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).fill(value);
+        Locator vehicleSizeInput = getVehicleSizeInput(rowIndex);
+        vehicleSizeInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
+        vehicleSizeInput.scrollIntoViewIfNeeded();
+
+        // Slower input
+        vehicleSizeInput.click();
+        vehicleSizeInput.clear();
+        vehicleSizeInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
+
+        // Defocus and wait longer
+        vehicleSizeInput.blur();
+        page.waitForTimeout(1500);
     }
 
     public void enterFuel(int rowIndex, String value) {
         page.waitForLoadState();
-        page.locator(String.format("'scope3_business_travel_fuel_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).waitFor();
-        page.locator(String.format("'scope3_business_travel_fuel_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).fill(value);
+        Locator fuelInput = getFuelInput(rowIndex);
+        fuelInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
+        fuelInput.scrollIntoViewIfNeeded();
+
+        // Slower input
+        fuelInput.click();
+        fuelInput.clear();
+        fuelInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
+
+        // Defocus and wait longer
+        fuelInput.blur();
+        page.waitForTimeout(1500);
     }
 
     public void enterEmissionFactor(int rowIndex, String value) {
         page.waitForLoadState();
-        page.locator(String.format("'scope3_business_travel_emission_factor_(kgco2e)_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).waitFor();
-        page.locator(String.format("'scope3_business_travel_emission_factor_(kgco2e)_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).fill(value);
+        Locator emissionFactorInput = getEmissionFactorInput(rowIndex);
+        emissionFactorInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
+        emissionFactorInput.scrollIntoViewIfNeeded();
+
+        // Slower input
+        emissionFactorInput.click();
+        emissionFactorInput.clear();
+        emissionFactorInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
+
+        // Defocus and wait longer
+        emissionFactorInput.blur();
+        page.waitForTimeout(1500);
     }
 
     public void enterTotalDistance(int rowIndex, String value) {
         page.waitForLoadState();
-        page.locator(String.format("'scope3_business_travel_total_distance_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).waitFor();
-        page.locator(String.format("'scope3_business_travel_total_distance_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).fill(value);
+        Locator totalDistanceInput = getTotalDistanceInput(rowIndex);
+        totalDistanceInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
+        totalDistanceInput.scrollIntoViewIfNeeded();
+
+        // Slower input
+        totalDistanceInput.click();
+        totalDistanceInput.clear();
+        totalDistanceInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
+
+        // Defocus and wait longer for calculation
+        totalDistanceInput.blur();
+        page.waitForTimeout(1500);
     }
 
     public void selectUnits(int rowIndex, String value) {
         page.waitForLoadState();
-        page.locator(String.format("'scope3_business_travel_units_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).waitFor();
-        page.locator(String.format("'scope3_business_travel_units_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).selectOption(value);
+        Locator unitsSelect = getUnitsSelect(rowIndex);
+        unitsSelect.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
+        unitsSelect.scrollIntoViewIfNeeded();
+        unitsSelect.selectOption(value);
+        page.waitForTimeout(500);
     }
 
-    /**
-     * Get values
-     */
+    // ========================================
+    // Public getter methods
+    // ========================================
     public String getVehicleType(int rowIndex) {
-        return page.locator(String.format("'scope3_business_travel_vehicle_type_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).inputValue();
+        return getVehicleTypeInput(rowIndex).inputValue();
     }
 
     public String getVehicleSize(int rowIndex) {
-        return page.locator(String.format("'scope3_business_travel_vehicle_size_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).inputValue();
+        return getVehicleSizeInput(rowIndex).inputValue();
     }
 
     public String getFuel(int rowIndex) {
-        return page.locator(String.format("'scope3_business_travel_fuel_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).inputValue();
+        return getFuelInput(rowIndex).inputValue();
     }
 
     public String getEmissionFactor(int rowIndex) {
-        return page.locator(String.format("'scope3_business_travel_emission_factor_(kgco2e)_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).inputValue();
+        return getEmissionFactorInput(rowIndex).inputValue();
     }
 
     public String getTotalDistance(int rowIndex) {
-        return page.locator(String.format("'scope3_business_travel_total_distance_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).inputValue();
+        return getTotalDistanceInput(rowIndex).inputValue();
+    }
+
+    public String getUnits(int rowIndex) {
+        return getUnitsSelect(rowIndex).inputValue();
     }
 
     public String getRowTotal(int rowIndex) {
-        return page.locator(String.format("'scope3_business_travel_rowtotal_%d'", rowIndex)).textContent();
+        return getRowTotalLocator(rowIndex).inputValue();
     }
 
     public String getTableTotal() {
-        return page.locator("'scope3_business_travel_total'").textContent();
+        return tableTotal.inputValue();
     }
 
-    /**
-     * Row operations
-     */
-    public void addRow() {
-        page.locator("'scope3_business_travel_add'").click();
+    // ========================================
+    // Row operations
+    // ========================================
+    public void addRow(int rowIndex) {
+        page.locator(String.format("[ftestcaseref='scope3_Business Travel_add_%d']", rowIndex)).click();
+        page.waitForTimeout(500); // Wait for new row to be added
     }
 
     public void removeRow(int rowIndex) {
-        page.locator(String.format("'scope3_business_travel_remove_%d'", rowIndex)).click();
+        page.locator(String.format("[ftestcaseref='scope3_Business Travel_remove_%d']", rowIndex)).click();
     }
 
     public void attach() {
-        page.locator("'scope3_business_travel_attach'").click();
+        page.locator("[ftestcaseref='scope3_Business Travel_attach']").click();
     }
 
     /**
