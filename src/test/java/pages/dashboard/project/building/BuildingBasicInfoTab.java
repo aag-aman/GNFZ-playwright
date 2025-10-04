@@ -123,7 +123,7 @@ public class BuildingBasicInfoTab {
      */
     public boolean isProjectIdFieldVisible() {
         page.waitForLoadState();
-        projectIdField.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+        projectIdField.waitFor(new Locator.WaitForOptions().setTimeout(30000));
         return projectIdField.isVisible();
     }
 

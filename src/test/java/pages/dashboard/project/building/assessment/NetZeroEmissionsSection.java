@@ -20,7 +20,7 @@ import pages.dashboard.project.building.assessment.tables.*;
  * emissions.tableA().enterEmissionFactor(0, "2.68");
  * emissions.tableB().enterFuel(0, "Coal");
  */
-public class NetZeroEmissionsSection extends BuildingAssessmentTab {
+public class NetZeroEmissionsSection {
     private final Page page;
 
     // Header and common locators
@@ -74,9 +74,9 @@ public class NetZeroEmissionsSection extends BuildingAssessmentTab {
 
         // Initialize common locators - using ftestcaseref attributes
         this.sectionHeader = page.locator("[ftestcaseref='net_zero_emissions_btn']");
-        this.reportingPeriodFrom = page.locator("[ftestcaseref='reporting_period_from']"); // TODO: Get actual ftestcaseref
-        this.reportingPeriodTo = page.locator("[ftestcaseref='reporting_period_to']"); // TODO: Get actual ftestcaseref
-        this.baselineCheck = page.locator("[ftestcaseref='baseline_checkbox']"); // TODO: Get actual ftestcaseref
+        this.reportingPeriodFrom = page.locator("#reporting_period_from"); // TODO: Get actual ftestcaseref
+        this.reportingPeriodTo = page.locator("#reporting_period_to"); // TODO: Get actual ftestcaseref
+        this.baselineCheck = page.locator("#baseline_checkbox"); // TODO: Get actual ftestcaseref
 
         // Scope sections
         this.scope1Section = page.locator("[ftestcaseref='scope_1']");
@@ -93,7 +93,7 @@ public class NetZeroEmissionsSection extends BuildingAssessmentTab {
 
         // Scope totals (auto-populated, read-only)
         this.scope1TotalEmissions = page.locator("[ftestcaseref='scope_1_total']");
-        this.scope2TotalEmissions = page.locator("[ftestcaseref='scope_2_total']");
+        this.scope2TotalEmissions = page.locator("[ftestcaseref='scope2_energy_total']");
         this.scope3TotalEmissions = page.locator("[ftestcaseref='scope_3_total']");
 
         // Initialize table objects - each table knows its own structure
@@ -141,6 +141,43 @@ public class NetZeroEmissionsSection extends BuildingAssessmentTab {
 
     public void enterReportingPeriodTo(String toDate) {
         page.waitForLoadState();
+        //Humanize using datepicker
+        page.waitForLoadState();
+        reportingPeriodTo.waitFor();
+
+        // Focus and click to trigger datepicker
+        page.waitForTimeout(2000);
+        reportingPeriodTo.focus();
+        page.waitForTimeout(2000);
+        reportingPeriodTo.click();
+        page.waitForTimeout(1100);
+
+        // Wait for datepicker to appear
+        Locator datepicker = page.locator("#ui-datepicker-div");
+        datepicker.waitFor();
+
+        // Parse date (format: MM/DD/YYYY)
+        String[] dateParts = toDate.split("/");
+        String monthValue = String.valueOf(Integer.parseInt(dateParts[0]) - 1); // Month is 0-indexed (0=Jan, 11=Dec)
+        String year = dateParts[2];
+        String day = String.valueOf(Integer.parseInt(dateParts[1])); // Remove leading zero
+
+        // Select month from dropdown
+        Locator monthDropdown = page.locator(".ui-datepicker-month");
+        monthDropdown.selectOption(monthValue);
+        page.waitForTimeout(200);
+
+        // Select year from dropdown
+        Locator yearDropdown = page.locator(".ui-datepicker-year");
+        yearDropdown.selectOption(year);
+        page.waitForTimeout(200);
+
+        // Click on the day in the calendar
+        Locator dayButton = page.locator(".ui-datepicker-calendar td a");
+        dayButton.filter(new Locator.FilterOptions().setHasText(day)).first().click();
+
+        page.waitForTimeout(300);
+
         reportingPeriodTo.fill(toDate);
     }
 
@@ -185,19 +222,42 @@ public class NetZeroEmissionsSection extends BuildingAssessmentTab {
 
     /**
      * ========================================
+     * SCOPE VISIBILITY
+     * ========================================
+     */
+    public void expandScope1() {
+        page.waitForLoadState();
+        scope1Section.click();
+        page.waitForLoadState();
+    }
+
+    public void expandScope2() {
+        page.waitForLoadState();
+        scope2Section.click();
+        page.waitForLoadState();
+    }
+
+    public void expandScope3() {
+        page.waitForLoadState();
+        scope3Section.click();
+        page.waitForLoadState();
+    }
+
+    /**
+     * ========================================
      * SCOPE TOTALS (Read-only, auto-populated)
      * ========================================
      */
     public String getScope1Total() {
-        return scope1TotalEmissions.textContent();
+        return scope1TotalEmissions.inputValue();
     }
 
     public String getScope2Total() {
-        return scope2TotalEmissions.textContent();
+        return scope2TotalEmissions.inputValue();
     }
 
     public String getScope3Total() {
-        return scope3TotalEmissions.textContent();
+        return scope3TotalEmissions.inputValue();
     }
 
     /**
@@ -286,7 +346,7 @@ public class NetZeroEmissionsSection extends BuildingAssessmentTab {
      * HELPER METHOD - Get any Scope 3 table by letter
      * ========================================
      */
-    public Scope3Table getScope3Table(char tableLetter) {
+    public Object getScope3Table(char tableLetter) {
         return switch (Character.toLowerCase(tableLetter)) {
             case 'e' -> tableE;
             case 'f' -> tableF;

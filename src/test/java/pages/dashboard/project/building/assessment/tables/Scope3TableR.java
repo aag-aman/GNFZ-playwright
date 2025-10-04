@@ -1,10 +1,10 @@
 package pages.dashboard.project.building.assessment.tables;
 
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 
 /**
  * Scope3TableR - Table R for Scope 3 Emissions
- * Extends base Scope3Table with specific column methods
  *
  * TODO: CLARIFY - User provided mixed ftestcaseref prefixes:
  * - type_of_material uses: scope3_reused_materials_type_of_material_0
@@ -16,45 +16,77 @@ import com.microsoft.playwright.Page;
  *
  * Columns: type_of_material, emission_factor_(kgco2e), quantity, units
  */
-public class Scope3TableR extends Scope3Table {
+public class Scope3TableR {
+    protected final Page page;
 
     public Scope3TableR(Page page) {
-        super(page, "recycled_materials");  // Using this prefix - may need adjustment
+        this.page = page;
     }
 
     /**
-     * Convenience methods for specific columns
+     * Enter methods for specific columns
      */
     public void enterTypeOfMaterial(int rowIndex, String value) {
         // Note: User data shows this might use "reused_materials" prefix
-        enterField("type_of_material", rowIndex, value);
+        page.waitForLoadState();
+        page.locator(String.format("'scope3_recycled_materials_type_of_material_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).waitFor();
+        page.locator(String.format("'scope3_recycled_materials_type_of_material_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).fill(value);
     }
 
     public void enterEmissionFactor(int rowIndex, String value) {
-        enterField("emission_factor_(kgco2e)", rowIndex, value);
+        page.waitForLoadState();
+        page.locator(String.format("'scope3_recycled_materials_emission_factor_(kgco2e)_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).waitFor();
+        page.locator(String.format("'scope3_recycled_materials_emission_factor_(kgco2e)_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).fill(value);
     }
 
     public void enterQuantity(int rowIndex, String value) {
-        enterField("quantity", rowIndex, value);
+        page.waitForLoadState();
+        page.locator(String.format("'scope3_recycled_materials_quantity_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).waitFor();
+        page.locator(String.format("'scope3_recycled_materials_quantity_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).fill(value);
     }
 
     public void selectUnits(int rowIndex, String value) {
-        selectField("units", rowIndex, value);
+        page.waitForLoadState();
+        page.locator(String.format("'scope3_recycled_materials_units_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).waitFor();
+        page.locator(String.format("'scope3_recycled_materials_units_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).selectOption(value);
     }
 
     /**
      * Get values
      */
     public String getTypeOfMaterial(int rowIndex) {
-        return getField("type_of_material", rowIndex);
+        return page.locator(String.format("'scope3_recycled_materials_type_of_material_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).inputValue();
     }
 
     public String getEmissionFactor(int rowIndex) {
-        return getField("emission_factor_(kgco2e)", rowIndex);
+        return page.locator(String.format("'scope3_recycled_materials_emission_factor_(kgco2e)_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).inputValue();
     }
 
     public String getQuantity(int rowIndex) {
-        return getField("quantity", rowIndex);
+        return page.locator(String.format("'scope3_recycled_materials_quantity_%d'", rowIndex)).getByRole(AriaRole.COMBOBOX).inputValue();
+    }
+
+    public String getRowTotal(int rowIndex) {
+        return page.locator(String.format("'scope3_recycled_materials_rowtotal_%d'", rowIndex)).textContent();
+    }
+
+    public String getTableTotal() {
+        return page.locator("'scope3_recycled_materials_total'").textContent();
+    }
+
+    /**
+     * Row operations
+     */
+    public void addRow() {
+        page.locator("'scope3_recycled_materials_add'").click();
+    }
+
+    public void removeRow(int rowIndex) {
+        page.locator(String.format("'scope3_recycled_materials_remove_%d'", rowIndex)).click();
+    }
+
+    public void attach() {
+        page.locator("'scope3_recycled_materials_attach'").click();
     }
 
     /**

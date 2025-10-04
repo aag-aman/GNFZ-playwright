@@ -1,5 +1,6 @@
 package pages.dashboard.project.building.assessment.tables;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 /**
@@ -8,120 +9,145 @@ import com.microsoft.playwright.Page;
  */
 public class Scope2TableD {
     protected final Page page;
-    protected final String tablePrefix;
+
+    // Locator patterns defined once
+    private static final String ACTIVITY_INPUT_PATTERN = "input[ftestcaseref='scope2_energy_activity_%d']";
+    private static final String EMISSION_FACTOR_INPUT_PATTERN = "input[ftestcaseref='scope2_energy_emission_factor_(kgco2e)_%d']";
+    private static final String CONSUMPTION_INPUT_PATTERN = "input[ftestcaseref='scope2_energy_consumption_%d']";
+    private static final String UNITS_SELECT_PATTERN = "select[ftestcaseref='scope2_energy_units_%d']";
+    private static final String ROW_TOTAL_PATTERN = "input[ftestcaseref='scope2_energy_total_emissions_(kgco2e)_%d']";
+
+    // Table-level locators
+    private final Locator tableTotal;
 
     public Scope2TableD(Page page) {
         this.page = page;
-        this.tablePrefix = "scope2_energy";
+        this.tableTotal = page.locator("input[ftestcaseref='scope2_energy_total']");
     }
 
-    /**
-     * Generic method to enter data in any field
-     */
-    public void enterField(String field, int rowIndex, String value) {
-        page.locator(buildFieldSelector(field, rowIndex)).fill(value);
+    // ========================================
+    // Helper methods - return locators for dynamic rows
+    // ========================================
+    private Locator getActivityInput(int rowIndex) {
+        return page.locator(String.format(ACTIVITY_INPUT_PATTERN, rowIndex));
     }
 
-    /**
-     * Generic method to select from dropdown
-     */
-    public void selectField(String field, int rowIndex, String value) {
-        page.locator(buildFieldSelector(field, rowIndex)).selectOption(value);
+    private Locator getEmissionFactorInput(int rowIndex) {
+        return page.locator(String.format(EMISSION_FACTOR_INPUT_PATTERN, rowIndex));
     }
 
-    /**
-     * Get field value
-     */
-    public String getField(String field, int rowIndex) {
-        return page.locator(buildFieldSelector(field, rowIndex)).inputValue();
+    private Locator getConsumptionInput(int rowIndex) {
+        return page.locator(String.format(CONSUMPTION_INPUT_PATTERN, rowIndex));
     }
 
-    /**
-     * Convenience methods for specific columns
-     */
+    private Locator getUnitsSelect(int rowIndex) {
+        return page.locator(String.format(UNITS_SELECT_PATTERN, rowIndex));
+    }
+
+    private Locator getRowTotalLocator(int rowIndex) {
+        return page.locator(String.format(ROW_TOTAL_PATTERN, rowIndex));
+    }
+
+    // ========================================
+    // Public action methods (slower inputs with more wait time)
+    // ========================================
     public void enterActivity(int rowIndex, String value) {
-        enterField("activity", rowIndex, value);
+        page.waitForLoadState();
+        Locator activityInput = getActivityInput(rowIndex);
+        activityInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
+        activityInput.scrollIntoViewIfNeeded();
+
+        // Slower input - type character by character
+        activityInput.click();
+        activityInput.clear();
+        activityInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
+
+        // Defocus and wait longer
+        activityInput.blur();
+        page.waitForTimeout(1500); // Longer wait for auto-population
     }
 
     public void enterEmissionFactor(int rowIndex, String value) {
-        enterField("emission_factor_(kgco2e)", rowIndex, value);
+        page.waitForLoadState();
+        Locator emissionFactorInput = getEmissionFactorInput(rowIndex);
+        emissionFactorInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
+        emissionFactorInput.scrollIntoViewIfNeeded();
+
+        // Slower input
+        emissionFactorInput.click();
+        emissionFactorInput.clear();
+        emissionFactorInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
+
+        // Defocus and wait longer
+        emissionFactorInput.blur();
+        page.waitForTimeout(1500);
     }
 
     public void enterConsumption(int rowIndex, String value) {
-        enterField("consumption", rowIndex, value);
+        page.waitForLoadState();
+        Locator consumptionInput = getConsumptionInput(rowIndex);
+        consumptionInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
+        consumptionInput.scrollIntoViewIfNeeded();
+
+        // Slower input
+        consumptionInput.click();
+        consumptionInput.clear();
+        consumptionInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
+
+        // Defocus and wait longer for calculation
+        consumptionInput.blur();
+        page.waitForTimeout(1500);
     }
 
     public void selectUnits(int rowIndex, String value) {
-        selectField("units", rowIndex, value);
+        page.waitForLoadState();
+        Locator unitsSelect = getUnitsSelect(rowIndex);
+        unitsSelect.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
+        unitsSelect.scrollIntoViewIfNeeded();
+        unitsSelect.selectOption(value);
+        page.waitForTimeout(500);
     }
 
-    /**
-     * Get values
-     */
+    // ========================================
+    // Public getter methods
+    // ========================================
     public String getActivity(int rowIndex) {
-        return getField("activity", rowIndex);
+        return getActivityInput(rowIndex).inputValue();
     }
 
     public String getEmissionFactor(int rowIndex) {
-        return getField("emission_factor_(kgco2e)", rowIndex);
+        return getEmissionFactorInput(rowIndex).inputValue();
     }
 
     public String getConsumption(int rowIndex) {
-        return getField("consumption", rowIndex);
+        return getConsumptionInput(rowIndex).inputValue();
+    }
+
+    public String getUnits(int rowIndex) {
+        return getUnitsSelect(rowIndex).inputValue();
     }
 
     public String getRowTotal(int rowIndex) {
-        return page.locator(buildFieldSelector("total_emissions_(kgco2e)", rowIndex)).textContent();
+        return getRowTotalLocator(rowIndex).inputValue();
     }
 
     public String getTableTotal() {
-        return page.locator(buildActionSelector("total")).textContent();
+        return tableTotal.inputValue();
     }
 
-    /**
-     * Row operations
-     */
+    // ========================================
+    // Row operations
+    // ========================================
     public void addRow() {
-        page.locator(buildActionSelector("add")).click();
+        page.locator("[ftestcaseref='scope2_energy_add']").click();
     }
 
     public void removeRow(int rowIndex) {
-        page.locator(String.format("[ftestcaseref='%s_remove_%d']", tablePrefix, rowIndex)).click();
+        page.locator(String.format("[ftestcaseref='scope2_energy_remove_%d']", rowIndex)).click();
     }
 
     public void attach() {
-        page.locator(buildActionSelector("attach")).click();
-    }
-
-    /**
-     * Get row count - counts elements with table prefix ending in _0 (first row indicators)
-     */
-    public int getRowCount() {
-        return page.locator(String.format("[ftestcaseref^='%s_'][ftestcaseref$='_0']", tablePrefix)).count();
-    }
-
-    /**
-     * Humanlike input methods - with delays to trigger auto-calculations
-     */
-    protected void enterFieldHumanlike(String field, int rowIndex, String value) {
-        page.locator(buildFieldSelector(field, rowIndex)).click();
-        page.locator(buildFieldSelector(field, rowIndex)).pressSequentially(value, new com.microsoft.playwright.Locator.PressSequentiallyOptions().setDelay(100));
-        page.waitForTimeout(300);
-    }
-
-    protected void selectFieldHumanlike(String field, int rowIndex, String value) {
-        page.locator(buildFieldSelector(field, rowIndex)).click();
-        page.waitForTimeout(200);
-        page.locator(buildFieldSelector(field, rowIndex)).selectOption(value);
-        page.waitForTimeout(300);
-    }
-
-    protected void enterAutocomplete(String field, int rowIndex, String value) {
-        page.locator(buildFieldSelector(field, rowIndex)).click();
-        page.locator(buildFieldSelector(field, rowIndex)).pressSequentially(value, new com.microsoft.playwright.Locator.PressSequentiallyOptions().setDelay(150));
-        page.waitForTimeout(500); // Wait for autocomplete suggestions
-        page.keyboard().press("Enter");
-        page.waitForTimeout(300);
+        page.locator("[ftestcaseref='scope2_energy_attach']").click();
     }
 
     /**
@@ -132,16 +158,5 @@ public class Scope2TableD {
         enterEmissionFactor(rowIndex, emissionFactor);
         enterConsumption(rowIndex, consumption);
         selectUnits(rowIndex, units);
-    }
-
-    /**
-     * Helper methods to build selectors
-     */
-    protected String buildFieldSelector(String field, int rowIndex) {
-        return String.format("[ftestcaseref='%s_%s_%d']", tablePrefix, field, rowIndex);
-    }
-
-    protected String buildActionSelector(String action) {
-        return String.format("[ftestcaseref='%s_%s']", tablePrefix, action);
     }
 }

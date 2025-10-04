@@ -79,7 +79,7 @@ public class BuildingProjectRegressionTest extends BaseTest {
             assertNotNull(buildingBasicInfoTab.getGrossArea(),
                 "Gross area field should be functional");
 
-            buildingBasicInfoTab.enterStartDate("2025-01-01");
+            buildingBasicInfoTab.enterStartDate("01/01/2024");
             assertNotNull(buildingBasicInfoTab.getStartDate(),
                 "Start date field should be functional");
         });
