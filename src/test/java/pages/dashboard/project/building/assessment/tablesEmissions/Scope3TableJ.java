@@ -1,4 +1,4 @@
-package pages.dashboard.project.building.assessment.tables;
+package pages.dashboard.project.building.assessment.tablesEmissions;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;

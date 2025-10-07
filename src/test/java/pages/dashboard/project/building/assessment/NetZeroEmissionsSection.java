@@ -4,7 +4,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 import pages.dashboard.project.building.BuildingAssessmentTab;
-import pages.dashboard.project.building.assessment.tables.*;
+import pages.dashboard.project.building.assessment.tablesEmissions.*;
 
 /**
  * NetZeroEmissionsSection - Net Zero Emissions section in Assessment tab
@@ -33,6 +33,7 @@ public class NetZeroEmissionsSection {
     private final Locator scope1Section;
     private final Locator scope2Section;
     private final Locator scope3Section;
+    private final Locator summaryOfScopes;
 
     // Scope view toggles
     private final Locator scope1SummaryView;
@@ -46,6 +47,21 @@ public class NetZeroEmissionsSection {
     private final Locator scope1TotalEmissions;
     private final Locator scope2TotalEmissions;
     private final Locator scope3TotalEmissions;
+
+    // Summary of Scopes table (read-only totals) - using CSS selectors based on table structure
+    private final Locator summaryScope1KgCO2e;
+    private final Locator summaryScope1MtCO2e;
+    private final Locator summaryScope2KgCO2e;
+    private final Locator summaryScope2MtCO2e;
+    private final Locator summaryScope3KgCO2e;
+    private final Locator summaryScope3MtCO2e;
+    private final Locator summaryTotalKgCO2e;
+    private final Locator summaryTotalMtCO2e;
+
+    // Summary section additional fields
+    private final Locator moreStandardsInput;
+    private final Locator viewUploadLink;
+    private final Locator saveButton;
 
     // Table objects - initialized once and reused
     private final Scope1TableA tableA;
@@ -82,6 +98,7 @@ public class NetZeroEmissionsSection {
         this.scope1Section = page.locator("[ftestcaseref='scope_1']");
         this.scope2Section = page.locator("[ftestcaseref='scope_2']");
         this.scope3Section = page.locator("[ftestcaseref='scope_3']");
+        this.summaryOfScopes = page.locator("[ftestcaseref='scope_summary']");
 
         // View toggles - TODO: Get actual ftestcaseref values for these
         this.scope1SummaryView = page.locator("[ftestcaseref='scope1_summary_view']");
@@ -95,6 +112,31 @@ public class NetZeroEmissionsSection {
         this.scope1TotalEmissions = page.locator("[ftestcaseref='scope_1_total']");
         this.scope2TotalEmissions = page.locator("[ftestcaseref='scope2_energy_total']");
         this.scope3TotalEmissions = page.locator("[ftestcaseref='scope_3_total']");
+
+        // Summary of Scopes table - scoped within the summary section using ID
+        // Using the parent div ID to ensure we target the correct table
+        String summaryTableBase = "#flush-collapse__Summary .summary-table tbody";
+
+        // Row 2: Scope 1 (a. Scope 1)
+        this.summaryScope1KgCO2e = page.locator(summaryTableBase + " tr:has-text('a. Scope 1') td:nth-child(2)");
+        this.summaryScope1MtCO2e = page.locator(summaryTableBase + " tr:has-text('a. Scope 1') td:nth-child(3)");
+
+        // Row 3: Scope 2 (b. Scope 2)
+        this.summaryScope2KgCO2e = page.locator(summaryTableBase + " tr:has-text('b. Scope 2') td:nth-child(2)");
+        this.summaryScope2MtCO2e = page.locator(summaryTableBase + " tr:has-text('b. Scope 2') td:nth-child(3)");
+
+        // Row 4: Scope 3 (c. Scope 3)
+        this.summaryScope3KgCO2e = page.locator(summaryTableBase + " tr:has-text('c. Scope 3') td:nth-child(2)");
+        this.summaryScope3MtCO2e = page.locator(summaryTableBase + " tr:has-text('c. Scope 3') td:nth-child(3)");
+
+        // Row 5: Total emissions (d. Total emissions)
+        this.summaryTotalKgCO2e = page.locator(summaryTableBase + " tr:has-text('d. Total emissions') td:nth-child(2) b");
+        this.summaryTotalMtCO2e = page.locator(summaryTableBase + " tr:has-text('d. Total emissions') td:nth-child(3) b");
+
+        // Summary section additional fields
+        this.moreStandardsInput = page.locator("#more_standards");
+        this.viewUploadLink = page.locator("a:has-text('View/Upload')");
+        this.saveButton = page.locator("#flush-collapse__Summary #gnfz-save");
 
         // Initialize table objects - each table knows its own structure
         this.tableA = new Scope1TableA(page);
@@ -243,6 +285,12 @@ public class NetZeroEmissionsSection {
         page.waitForLoadState();
     }
 
+    public void expandSummaryOfScopes() {
+        page.waitForLoadState();
+        summaryOfScopes.click();
+        page.waitForLoadState();
+    }
+
     /**
      * ========================================
      * SCOPE TOTALS (Read-only, auto-populated)
@@ -258,6 +306,73 @@ public class NetZeroEmissionsSection {
 
     public String getScope3Total() {
         return scope3TotalEmissions.inputValue();
+    }
+
+    /**
+     * ========================================
+     * SUMMARY OF SCOPES TABLE (Read-only totals)
+     * ========================================
+     */
+    public String getSummaryScope1KgCO2e() {
+        page.waitForLoadState();
+        return summaryScope1KgCO2e.textContent().trim();
+    }
+
+    public String getSummaryScope1MtCO2e() {
+        page.waitForLoadState();
+        return summaryScope1MtCO2e.textContent().trim();
+    }
+
+    public String getSummaryScope2KgCO2e() {
+        page.waitForLoadState();
+        return summaryScope2KgCO2e.textContent().trim();
+    }
+
+    public String getSummaryScope2MtCO2e() {
+        page.waitForLoadState();
+        return summaryScope2MtCO2e.textContent().trim();
+    }
+
+    public String getSummaryScope3KgCO2e() {
+        page.waitForLoadState();
+        return summaryScope3KgCO2e.textContent().trim();
+    }
+
+    public String getSummaryScope3MtCO2e() {
+        page.waitForLoadState();
+        return summaryScope3MtCO2e.textContent().trim();
+    }
+
+    public String getSummaryTotalKgCO2e() {
+        page.waitForLoadState();
+        return summaryTotalKgCO2e.textContent().trim();
+    }
+
+    public String getSummaryTotalMtCO2e() {
+        page.waitForLoadState();
+        return summaryTotalMtCO2e.textContent().trim();
+    }
+
+    /**
+     * ========================================
+     * SUMMARY SECTION ACTIONS
+     * ========================================
+     */
+    public void enterMoreStandards(String standards) {
+        page.waitForLoadState();
+        moreStandardsInput.waitFor();
+        moreStandardsInput.fill(standards);
+    }
+
+    public void clickViewUpload() {
+        page.waitForLoadState();
+        viewUploadLink.click();
+    }
+
+    public void clickSave() {
+        page.waitForLoadState();
+        saveButton.click();
+        page.waitForTimeout(1000);
     }
 
     /**

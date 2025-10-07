@@ -1,42 +1,40 @@
-package pages.dashboard.project.building.assessment.tables;
+package pages.dashboard.project.building.assessment.tablesEmissions;
 
-import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.Page;
 
 /**
- * Scope1TableA - Table A for Scope 1 Emissions (Fuels)
- *
- * Columns: fuel, emission_factor_(kgco2e), consumption, units
+ * Scope2TableD - Table D for Scope 2 Emissions (Energy)
+ * Columns: activity, emission_factor_(kgco2e), consumption, units
  */
-public class Scope1TableA {
+public class Scope2TableD {
     protected final Page page;
 
     // Locator patterns (defined once, reused for all rows)
-    private static final String FUEL_INPUT_PATTERN = "input[ftestcaseref='scope1_fuels_fuel_%d']";
-    private static final String EMISSION_FACTOR_INPUT_PATTERN = "input[ftestcaseref='scope1_fuels_emission_factor_(kgco2e)_%d']";
-    private static final String CONSUMPTION_INPUT_PATTERN = "input[ftestcaseref='scope1_fuels_consumption_%d']";
-    private static final String UNITS_SELECT_PATTERN = "select[ftestcaseref='scope1_fuels_units_%d']";
-    private static final String ROW_TOTAL_PATTERN = "input[ftestcaseref='scope1_fuels_total_emissions_(kgco2e)_%d']";
-    private static final String ADD_ROW_BUTTON_PATTERN = "#scope1_Fuels_table_tr_row_add_%d";
-    private static final String ATTACH_BUTTON_PATTERN = "#scope1_Fuels_table_tr_row_attach_%d";
-    private static final String REMOVE_ROW_BUTTON_PATTERN = "#scope1_Fuels_table_tr_row_trash_%d";
+    private static final String ACTIVITY_INPUT_PATTERN = "input[ftestcaseref='scope2_energy_activity_%d']";
+    private static final String EMISSION_FACTOR_INPUT_PATTERN = "input[ftestcaseref='scope2_energy_emission_factor_(kgco2e)_%d']";
+    private static final String CONSUMPTION_INPUT_PATTERN = "input[ftestcaseref='scope2_energy_consumption_%d']";
+    private static final String UNITS_SELECT_PATTERN = "select[ftestcaseref='scope2_energy_units_%d']";
+    private static final String ROW_TOTAL_PATTERN = "input[ftestcaseref='scope2_energy_total_emissions_(kgco2e)_%d']";
+    private static final String ADD_ROW_BUTTON_PATTERN = "#scope2_Energy_table_tr_row_add_%d";
+    private static final String ATTACH_BUTTON_PATTERN = "#scope2_Energy_table_tr_row_attach_%d";
+    private static final String REMOVE_ROW_BUTTON_PATTERN = "#scope2_Energy_table_tr_row_trash_%d";
 
-    // Table-level locators (not row-specific)
+    // Table-level locators
     private final Locator tableTotal;
 
     // Constructor
-    public Scope1TableA(Page page) {
+    public Scope2TableD(Page page) {
         this.page = page;
         // Initialize only table-level locators (table total is shared across all rows)
-        this.tableTotal = page.locator("input[ftestcaseref='scope1_fuels_total']");
+        this.tableTotal = page.locator("input[ftestcaseref='scope2_energy_total']");
     }
 
     /**
      * Helper methods to build dynamic locators based on row index
      */
-    private Locator getFuelInput(int rowIndex) {
-        return page.locator(String.format(FUEL_INPUT_PATTERN, rowIndex));
+    private Locator getActivityInput(int rowIndex) {
+        return page.locator(String.format(ACTIVITY_INPUT_PATTERN, rowIndex));
     }
 
     private Locator getEmissionFactorInput(int rowIndex) {
@@ -70,23 +68,20 @@ public class Scope1TableA {
     /**
      * Enter methods for specific columns
      */
-    public void enterFuel(int rowIndex, String value) {
+    public void enterActivity(int rowIndex, String value) {
         page.waitForLoadState();
-        Locator fuelInput = getFuelInput(rowIndex);
-        // Wait for element to be attached to DOM (less strict than visible)
-        fuelInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        // Scroll into view if needed
-        fuelInput.scrollIntoViewIfNeeded();
-        // Click to focus first
-        fuelInput.click();
-        page.waitForTimeout(100);
-        // Enter value human-like with delays (increased to 100ms for better auto-population trigger)
-        fuelInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
-        page.waitForTimeout(500);
-        // Press Enter to trigger calculation or blur to defocus
-        page.keyboard().press("Enter");
-        // Wait longer for emission factor auto-population to complete
-        page.waitForTimeout(1500);
+        Locator activityInput = getActivityInput(rowIndex);
+        activityInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
+        activityInput.scrollIntoViewIfNeeded();
+
+        // Slower input - type character by character
+        activityInput.click();
+        activityInput.clear();
+        activityInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
+
+        // Defocus and wait longer
+        activityInput.blur();
+        page.waitForTimeout(1500); // Longer wait for auto-population
     }
 
     public void enterEmissionFactor(int rowIndex, String value) {
@@ -94,11 +89,15 @@ public class Scope1TableA {
         Locator emissionFactorInput = getEmissionFactorInput(rowIndex);
         emissionFactorInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
         emissionFactorInput.scrollIntoViewIfNeeded();
-        emissionFactorInput.fill(value);
 
-        // Defocus the field to trigger any validation/calculation
+        // Slower input
+        emissionFactorInput.click();
+        emissionFactorInput.clear();
+        emissionFactorInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
+
+        // Defocus and wait longer
         emissionFactorInput.blur();
-        page.waitForTimeout(500);
+        page.waitForTimeout(1500);
     }
 
     public void enterConsumption(int rowIndex, String value) {
@@ -106,15 +105,15 @@ public class Scope1TableA {
         Locator consumptionInput = getConsumptionInput(rowIndex);
         consumptionInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
         consumptionInput.scrollIntoViewIfNeeded();
-        consumptionInput.fill(value);
 
-        // Defocus the field to trigger calculation
+        // Slower input
+        consumptionInput.click();
+        consumptionInput.clear();
+        consumptionInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
+
+        // Defocus and wait longer for calculation
         consumptionInput.blur();
-        // OR press Tab to move to next field
-        // page.keyboard().press("Tab");
-
-        // Wait for calculations to complete
-        page.waitForTimeout(1000);
+        page.waitForTimeout(1500);
     }
 
     public void selectUnits(int rowIndex, String value) {
@@ -123,13 +122,14 @@ public class Scope1TableA {
         unitsSelect.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
         unitsSelect.scrollIntoViewIfNeeded();
         unitsSelect.selectOption(value);
+        page.waitForTimeout(500);
     }
 
     /**
      * Get values
      */
-    public String getFuel(int rowIndex) {
-        return getFuelInput(rowIndex).inputValue();
+    public String getActivity(int rowIndex) {
+        return getActivityInput(rowIndex).inputValue();
     }
 
     public String getEmissionFactor(int rowIndex) {
@@ -180,8 +180,8 @@ public class Scope1TableA {
     /**
      * Fill entire row at once
      */
-    public void fillRow(int rowIndex, String fuel, String emissionFactor, String consumption, String units) {
-        enterFuel(rowIndex, fuel);
+    public void fillRow(int rowIndex, String activity, String emissionFactor, String consumption, String units) {
+        enterActivity(rowIndex, activity);
         enterEmissionFactor(rowIndex, emissionFactor);
         enterConsumption(rowIndex, consumption);
         selectUnits(rowIndex, units);

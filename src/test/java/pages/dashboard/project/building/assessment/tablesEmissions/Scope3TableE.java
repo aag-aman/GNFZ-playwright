@@ -1,49 +1,49 @@
-package pages.dashboard.project.building.assessment.tables;
+package pages.dashboard.project.building.assessment.tablesEmissions;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 /**
- * Scope3TableG - Table G for Scope 3 Emissions (Composed Waste)
+ * Scope3TableE - Table E for Scope 3 Emissions (Water)
  *
- * Columns: type_of_waste, emission_factor_(kgco2e), quantity_of_waste_composted, unit
+ * Columns: activity, emission_factor_(kgco2e), consumption, unit
  */
-public class Scope3TableG {
+public class Scope3TableE {
     protected final Page page;
 
     // Locator patterns (defined once, reused for all rows)
-    private static final String TYPE_OF_WASTE_INPUT_PATTERN = "input[ftestcaseref='scope3_composed_waste_type_of_waste_%d']";
-    private static final String EMISSION_FACTOR_INPUT_PATTERN = "input[ftestcaseref='scope3_composed_waste_emission_factor_(kgco2e)_%d']";
-    private static final String QUANTITY_COMPOSTED_INPUT_PATTERN = "input[ftestcaseref='scope3_composed_waste_quantity_of_waste_composted_%d']";
-    private static final String UNIT_SELECT_PATTERN = "select[ftestcaseref='scope3_composed_waste_unit_%d']";
-    private static final String ROW_TOTAL_PATTERN = "input[ftestcaseref='scope3_composed_waste_total_emissions_(kgco2e)_%d']";
-    private static final String ADD_ROW_BUTTON_PATTERN = "#scope3_ComposedWaste_table_tr_row_add_%d";
-    private static final String ATTACH_BUTTON_PATTERN = "#scope3_ComposedWaste_table_tr_row_attach_%d";
-    private static final String REMOVE_ROW_BUTTON_PATTERN = "#scope3_ComposedWaste_table_tr_row_trash_%d";
+    private static final String ACTIVITY_INPUT_PATTERN = "input[ftestcaseref='scope3_water_activity_%d']";
+    private static final String EMISSION_FACTOR_INPUT_PATTERN = "input[ftestcaseref='scope3_water_emission_factor_(kgco2e)_%d']";
+    private static final String CONSUMPTION_INPUT_PATTERN = "input[ftestcaseref='scope3_water_consumption_%d']";
+    private static final String UNIT_SELECT_PATTERN = "select[ftestcaseref='scope3_water_unit_%d']";
+    private static final String ROW_TOTAL_PATTERN = "input[ftestcaseref='scope3_water_total_emissions_(kgco2e)_%d']";
+    private static final String ADD_ROW_BUTTON_PATTERN = "#scope3_Water_table_tr_row_add_%d";
+    private static final String ATTACH_BUTTON_PATTERN = "#scope3_Water_table_tr_row_attach_%d";
+    private static final String REMOVE_ROW_BUTTON_PATTERN = "#scope3_Water_table_tr_row_trash_%d";
 
     // Table-level locators (not row-specific)
     private final Locator tableTotal;
 
     // Constructor
-    public Scope3TableG(Page page) {
+    public Scope3TableE(Page page) {
         this.page = page;
         // Initialize only table-level locators (table total is shared across all rows)
-        this.tableTotal = page.locator("input[ftestcaseref='scope3_composed_waste_total']");
+        this.tableTotal = page.locator("input[ftestcaseref='scope3_water_total']");
     }
 
     /**
      * Helper methods to build dynamic locators based on row index
      */
-    private Locator getTypeOfWasteInput(int rowIndex) {
-        return page.locator(String.format(TYPE_OF_WASTE_INPUT_PATTERN, rowIndex));
+    private Locator getActivityInput(int rowIndex) {
+        return page.locator(String.format(ACTIVITY_INPUT_PATTERN, rowIndex));
     }
 
     private Locator getEmissionFactorInput(int rowIndex) {
         return page.locator(String.format(EMISSION_FACTOR_INPUT_PATTERN, rowIndex));
     }
 
-    private Locator getQuantityCompostedInput(int rowIndex) {
-        return page.locator(String.format(QUANTITY_COMPOSTED_INPUT_PATTERN, rowIndex));
+    private Locator getConsumptionInput(int rowIndex) {
+        return page.locator(String.format(CONSUMPTION_INPUT_PATTERN, rowIndex));
     }
 
     private Locator getUnitSelect(int rowIndex) {
@@ -69,19 +69,19 @@ public class Scope3TableG {
     /**
      * Enter methods for specific columns
      */
-    public void enterTypeOfWaste(int rowIndex, String value) {
+    public void enterActivity(int rowIndex, String value) {
         page.waitForLoadState();
-        Locator typeOfWasteInput = getTypeOfWasteInput(rowIndex);
-        typeOfWasteInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        typeOfWasteInput.scrollIntoViewIfNeeded();
+        Locator activityInput = getActivityInput(rowIndex);
+        activityInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
+        activityInput.scrollIntoViewIfNeeded();
 
         // Slower input - type character by character
-        typeOfWasteInput.click();
-        typeOfWasteInput.clear();
-        typeOfWasteInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
+        activityInput.click();
+        activityInput.clear();
+        activityInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
 
         // Defocus and wait longer
-        typeOfWasteInput.blur();
+        activityInput.blur();
         page.waitForTimeout(1500);
     }
 
@@ -101,19 +101,19 @@ public class Scope3TableG {
         page.waitForTimeout(1500);
     }
 
-    public void enterQuantityOfWasteComposted(int rowIndex, String value) {
+    public void enterConsumption(int rowIndex, String value) {
         page.waitForLoadState();
-        Locator quantityCompostedInput = getQuantityCompostedInput(rowIndex);
-        quantityCompostedInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        quantityCompostedInput.scrollIntoViewIfNeeded();
+        Locator consumptionInput = getConsumptionInput(rowIndex);
+        consumptionInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
+        consumptionInput.scrollIntoViewIfNeeded();
 
         // Slower input
-        quantityCompostedInput.click();
-        quantityCompostedInput.clear();
-        quantityCompostedInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
+        consumptionInput.click();
+        consumptionInput.clear();
+        consumptionInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
 
         // Defocus and wait longer for calculation
-        quantityCompostedInput.blur();
+        consumptionInput.blur();
         page.waitForTimeout(1500);
     }
 
@@ -129,16 +129,16 @@ public class Scope3TableG {
     /**
      * Get values
      */
-    public String getTypeOfWaste(int rowIndex) {
-        return getTypeOfWasteInput(rowIndex).inputValue();
+    public String getActivity(int rowIndex) {
+        return getActivityInput(rowIndex).inputValue();
     }
 
     public String getEmissionFactor(int rowIndex) {
         return getEmissionFactorInput(rowIndex).inputValue();
     }
 
-    public String getQuantityOfWasteComposted(int rowIndex) {
-        return getQuantityCompostedInput(rowIndex).inputValue();
+    public String getConsumption(int rowIndex) {
+        return getConsumptionInput(rowIndex).inputValue();
     }
 
     public String getUnit(int rowIndex) {
@@ -181,10 +181,10 @@ public class Scope3TableG {
     /**
      * Fill entire row at once
      */
-    public void fillRow(int rowIndex, String typeOfWaste, String emissionFactor, String quantityComposted, String unit) {
-        enterTypeOfWaste(rowIndex, typeOfWaste);
+    public void fillRow(int rowIndex, String activity, String emissionFactor, String consumption, String unit) {
+        enterActivity(rowIndex, activity);
         enterEmissionFactor(rowIndex, emissionFactor);
-        enterQuantityOfWasteComposted(rowIndex, quantityComposted);
+        enterConsumption(rowIndex, consumption);
         selectUnit(rowIndex, unit);
     }
 }
