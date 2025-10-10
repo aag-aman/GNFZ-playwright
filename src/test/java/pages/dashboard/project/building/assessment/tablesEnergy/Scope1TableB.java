@@ -50,6 +50,7 @@ public class Scope1TableB {
         return page.locator(String.format(UNITS_SELECT_PATTERN, rowIndex));
     }
 
+    @SuppressWarnings("unused")
     private Locator getRowTotalLocator(int rowIndex) {
         return page.locator(String.format(ROW_TOTAL_PATTERN, rowIndex));
     }

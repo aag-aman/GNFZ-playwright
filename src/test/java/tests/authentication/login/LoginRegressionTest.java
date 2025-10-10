@@ -30,7 +30,6 @@ public class LoginRegressionTest extends BaseTest {
         String email = testData.get("username");
         String password = testData.get("password");
         String expectedSuccess = testData.get("expectedSuccess");
-        String expectedError = testData.get("expectedError");
         String description = testData.get("description");
 
         System.out.println("Running test: " + description);

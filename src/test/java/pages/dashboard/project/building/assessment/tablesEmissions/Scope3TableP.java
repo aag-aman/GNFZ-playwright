@@ -2,7 +2,6 @@ package pages.dashboard.project.building.assessment.tablesEmissions;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
 
 /**
  * Scope3TableP - Table P for Scope 3 Emissions (Primary Materials)

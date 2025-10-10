@@ -10,8 +10,6 @@ import com.microsoft.playwright.Page;
 import java.io.IOException;
 import java.util.Map;
 
-// Static imports for better readability
-import static org.junit.jupiter.api.Assertions.*;
 
 @Epic("User Authentication")
 @Feature("Login Functionality")

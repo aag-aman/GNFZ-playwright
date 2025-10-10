@@ -2,8 +2,6 @@ package pages.dashboard.project.building.assessment.tablesEmissions;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
-import com.microsoft.playwright.options.LoadState;
 
 /**
  * Scope3TableM - Table M for Scope 3 Emissions (Flights)

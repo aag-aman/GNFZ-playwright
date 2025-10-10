@@ -15,11 +15,19 @@ public class BuildingOverviewTab {
 
     private final Locator buildingInfoSelect;
     private final Locator teamInfoSelect;
+
+    // Other locators (placeholders for future use)
+    @SuppressWarnings("unused")
     private final Locator assessmentSelect;
+    @SuppressWarnings("unused")
     private final Locator netZeroPlanSelect;
+    @SuppressWarnings("unused")
     private final Locator carbonOffsetSelect;
+    @SuppressWarnings("unused")
     private final Locator netZeroMilestoneSelect;
+    @SuppressWarnings("unused")
     private final Locator netZeroCertificationStatus;
+    @SuppressWarnings("unused")
     private final Locator demoLink;
 
     public BuildingOverviewTab(Page page) {

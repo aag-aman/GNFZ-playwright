@@ -2,7 +2,6 @@ package pages.dashboard.project.building.assessment.tablesEmissions;
 
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.options.AriaRole;
 
 /**
  * Scope1TableC - Table C for Scope 1 Emissions (Mobile Combustion)
@@ -51,6 +50,7 @@ public class Scope1TableC {
         return page.locator(String.format(UNITS_SELECT_PATTERN, rowIndex));
     }
 
+    @SuppressWarnings("unused")
     private Locator getRowTotalLocator(int rowIndex) {
         return page.locator(String.format(ROW_TOTAL_PATTERN, rowIndex));
     }
