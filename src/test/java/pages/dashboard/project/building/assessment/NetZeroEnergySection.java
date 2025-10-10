@@ -58,6 +58,9 @@ public class NetZeroEnergySection {
     private final Scope1TableB tableB;
     private final Scope2TableC tableC;
 
+    //Save button
+    private final Locator saveButton;
+
     public NetZeroEnergySection(Page page) {
         this.page = page;
 
@@ -109,6 +112,9 @@ public class NetZeroEnergySection {
         this.tableA = new Scope1TableA(page);
         this.tableB = new Scope1TableB(page);
         this.tableC = new Scope2TableC(page);
+
+        // Save button
+        this.saveButton = page.locator("#gnfz-save");
     }
 
     /**
@@ -293,5 +299,17 @@ public class NetZeroEnergySection {
     // Scope 2 Table
     public Scope2TableC tableC() {
         return tableC;
+    }
+
+    /**
+     * ========================================
+     * SAVE BUTTON
+     * ========================================
+     */
+    public void clickSave() {
+        page.waitForLoadState();
+        saveButton.scrollIntoViewIfNeeded();
+        saveButton.click();
+        page.waitForTimeout(500);   
     }
 }
