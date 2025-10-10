@@ -86,14 +86,11 @@ public class Scope3TableK {
         vehicleTypeInput.waitFor(
                 new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
         vehicleTypeInput.scrollIntoViewIfNeeded();
-
-        // Slower input - type character by character
         vehicleTypeInput.click();
-        vehicleTypeInput.clear();
-        vehicleTypeInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
-
-        // Defocus and wait longer
-        vehicleTypeInput.blur();
+        page.waitForTimeout(100);
+        vehicleTypeInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
+        page.waitForTimeout(500);
+        page.keyboard().press("Enter");
         page.waitForTimeout(1500);
     }
 
@@ -103,14 +100,11 @@ public class Scope3TableK {
         vehicleSizeInput.waitFor(
                 new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
         vehicleSizeInput.scrollIntoViewIfNeeded();
-
-        // Slower input
         vehicleSizeInput.click();
-        vehicleSizeInput.clear();
-        vehicleSizeInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
-
-        // Defocus and wait longer
-        vehicleSizeInput.blur();
+        page.waitForTimeout(100);
+        vehicleSizeInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
+        page.waitForTimeout(500);
+        page.keyboard().press("Enter");
         page.waitForTimeout(1500);
     }
 
@@ -120,14 +114,11 @@ public class Scope3TableK {
         fuelInput.waitFor(
                 new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
         fuelInput.scrollIntoViewIfNeeded();
-
-        // Slower input
         fuelInput.click();
-        fuelInput.clear();
-        fuelInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
-
-        // Defocus and wait longer
-        fuelInput.blur();
+        page.waitForTimeout(100);
+        fuelInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
+        page.waitForTimeout(500);
+        page.keyboard().press("Enter");
         page.waitForTimeout(1500);
     }
 

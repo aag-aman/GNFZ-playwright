@@ -73,15 +73,12 @@ public class Scope2TableD {
         Locator activityInput = getActivityInput(rowIndex);
         activityInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
         activityInput.scrollIntoViewIfNeeded();
-
-        // Slower input - type character by character
         activityInput.click();
-        activityInput.clear();
-        activityInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
-
-        // Defocus and wait longer
-        activityInput.blur();
-        page.waitForTimeout(1500); // Longer wait for auto-population
+        page.waitForTimeout(100);
+        activityInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
+        page.waitForTimeout(500);
+        page.keyboard().press("Enter");
+        page.waitForTimeout(1500);
     }
 
     public void enterEmissionFactor(int rowIndex, String value) {

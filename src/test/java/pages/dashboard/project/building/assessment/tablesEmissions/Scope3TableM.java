@@ -133,7 +133,7 @@ public class Scope3TableM {
         passengersInput.scrollIntoViewIfNeeded();
         passengersInput.fill(passengers);
         passengersInput.blur();
-        page.waitForTimeout(1000);
+        page.waitForTimeout(1500);
     }
 
     public void enterTotalEmissions(int rowIndex, String totalEmissions) {
@@ -143,7 +143,7 @@ public class Scope3TableM {
         emissionsInput.scrollIntoViewIfNeeded();
         emissionsInput.fill(totalEmissions);
         emissionsInput.blur();
-        page.waitForTimeout(1000);
+        page.waitForTimeout(1500);
     }
 
     /**

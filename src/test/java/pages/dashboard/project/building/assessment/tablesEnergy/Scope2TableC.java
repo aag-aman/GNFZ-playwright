@@ -1,48 +1,44 @@
-package pages.dashboard.project.building.assessment.tablesEmissions;
+package pages.dashboard.project.building.assessment.tablesEnergy;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
-/**
- * Scope3TableN - Table N for Scope 3 Emissions (Food)
- *
- * Columns: food_type, emission_factor_(kgco2e), quantity_(no._of_units), units
- */
-public class Scope3TableN {
+public class Scope2TableC {
     protected final Page page;
 
     // Locator patterns (defined once, reused for all rows)
-    private static final String FOOD_TYPE_INPUT_PATTERN = "input[ftestcaseref='scope3_food_food_type_%d']";
-    private static final String EMISSION_FACTOR_INPUT_PATTERN = "input[ftestcaseref='scope3_food_emission_factor_(kgco2e)_%d']";
-    private static final String QUANTITY_INPUT_PATTERN = "input[ftestcaseref='scope3_food_quantity_(no._of_units)_%d']";
-    private static final String UNITS_SELECT_PATTERN = "select[ftestcaseref='scope3_food_units_%d']";
-    private static final String ROW_TOTAL_PATTERN = "input[ftestcaseref='scope3_food_total_emissions_(kgco2e)_%d']";
-    private static final String ADD_ROW_BUTTON_PATTERN = "#scope3_Food_table_tr_row_add_%d";
-    private static final String ATTACH_BUTTON_PATTERN = "#scope3_Food_table_tr_row_attach_%d";
-    private static final String REMOVE_ROW_BUTTON_PATTERN = "#scope3_Food_table_tr_row_trash_%d";
+    private static final String ACTIVITY_INPUT_PATTERN = "input[ftestcaseref='scope2_energy_activity_%d']";
+    private static final String EMISSION_FACTOR_INPUT_PATTERN = "input[ftestcaseref='scope2_energy_emission_factor_(kgco2e)_%d']";
+    private static final String CONSUMPTION_INPUT_PATTERN = "input[ftestcaseref='scope2_energy_consumption_%d']";
+    private static final String UNITS_SELECT_PATTERN = "select[ftestcaseref='scope2_energy_units_%d']";
+    private static final String ROW_TOTAL_PATTERN = "input[ftestcaseref='scope2_energy_total_emissions_(kgco2e)_%d']";
+    private static final String ADD_ROW_BUTTON_PATTERN = "#scope2_Energy_table_tr_row_add_%d";
+    private static final String ATTACH_BUTTON_PATTERN = "#scope2_Energy_table_tr_row_attach_%d";
+    private static final String REMOVE_ROW_BUTTON_PATTERN = "#scope2_Energy_table_tr_row_trash_%d";
 
-    // Table-level locators (not row-specific)
+    // Table-level locators
     private final Locator tableTotal;
 
     // Constructor
-    public Scope3TableN(Page page) {
+    public Scope2TableC(Page page) {
         this.page = page;
-        this.tableTotal = page.locator("input[ftestcaseref='scope3_food_total']");
+        // Initialize only table-level locators (table total is shared across all rows)
+        this.tableTotal = page.locator("input[ftestcaseref='scope2_energy_total']");
     }
 
     /**
      * Helper methods to build dynamic locators based on row index
      */
-    private Locator getFoodTypeInput(int rowIndex) {
-        return page.locator(String.format(FOOD_TYPE_INPUT_PATTERN, rowIndex));
+    private Locator getActivityInput(int rowIndex) {
+        return page.locator(String.format(ACTIVITY_INPUT_PATTERN, rowIndex));
     }
 
     private Locator getEmissionFactorInput(int rowIndex) {
         return page.locator(String.format(EMISSION_FACTOR_INPUT_PATTERN, rowIndex));
     }
 
-    private Locator getQuantityInput(int rowIndex) {
-        return page.locator(String.format(QUANTITY_INPUT_PATTERN, rowIndex));
+    private Locator getConsumptionInput(int rowIndex) {
+        return page.locator(String.format(CONSUMPTION_INPUT_PATTERN, rowIndex));
     }
 
     private Locator getUnitsSelect(int rowIndex) {
@@ -68,14 +64,14 @@ public class Scope3TableN {
     /**
      * Enter methods for specific columns
      */
-    public void enterFoodType(int rowIndex, String value) {
+    public void enterActivity(int rowIndex, String value) {
         page.waitForLoadState();
-        Locator foodTypeInput = getFoodTypeInput(rowIndex);
-        foodTypeInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        foodTypeInput.scrollIntoViewIfNeeded();
-        foodTypeInput.click();
+        Locator activityInput = getActivityInput(rowIndex);
+        activityInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
+        activityInput.scrollIntoViewIfNeeded();
+        activityInput.click();
         page.waitForTimeout(100);
-        foodTypeInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
+        activityInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
         page.waitForTimeout(500);
         page.keyboard().press("Enter");
         page.waitForTimeout(1500);
@@ -86,18 +82,30 @@ public class Scope3TableN {
         Locator emissionFactorInput = getEmissionFactorInput(rowIndex);
         emissionFactorInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
         emissionFactorInput.scrollIntoViewIfNeeded();
-        emissionFactorInput.fill(value);
+
+        // Slower input
+        emissionFactorInput.click();
+        emissionFactorInput.clear();
+        emissionFactorInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
+
+        // Defocus and wait longer
         emissionFactorInput.blur();
         page.waitForTimeout(1500);
     }
 
-    public void enterQuantity(int rowIndex, String value) {
+    public void enterConsumption(int rowIndex, String value) {
         page.waitForLoadState();
-        Locator quantityInput = getQuantityInput(rowIndex);
-        quantityInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        quantityInput.scrollIntoViewIfNeeded();
-        quantityInput.fill(value);
-        quantityInput.blur();
+        Locator consumptionInput = getConsumptionInput(rowIndex);
+        consumptionInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
+        consumptionInput.scrollIntoViewIfNeeded();
+
+        // Slower input
+        consumptionInput.click();
+        consumptionInput.clear();
+        consumptionInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
+
+        // Defocus and wait longer for calculation
+        consumptionInput.blur();
         page.waitForTimeout(1500);
     }
 
@@ -107,21 +115,26 @@ public class Scope3TableN {
         unitsSelect.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
         unitsSelect.scrollIntoViewIfNeeded();
         unitsSelect.selectOption(value);
+        page.waitForTimeout(500);
     }
 
     /**
      * Get values
      */
-    public String getFoodType(int rowIndex) {
-        return getFoodTypeInput(rowIndex).inputValue();
+    public String getActivity(int rowIndex) {
+        return getActivityInput(rowIndex).inputValue();
     }
 
     public String getEmissionFactor(int rowIndex) {
         return getEmissionFactorInput(rowIndex).inputValue();
     }
 
-    public String getQuantity(int rowIndex) {
-        return getQuantityInput(rowIndex).inputValue();
+    public String getConsumption(int rowIndex) {
+        return getConsumptionInput(rowIndex).inputValue();
+    }
+
+    public String getUnits(int rowIndex) {
+        return getUnitsSelect(rowIndex).inputValue();
     }
 
     public String getRowTotal(int rowIndex) {
@@ -140,7 +153,7 @@ public class Scope3TableN {
         Locator addButton = getAddRowButton(currentRowIndex);
         addButton.waitFor();
         addButton.click();
-        page.waitForTimeout(1500);
+        page.waitForTimeout(500); // Wait for new row to be added
     }
 
     public void removeRow(int rowIndex) {
@@ -160,10 +173,10 @@ public class Scope3TableN {
     /**
      * Fill entire row at once
      */
-    public void fillRow(int rowIndex, String foodType, String emissionFactor, String quantity, String units) {
-        enterFoodType(rowIndex, foodType);
+    public void fillRow(int rowIndex, String activity, String emissionFactor, String consumption, String units) {
+        enterActivity(rowIndex, activity);
         enterEmissionFactor(rowIndex, emissionFactor);
-        enterQuantity(rowIndex, quantity);
+        enterConsumption(rowIndex, consumption);
         selectUnits(rowIndex, units);
     }
 }

@@ -74,14 +74,11 @@ public class Scope3TableG {
         Locator typeOfWasteInput = getTypeOfWasteInput(rowIndex);
         typeOfWasteInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
         typeOfWasteInput.scrollIntoViewIfNeeded();
-
-        // Slower input - type character by character
         typeOfWasteInput.click();
-        typeOfWasteInput.clear();
-        typeOfWasteInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
-
-        // Defocus and wait longer
-        typeOfWasteInput.blur();
+        page.waitForTimeout(100);
+        typeOfWasteInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
+        page.waitForTimeout(500);
+        page.keyboard().press("Enter");
         page.waitForTimeout(1500);
     }
 

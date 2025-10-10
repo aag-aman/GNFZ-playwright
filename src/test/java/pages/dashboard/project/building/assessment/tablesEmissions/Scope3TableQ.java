@@ -5,7 +5,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
 /**
- * Scope3TableQ - Table Q for Scope 3 Emissions (Reused Materials)
+ * Scope3TableQ - Table Q for Scope 3 Emissions (Recycled Materials)
  *
  * Columns: type_of_material, emission_factor_(kgco2e), quantity, units
  */
@@ -13,14 +13,14 @@ public class Scope3TableQ {
     protected final Page page;
 
     // Locator patterns (defined once, reused for all rows)
-    private static final String TYPE_OF_MATERIAL_INPUT_PATTERN = "input[ftestcaseref='scope3_reused_materials_type_of_material_%d']";
-    private static final String EMISSION_FACTOR_INPUT_PATTERN = "input[ftestcaseref='scope3_reused_materials_emission_factor_(kgco2e)_%d']";
-    private static final String QUANTITY_INPUT_PATTERN = "input[ftestcaseref='scope3_reused_materials_quantity_%d']";
-    private static final String UNITS_SELECT_PATTERN = "select[ftestcaseref='scope3_reused_materials_units_%d']";
-    private static final String ROW_TOTAL_PATTERN = "input[ftestcaseref='scope3_reused_materials_total_emissions_(kgco2e)_%d']";
-    private static final String ADD_ROW_BUTTON_PATTERN = "#scope3_Reused_Materials_table_tr_row_add_%d";
-    private static final String ATTACH_BUTTON_PATTERN = "#scope3_Reused_Materials_table_tr_row_attach_%d";
-    private static final String REMOVE_ROW_BUTTON_PATTERN = "#scope3_Reused_Materials_table_tr_row_trash_%d";
+    private static final String TYPE_OF_MATERIAL_INPUT_PATTERN = "input[ftestcaseref='scope3_recycled_materials_type_of_material_%d']";
+    private static final String EMISSION_FACTOR_INPUT_PATTERN = "input[ftestcaseref='scope3_recycled_materials_emission_factor_(kgco2e)_%d']";
+    private static final String QUANTITY_INPUT_PATTERN = "input[ftestcaseref='scope3_recycled_materials_quantity_%d']";
+    private static final String UNITS_SELECT_PATTERN = "select[ftestcaseref='scope3_recycled_materials_units_%d']";
+    private static final String ROW_TOTAL_PATTERN = "input[ftestcaseref='scope3_recycled_materials_total_emissions_(kgco2e)_%d']";
+    private static final String ADD_ROW_BUTTON_PATTERN = "#scope3_Recycled_Materials_table_tr_row_add_%d";
+    private static final String ATTACH_BUTTON_PATTERN = "#scope3_Recycled_Materials_table_tr_row_attach_%d";
+    private static final String REMOVE_ROW_BUTTON_PATTERN = "#scope3_Recycled_Materials_table_tr_row_trash_%d";
 
     // Table-level locators (not row-specific)
     private final Locator tableTotal;
@@ -28,7 +28,7 @@ public class Scope3TableQ {
     // Constructor
     public Scope3TableQ(Page page) {
         this.page = page;
-        this.tableTotal = page.locator("input[ftestcaseref='scope3_reused_materials_total']");
+        this.tableTotal = page.locator("input[ftestcaseref='scope3_recycled_materials_total']");
     }
 
     /**
@@ -99,7 +99,7 @@ public class Scope3TableQ {
         quantityInput.scrollIntoViewIfNeeded();
         quantityInput.fill(value);
         quantityInput.blur();
-        page.waitForTimeout(1000);
+        page.waitForTimeout(1500);
     }
 
     public void selectUnits(int rowIndex, String value) {

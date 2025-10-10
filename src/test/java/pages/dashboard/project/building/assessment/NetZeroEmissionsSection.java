@@ -3,7 +3,6 @@ package pages.dashboard.project.building.assessment;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
-import pages.dashboard.project.building.BuildingAssessmentTab;
 import pages.dashboard.project.building.assessment.tablesEmissions.*;
 
 /**
@@ -48,7 +47,8 @@ public class NetZeroEmissionsSection {
     private final Locator scope2TotalEmissions;
     private final Locator scope3TotalEmissions;
 
-    // Summary of Scopes table (read-only totals) - using CSS selectors based on table structure
+    // Summary of Scopes table (read-only totals) - using CSS selectors based on
+    // table structure
     private final Locator summaryScope1KgCO2e;
     private final Locator summaryScope1MtCO2e;
     private final Locator summaryScope2KgCO2e;
@@ -130,8 +130,10 @@ public class NetZeroEmissionsSection {
         this.summaryScope3MtCO2e = page.locator(summaryTableBase + " tr:has-text('c. Scope 3') td:nth-child(3)");
 
         // Row 5: Total emissions (d. Total emissions)
-        this.summaryTotalKgCO2e = page.locator(summaryTableBase + " tr:has-text('d. Total emissions') td:nth-child(2) b");
-        this.summaryTotalMtCO2e = page.locator(summaryTableBase + " tr:has-text('d. Total emissions') td:nth-child(3) b");
+        this.summaryTotalKgCO2e = page
+                .locator(summaryTableBase + " tr:has-text('d. Total emissions') td:nth-child(2) b");
+        this.summaryTotalMtCO2e = page
+                .locator(summaryTableBase + " tr:has-text('d. Total emissions') td:nth-child(3) b");
 
         // Summary section additional fields
         this.moreStandardsInput = page.locator("#more_standards");
@@ -183,7 +185,7 @@ public class NetZeroEmissionsSection {
 
     public void enterReportingPeriodTo(String toDate) {
         page.waitForLoadState();
-        //Humanize using datepicker
+        // Humanize using datepicker
         page.waitForLoadState();
         reportingPeriodTo.waitFor();
 

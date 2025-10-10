@@ -74,14 +74,11 @@ public class Scope3TableJ {
         Locator fuelInput = getFuelInput(rowIndex);
         fuelInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
         fuelInput.scrollIntoViewIfNeeded();
-
-        // Slower input - type character by character
         fuelInput.click();
-        fuelInput.clear();
-        fuelInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
-
-        // Defocus and wait longer
-        fuelInput.blur();
+        page.waitForTimeout(100);
+        fuelInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
+        page.waitForTimeout(500);
+        page.keyboard().press("Enter");
         page.waitForTimeout(1500);
     }
 

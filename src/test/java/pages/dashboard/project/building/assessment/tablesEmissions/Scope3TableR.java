@@ -5,7 +5,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
 /**
- * Scope3TableR - Table R for Scope 3 Emissions (Waste)
+ * Scope3TableR - Table R for Scope 3 Emissions (Reused Materials)
  *
  * Columns: type_of_material, emission_factor_(kgco2e), quantity, units
  */
@@ -18,9 +18,9 @@ public class Scope3TableR {
     private static final String QUANTITY_INPUT_PATTERN = "input[ftestcaseref='scope3_reused_materials_quantity_%d']";
     private static final String UNITS_SELECT_PATTERN = "select[ftestcaseref='scope3_reused_materials_units_%d']";
     private static final String ROW_TOTAL_PATTERN = "input[ftestcaseref='scope3_reused_materials_total_emissions_(kgco2e)_%d']";
-    private static final String ADD_ROW_BUTTON_PATTERN = "#scope3_Reused Materials_table_tr_row_add_%d";
-    private static final String ATTACH_BUTTON_PATTERN = "#scope3_Reused Materials_table_tr_row_attach_%d";
-    private static final String REMOVE_ROW_BUTTON_PATTERN = "#scope3_Reused Materials_table_tr_row_trash_%d";
+    private static final String ADD_ROW_BUTTON_PATTERN = "#scope3_Reused_Materials_table_tr_row_add_%d";
+    private static final String ATTACH_BUTTON_PATTERN = "#scope3_Reused_Materials_table_tr_row_attach_%d";
+    private static final String REMOVE_ROW_BUTTON_PATTERN = "#scope3_Reused_Materials_table_tr_row_trash_%d";
 
     // Table-level locators (not row-specific)
     private final Locator tableTotal;
@@ -99,7 +99,7 @@ public class Scope3TableR {
         quantityInput.scrollIntoViewIfNeeded();
         quantityInput.fill(value);
         quantityInput.blur();
-        page.waitForTimeout(1000);
+        page.waitForTimeout(1500);
     }
 
     public void selectUnits(int rowIndex, String value) {

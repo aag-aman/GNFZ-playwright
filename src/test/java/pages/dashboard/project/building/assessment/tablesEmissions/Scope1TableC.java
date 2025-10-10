@@ -105,12 +105,8 @@ public class Scope1TableC {
         consumptionInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
         consumptionInput.scrollIntoViewIfNeeded();
         consumptionInput.fill(value);
-
-        // Defocus the field to trigger calculation
         consumptionInput.blur();
-
-        // Wait for calculations to complete
-        page.waitForTimeout(1000);
+        page.waitForTimeout(1500);
     }
 
     public void selectUnits(int rowIndex, String value) {
