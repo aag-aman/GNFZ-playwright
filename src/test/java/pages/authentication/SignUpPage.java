@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import utils.InputHelper;
 
 /**
  * SignUpPage - Page Object Model for the Sign Up page
@@ -80,23 +81,23 @@ public class SignUpPage {
     // =============================================================================
 
     public void enterFirstName(String firstName) {
-        firstNameField.fill(firstName);
+        InputHelper.humanizedInputNoEnter(page, firstNameField, firstName);
     }
 
     public void enterLastName(String lastName) {
-        lastNameField.fill(lastName);
+        InputHelper.humanizedInputNoEnter(page, lastNameField, lastName);
     }
 
     public void enterEmail(String email) {
-        emailField.fill(email);
+        InputHelper.humanizedInputNoEnter(page, emailField, email);
     }
 
     public void enterPassword(String password) {
-        passwordField.fill(password);
+        InputHelper.humanizedInputNoEnter(page, passwordField, password);
     }
 
     public void enterConfirmPassword(String confirmPassword) {
-        confirmPasswordField.fill(confirmPassword);
+        InputHelper.humanizedInputNoEnter(page, confirmPasswordField, confirmPassword);
     }
 
     public void clickSignUpButton() {

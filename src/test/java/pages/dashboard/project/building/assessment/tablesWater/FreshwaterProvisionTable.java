@@ -3,6 +3,8 @@ package pages.dashboard.project.building.assessment.tablesWater;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import utils.InputHelper;
+
 /**
  * FreshwaterProvisionTable - Table H for Freshwater Provision
  *
@@ -12,7 +14,7 @@ public class FreshwaterProvisionTable {
     protected final Page page;
 
     // Locator patterns (defined once, reused for all rows)
-    private static final String DESCRIPTION_INPUT_PATTERN = "input[ftestcaseref='scope1_freshwater_provision_description_%d']";
+    private static final String TYPE_INPUT_PATTERN = "input[ftestcaseref='scope1_freshwater_provision_type_%d']";
     private static final String UNIT_INPUT_PATTERN = "input[ftestcaseref='scope1_freshwater_provision_unit_%d']";
     private static final String QUANTITY_INPUT_PATTERN = "input[ftestcaseref='scope1_freshwater_provision_quantity_%d']";
     private static final String ADD_ROW_BUTTON_PATTERN = "#scope1_Freshwater provision_table_tr_row_add_%d";
@@ -32,7 +34,7 @@ public class FreshwaterProvisionTable {
      * Helper methods to build dynamic locators based on row index
      */
     private Locator getDescriptionInput(int rowIndex) {
-        return page.locator(String.format(DESCRIPTION_INPUT_PATTERN, rowIndex));
+        return page.locator(String.format(TYPE_INPUT_PATTERN, rowIndex));
     }
 
     private Locator getUnitInput(int rowIndex) {
@@ -59,34 +61,17 @@ public class FreshwaterProvisionTable {
      * Enter methods for specific columns
      */
     public void enterDescription(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator descriptionInput = getDescriptionInput(rowIndex);
-        descriptionInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        descriptionInput.scrollIntoViewIfNeeded();
-        descriptionInput.fill(value);
-        descriptionInput.blur();
-        page.waitForTimeout(500);
+        InputHelper.humanizedInput(page, getDescriptionInput(rowIndex), value);
     }
 
     public void enterUnit(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator unitInput = getUnitInput(rowIndex);
-        unitInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        unitInput.scrollIntoViewIfNeeded();
-        unitInput.fill(value);
-        unitInput.blur();
-        page.waitForTimeout(500);
+        // InputHelper.humanizedInput(page, getUnitInput(rowIndex), value);
     }
 
     public void enterQuantity(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator quantityInput = getQuantityInput(rowIndex);
-        quantityInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        quantityInput.scrollIntoViewIfNeeded();
-        quantityInput.fill(value);
-        quantityInput.blur();
-        page.waitForTimeout(500);
+        InputHelper.humanizedInput(page, getQuantityInput(rowIndex), value);
     }
+    
 
     /**
      * Get values

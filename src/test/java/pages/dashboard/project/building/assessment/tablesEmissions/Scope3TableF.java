@@ -3,6 +3,8 @@ package pages.dashboard.project.building.assessment.tablesEmissions;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import utils.InputHelper;
+
 /**
  * Scope3TableF - Table F for Scope 3 Emissions (Waste Disposal)
  *
@@ -75,66 +77,20 @@ public class Scope3TableF {
      * Enter methods for specific columns
      */
     public void enterTypeOfWaste(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator typeOfWasteInput = getTypeOfWasteInput(rowIndex);
-        typeOfWasteInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        typeOfWasteInput.scrollIntoViewIfNeeded();
-        typeOfWasteInput.click();
-        page.waitForTimeout(100);
-        typeOfWasteInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
-        page.waitForTimeout(500);
-        page.keyboard().press("Enter");
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getTypeOfWasteInput(rowIndex), value);
     }
 
     public void enterEmissionFactor(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator emissionFactorInput = getEmissionFactorInput(rowIndex);
-        emissionFactorInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        emissionFactorInput.scrollIntoViewIfNeeded();
-
-        // Slower input
-        emissionFactorInput.click();
-        emissionFactorInput.clear();
-        emissionFactorInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
-
-        // Defocus and wait longer
-        emissionFactorInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getEmissionFactorInput(rowIndex), value);
     }
-
     public void enterQuantityOfWasteGenerated(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator quantityGeneratedInput = getQuantityGeneratedInput(rowIndex);
-        quantityGeneratedInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        quantityGeneratedInput.scrollIntoViewIfNeeded();
-
-        // Slower input
-        quantityGeneratedInput.click();
-        quantityGeneratedInput.clear();
-        quantityGeneratedInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
-
-        // Defocus and wait longer for calculation
-        quantityGeneratedInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getQuantityGeneratedInput(rowIndex), value);
     }
 
     public void enterQuantityOfWasteSentToLandfill(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator quantityLandfillInput = getQuantityLandfillInput(rowIndex);
-        quantityLandfillInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        quantityLandfillInput.scrollIntoViewIfNeeded();
-
-        // Slower input
-        quantityLandfillInput.click();
-        quantityLandfillInput.clear();
-        quantityLandfillInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
-
-        // Defocus and wait longer for calculation
-        quantityLandfillInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getQuantityLandfillInput(rowIndex), value);
     }
-
+    
     public void selectUnit(int rowIndex, String value) {
         page.waitForLoadState();
         Locator unitSelect = getUnitSelect(rowIndex);

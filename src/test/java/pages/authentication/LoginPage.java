@@ -32,11 +32,11 @@ public class LoginPage {
     }
 
     public void enterEmail(String email) {
-        emailField.fill(email);
+        this.emailField.fill(email); // Clear existing text
     }
 
     public void enterPassword(String password) {
-        passwordField.fill(password);
+        this.passwordField.fill(password);
     }
 
     public void clickSignInButton() {

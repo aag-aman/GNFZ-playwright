@@ -3,6 +3,8 @@ package pages.dashboard.project.building.assessment.tablesEmissions;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import utils.InputHelper;
+
 /**
  * Scope2TableD - Table D for Scope 2 Emissions (Energy)
  * Columns: activity, emission_factor_(kgco2e), consumption, units
@@ -69,50 +71,17 @@ public class Scope2TableD {
      * Enter methods for specific columns
      */
     public void enterActivity(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator activityInput = getActivityInput(rowIndex);
-        activityInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        activityInput.scrollIntoViewIfNeeded();
-        activityInput.click();
-        page.waitForTimeout(100);
-        activityInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
-        page.waitForTimeout(500);
-        page.keyboard().press("Enter");
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getActivityInput(rowIndex), value);
     }
 
     public void enterEmissionFactor(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator emissionFactorInput = getEmissionFactorInput(rowIndex);
-        emissionFactorInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        emissionFactorInput.scrollIntoViewIfNeeded();
-
-        // Slower input
-        emissionFactorInput.click();
-        emissionFactorInput.clear();
-        emissionFactorInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
-
-        // Defocus and wait longer
-        emissionFactorInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getEmissionFactorInput(rowIndex), value);
     }
 
     public void enterConsumption(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator consumptionInput = getConsumptionInput(rowIndex);
-        consumptionInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        consumptionInput.scrollIntoViewIfNeeded();
-
-        // Slower input
-        consumptionInput.click();
-        consumptionInput.clear();
-        consumptionInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
-
-        // Defocus and wait longer for calculation
-        consumptionInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getConsumptionInput(rowIndex), value);
     }
-
+    
     public void selectUnits(int rowIndex, String value) {
         page.waitForLoadState();
         Locator unitsSelect = getUnitsSelect(rowIndex);

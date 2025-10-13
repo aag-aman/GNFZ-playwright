@@ -3,6 +3,8 @@ package pages.dashboard.project.building.assessment.tablesEmissions;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import utils.InputHelper;
+
 /**
  * Scope3TableL - Table L for Scope 3 Emissions (Business Travel)
  *
@@ -63,75 +65,25 @@ public class Scope3TableL {
     // Public action methods (slower inputs with more wait time)
     // ========================================
     public void enterVehicleType(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator vehicleTypeInput = getVehicleTypeInput(rowIndex);
-        vehicleTypeInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        vehicleTypeInput.scrollIntoViewIfNeeded();
-        vehicleTypeInput.click();
-        page.waitForTimeout(100);
-        vehicleTypeInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
-        page.waitForTimeout(500);
-        page.keyboard().press("Enter");
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getVehicleTypeInput(rowIndex), value);
     }
 
     public void enterVehicleSize(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator vehicleSizeInput = getVehicleSizeInput(rowIndex);
-        vehicleSizeInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        vehicleSizeInput.scrollIntoViewIfNeeded();
-        vehicleSizeInput.click();
-        page.waitForTimeout(100);
-        vehicleSizeInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
-        page.waitForTimeout(500);
-        page.keyboard().press("Enter");
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getVehicleSizeInput(rowIndex), value);
     }
 
     public void enterFuel(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator fuelInput = getFuelInput(rowIndex);
-        fuelInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        fuelInput.scrollIntoViewIfNeeded();
-        fuelInput.click();
-        page.waitForTimeout(100);
-        fuelInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
-        page.waitForTimeout(500);
-        page.keyboard().press("Enter");
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getFuelInput(rowIndex), value);
     }
 
     public void enterEmissionFactor(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator emissionFactorInput = getEmissionFactorInput(rowIndex);
-        emissionFactorInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        emissionFactorInput.scrollIntoViewIfNeeded();
-
-        // Slower input
-        emissionFactorInput.click();
-        emissionFactorInput.clear();
-        emissionFactorInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
-
-        // Defocus and wait longer
-        emissionFactorInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getEmissionFactorInput(rowIndex), value);
     }
 
     public void enterTotalDistance(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator totalDistanceInput = getTotalDistanceInput(rowIndex);
-        totalDistanceInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        totalDistanceInput.scrollIntoViewIfNeeded();
-
-        // Slower input
-        totalDistanceInput.click();
-        totalDistanceInput.clear();
-        totalDistanceInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
-
-        // Defocus and wait longer for calculation
-        totalDistanceInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getTotalDistanceInput(rowIndex), value);
     }
+
 
     public void selectUnits(int rowIndex, String value) {
         page.waitForLoadState();

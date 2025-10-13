@@ -3,6 +3,7 @@ package pages.dashboard.project.building;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.SelectOption;
+import utils.InputHelper;
 
 /**
  * BuildingCarbonOffsetTab - Carbon Offset tab for Building project
@@ -34,7 +35,7 @@ public class BuildingCarbonOffsetTab {
     private static final String DATE_INPUT_PATTERN = "input.carbon-offset-datepicker[data-index='%d']";
     private static final String PLANNED_INPUT_PATTERN = "#carbon_offset_planned_%d";
     private static final String ACTUAL_INPUT_PATTERN = "#carbon_offset_actual_%d";
-    private static final String CUMULATIVE_INPUT_PATTERN = "#records_%d input[readonly].text-end";
+    private static final String CUMULATIVE_INPUT_PATTERN = "#plan_and_targets_carbon_offset #records_%d td:nth-child(4) input[readonly]";
     private static final String ATTACH_ICON_PATTERN = "#records_%d a i.bi-paperclip";
     private static final String STATUS_SELECT_PATTERN = "#gnfz-carbon-offset-status-%d";
     private static final String CHAT_ICON_PATTERN = "#records_%d img[alt='iconPreview']";
@@ -56,11 +57,11 @@ public class BuildingCarbonOffsetTab {
         this.cumulativeTooltipText = page.locator("span.tooltiptext.cummulative-tooltip");
 
         // Table total row
-        this.totalLabel = page.locator("tr.border-bottom-white td:has-text('Total')");
-        this.totalCumulativeInput = page.locator("tr.border-bottom-white td:nth-child(4) input[readonly]");
+        this.totalLabel = page.locator("#plan_and_targets_carbon_offset tr.border-bottom-white td:has-text('Total')");
+        this.totalCumulativeInput = page.locator("#plan_and_targets_carbon_offset tr.border-bottom-white td:nth-child(2) input[readonly]");
 
         // Actions
-        this.saveButton = page.locator("button#gnfz-save");
+        this.saveButton = page.locator("#plan_and_targets_carbon_offset button#gnfz-save");
     }
 
     /**
@@ -112,7 +113,7 @@ public class BuildingCarbonOffsetTab {
     }
 
     /**
-     * Row interactions - Date field
+     * Row interactions - Date field (regular input, not datepicker)
      */
     private Locator getDateInput(int rowIndex) {
         return page.locator(String.format(DATE_INPUT_PATTERN, rowIndex));
@@ -123,29 +124,12 @@ public class BuildingCarbonOffsetTab {
         Locator dateInput = getDateInput(rowIndex);
         dateInput.scrollIntoViewIfNeeded();
         dateInput.click();
-        page.waitForTimeout(500);
-
-        // Handle jQuery UI datepicker
-        // Parse the date (assuming mm/dd/yyyy format)
-        String[] parts = date.split("/");
-        if (parts.length == 3) {
-            String month = parts[0];
-            String day = parts[1];
-            String year = parts[2];
-
-            // Select year
-            page.locator(".ui-datepicker-year").selectOption(year);
-            page.waitForTimeout(200);
-
-            // Select month (0-indexed in datepicker, so subtract 1)
-            int monthIndex = Integer.parseInt(month) - 1;
-            page.locator(".ui-datepicker-month").selectOption(String.valueOf(monthIndex));
-            page.waitForTimeout(200);
-
-            // Click day
-            page.locator(String.format(".ui-datepicker-calendar a:has-text('%s')", day.replaceFirst("^0+", ""))).first().click();
-            page.waitForTimeout(500);
-        }
+        page.waitForTimeout(100);
+        InputHelper.selectDateFromDatepicker(page, dateInput, date);
+        page.waitForTimeout(300);
+        // Trigger blur to enable other fields
+        dateInput.evaluate("el => el.blur()");
+        page.waitForTimeout(1000);
     }
 
     public String getDate(int rowIndex) {
@@ -161,11 +145,9 @@ public class BuildingCarbonOffsetTab {
     }
 
     public void enterPlannedEmissions(int rowIndex, String value) {
-        page.waitForLoadState();
         Locator plannedInput = getPlannedInput(rowIndex);
-        plannedInput.scrollIntoViewIfNeeded();
-        plannedInput.click();
-        plannedInput.fill(value);
+        InputHelper.humanizedInput(page, plannedInput, value);
+        plannedInput.evaluate("el => el.blur()");
         page.waitForTimeout(500);
     }
 
@@ -187,11 +169,9 @@ public class BuildingCarbonOffsetTab {
     }
 
     public void enterActualEmissions(int rowIndex, String value) {
-        page.waitForLoadState();
         Locator actualInput = getActualInput(rowIndex);
-        actualInput.scrollIntoViewIfNeeded();
-        actualInput.click();
-        actualInput.fill(value);
+        InputHelper.humanizedInput(page, actualInput, value);
+        actualInput.evaluate("el => el.blur()");
         page.waitForTimeout(500);
     }
 
@@ -304,14 +284,19 @@ public class BuildingCarbonOffsetTab {
      */
     public void fillRow(int rowIndex, String date, String plannedEmissions, String actualEmissions, String status) {
         enterDate(rowIndex, date);
+        System.out.println("Entered date: " + date);
+
         if (plannedEmissions != null && !plannedEmissions.isEmpty()) {
             enterPlannedEmissions(rowIndex, plannedEmissions);
+            System.out.println("Entered planned emissions: " + plannedEmissions);
         }
         if (actualEmissions != null && !actualEmissions.isEmpty()) {
             enterActualEmissions(rowIndex, actualEmissions);
+            System.out.println("Entered actual emissions: " + actualEmissions);
         }
         if (status != null && !status.isEmpty()) {
             selectStatus(rowIndex, status);
+            System.out.println("Selected status: " + status);
         }
     }
 

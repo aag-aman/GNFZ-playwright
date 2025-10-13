@@ -8,9 +8,9 @@ import pages.dashboard.ProjectListPage;
 import pages.dashboard.ProjectSelectionPage;
 import pages.dashboard.project.building.BuildingProjectPage;
 import pages.dashboard.project.building.BuildingBasicInfoTab;
+import pages.dashboard.project.building.BuildingAssessmentTab;
 import pages.dashboard.project.building.BuildingCarbonOffsetTab;
 import pages.dashboard.project.building.BuildingNetZeroMilestoneTab;
-import pages.dashboard.project.building.BuildingAssessmentTab;
 import tests.base.BaseTest;
 import utils.TestDataManager;
 
@@ -177,7 +177,7 @@ public class BuildingProjectTest extends BaseTest {
     }
 
     /**
-     * Test complete Building creation flow
+     * Test complete Building creation flow with Basic Info
      */
     @Test
     @DisplayName("Create Building with Basic Info")
@@ -192,38 +192,11 @@ public class BuildingProjectTest extends BaseTest {
         BuildingProjectPage buildingProjectPage = pageManager.getBuildingProjectPage();
         BuildingBasicInfoTab buildingBasicInfoTab = pageManager.getBuildingBasicInfoTab();
         BuildingAssessmentTab buildingAssessmentTab = pageManager.getBuildingAssessmentTab();
-        BuildingCarbonOffsetTab buildingCarbonOffsetTab = pageManager.getBuildingCarbonOffsetTab();
-        BuildingNetZeroMilestoneTab buildingNetZeroMilestoneTab = pageManager.getBuildingNetZeroMilestoneTab();
-
-        // Declare variables for cross-step data validation (Emissions -> Energy)
-        // Table A (Fuels) variables
-        final String[] fuelTypeA = new String[1];
-        final String[] consumptionA = new String[1];
-        final String[] emissionFactorA = new String[1];
-        final String[] unitsA = new String[1];
-        final String[] rowTotalA = new String[1];
-        final String[] tableTotalA = new String[1];
-
-        // Table C (Mobile Combustion) variables
-        final String[] fuelTypeC = new String[1];
-        final String[] consumptionC = new String[1];
-        final String[] emissionFactorC = new String[1];
-        final String[] unitsC = new String[1];
-        final String[] rowTotalC = new String[1];
-        final String[] tableTotalC = new String[1];
-
-        // Table D (Energy/Scope 2) variables
-        final String[] activityD = new String[1];
-        final String[] consumptionD = new String[1];
-        final String[] emissionFactorD = new String[1];
-        final String[] unitsD = new String[1];
-        final String[] rowTotalD = new String[1];
-        final String[] tableTotalD = new String[1];
-
         // Login and navigate to project selection
         Map<String, String> user = TestDataManager.getSmokeUser();
         Allure.step("Login and navigate to project selection", () -> {
             loginPage.navigateToLogin();
+            page.waitForTimeout(2000);
             loginPage.enterEmail(user.get("username"));
             loginPage.enterPassword(user.get("password"));
             loginPage.clickSignInButton();
@@ -269,7 +242,7 @@ public class BuildingProjectTest extends BaseTest {
         takeScreenshot("Building Created with Basic Info");
 
         // Enter Assessment details
-        Allure.step("Navigate to Assessment tab and enter Reporting Period", () -> {
+        Allure.step("Navigate to Assessment tab and enter Net Zero Emission details", () -> {
             buildingProjectPage.goToAssessmentTab();
 
             assertTrue(buildingAssessmentTab.isTabDisplayed(),
@@ -284,12 +257,9 @@ public class BuildingProjectTest extends BaseTest {
             buildingAssessmentTab.getNetZeroEmissionsSection().enterReportingPeriodFrom("01/01/2024");
             buildingAssessmentTab.getNetZeroEmissionsSection().enterReportingPeriodTo("01/01/2025");
 
-        });
-
-        Allure.step("Navigate to Scope 1 tab and enter details", () -> {
             // Switch to Scope 1 detailed view to show tables
             buildingAssessmentTab.getNetZeroEmissionsSection().expandScope1();
-            page.waitForTimeout(10000); // Wait for section to expand
+            page.waitForTimeout(500); // Wait for section to expand
 
             // ========================================
             // Table A (Fuels)
@@ -297,60 +267,59 @@ public class BuildingProjectTest extends BaseTest {
             System.out.println("\n=== Testing Table A (Fuels) ===");
 
             // Define test data
-            fuelTypeA[0] = "Natural Gas";
-            consumptionA[0] = "100";
+            String fuelTypeA = "Natural Gas";
+            String consumptionA = "100";
             double expectedEmissionFactorA = 2539.25;
 
             // Enter fuel
-            buildingAssessmentTab.getNetZeroEmissionsSection().tableA().enterFuel(0, fuelTypeA[0]);
+            buildingAssessmentTab.getNetZeroEmissionsSection().tableA().enterFuel(0, fuelTypeA);
 
             // Check emission factor auto-population
-            emissionFactorA[0] = buildingAssessmentTab.getNetZeroEmissionsSection().tableA().getEmissionFactor(0);
-            if (emissionFactorA[0] == null || emissionFactorA[0].trim().isEmpty() || emissionFactorA[0].equals("0")) {
-                System.out.println(
-                        "Table A: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorA);
+            String emissionFactorA = buildingAssessmentTab.getNetZeroEmissionsSection().tableA().getEmissionFactor(0);
+            if (emissionFactorA == null || emissionFactorA.trim().isEmpty() || emissionFactorA.equals("0")) {
+                System.out.println("Table A: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorA);
                 buildingAssessmentTab.getNetZeroEmissionsSection().tableA().enterEmissionFactor(0,
-                        String.valueOf(expectedEmissionFactorA));
-                emissionFactorA[0] = buildingAssessmentTab.getNetZeroEmissionsSection().tableA().getEmissionFactor(0);
+                    String.valueOf(expectedEmissionFactorA));
+                emissionFactorA = buildingAssessmentTab.getNetZeroEmissionsSection().tableA().getEmissionFactor(0);
             } else {
-                System.out.println("Table A: Emission factor auto-populated: " + emissionFactorA[0]);
+                System.out.println("Table A: Emission factor auto-populated: " + emissionFactorA);
             }
 
             // Enter consumption
-            buildingAssessmentTab.getNetZeroEmissionsSection().tableA().enterConsumption(0, consumptionA[0]);
+            buildingAssessmentTab.getNetZeroEmissionsSection().tableA().enterConsumption(0, consumptionA);
             page.waitForTimeout(1000);
 
             // Check units auto-population
-            unitsA[0] = buildingAssessmentTab.getNetZeroEmissionsSection().tableA().getUnits(0);
-            System.out.println("Table A: Units auto-populated: " + unitsA[0]);
+            String unitsA = buildingAssessmentTab.getNetZeroEmissionsSection().tableA().getUnits(0);
+            System.out.println("Table A: Units auto-populated: " + unitsA);
 
             // Wait for calculations
             page.waitForTimeout(1000);
 
             // Get and verify totals
-            rowTotalA[0] = buildingAssessmentTab.getNetZeroEmissionsSection().tableA().getRowTotal(0);
-            tableTotalA[0] = buildingAssessmentTab.getNetZeroEmissionsSection().tableA().getTableTotal();
-            System.out.println("Table A: Row total calculated: " + rowTotalA[0]);
-            System.out.println("Table A: Table total calculated: " + tableTotalA[0]);
+            String rowTotalA = buildingAssessmentTab.getNetZeroEmissionsSection().tableA().getRowTotal(0);
+            String tableTotalA = buildingAssessmentTab.getNetZeroEmissionsSection().tableA().getTableTotal();
+            System.out.println("Table A: Row total calculated: " + rowTotalA);
+            System.out.println("Table A: Table total calculated: " + tableTotalA);
 
             // Verify calculation: emission_factor × consumption
-            double actualEmissionFactorA = Double.parseDouble(emissionFactorA[0].replace(",", ""));
-            double consumptionValueA = Double.parseDouble(consumptionA[0]);
+            double actualEmissionFactorA = Double.parseDouble(emissionFactorA.replace(",", ""));
+            double consumptionValueA = Double.parseDouble(consumptionA);
             double calculatedRowTotalA = actualEmissionFactorA * consumptionValueA;
             String expectedRowTotalA = String.format("%,.2f", calculatedRowTotalA);
 
-            assertNotNull(rowTotalA[0], "Table A: Row total should be calculated");
-            assertEquals(expectedRowTotalA, rowTotalA[0].trim(),
-                    String.format("Table A: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                            actualEmissionFactorA, consumptionValueA, expectedRowTotalA, rowTotalA));
+            assertNotNull(rowTotalA, "Table A: Row total should be calculated");
+            assertEquals(expectedRowTotalA, rowTotalA.trim(),
+                String.format("Table A: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
+                    actualEmissionFactorA, consumptionValueA, expectedRowTotalA, rowTotalA));
 
-            assertNotNull(tableTotalA[0], "Table A: Table total should be calculated");
-
-            assertEquals(expectedRowTotalA, tableTotalA[0].trim(),
-                    "Table A: Table total should equal row total for single row");
+            assertNotNull(tableTotalA, "Table A: Table total should be calculated");
+            
+            assertEquals(expectedRowTotalA, tableTotalA.trim(),
+                "Table A: Table total should equal row total for single row");
 
             System.out.println(String.format("Table A verified: %s, EF=%.2f × Consumption=%.2f = %s ✓",
-                    fuelTypeA, actualEmissionFactorA, consumptionValueA, rowTotalA));
+                fuelTypeA, actualEmissionFactorA, consumptionValueA, rowTotalA));
 
             // ========================================
             // Table B (Refrigerants)
@@ -368,10 +337,9 @@ public class BuildingProjectTest extends BaseTest {
             // Check emission factor auto-population
             String emissionFactorB = buildingAssessmentTab.getNetZeroEmissionsSection().tableB().getEmissionFactor(0);
             if (emissionFactorB == null || emissionFactorB.trim().isEmpty() || emissionFactorB.equals("0")) {
-                System.out.println(
-                        "Table B: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorB);
+                System.out.println("Table B: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorB);
                 buildingAssessmentTab.getNetZeroEmissionsSection().tableB().enterEmissionFactor(0,
-                        String.valueOf(expectedEmissionFactorB));
+                    String.valueOf(expectedEmissionFactorB));
                 emissionFactorB = buildingAssessmentTab.getNetZeroEmissionsSection().tableB().getEmissionFactor(0);
             } else {
                 System.out.println("Table B: Emission factor auto-populated: " + emissionFactorB);
@@ -401,15 +369,15 @@ public class BuildingProjectTest extends BaseTest {
 
             assertNotNull(rowTotalB, "Table B: Row total should be calculated");
             assertEquals(expectedRowTotalB, rowTotalB.trim(),
-                    String.format("Table B: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                            actualEmissionFactorB, consumptionValueB, expectedRowTotalB, rowTotalB));
+                String.format("Table B: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
+                    actualEmissionFactorB, consumptionValueB, expectedRowTotalB, rowTotalB));
 
             assertNotNull(tableTotalB, "Table B: Table total should be calculated");
             assertEquals(expectedRowTotalB, tableTotalB.trim(),
                     "Table B: Table total should equal row total for single row");
 
             System.out.println(String.format("Table B verified: %s, EF=%.2f × Consumption=%.2f = %s ✓",
-                    refrigerantTypeB, actualEmissionFactorB, consumptionValueB, rowTotalB));
+                refrigerantTypeB, actualEmissionFactorB, consumptionValueB, rowTotalB));
 
             // ========================================
             // Table C (Mobile Combustion)
@@ -417,58 +385,57 @@ public class BuildingProjectTest extends BaseTest {
             System.out.println("\n=== Testing Table C (Mobile Combustion) ===");
 
             // Define test data
-            fuelTypeC[0] = "Gasoline";
-            consumptionC[0] = "200";
+            String fuelTypeC = "Gasoline";
+            String consumptionC = "200";
             double expectedEmissionFactorC = 34.0;
 
             // Enter fuel type
-            buildingAssessmentTab.getNetZeroEmissionsSection().tableC().enterFuel(0, fuelTypeC[0]);
+            buildingAssessmentTab.getNetZeroEmissionsSection().tableC().enterFuel(0, fuelTypeC);
 
             // Check emission factor auto-population
-            emissionFactorC[0] = buildingAssessmentTab.getNetZeroEmissionsSection().tableC().getEmissionFactor(0);
-            if (emissionFactorC[0] == null || emissionFactorC[0].trim().isEmpty() || emissionFactorC[0].equals("0")) {
-                System.out.println(
-                        "Table C: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorC);
+            String emissionFactorC = buildingAssessmentTab.getNetZeroEmissionsSection().tableC().getEmissionFactor(0);
+            if (emissionFactorC == null || emissionFactorC.trim().isEmpty() || emissionFactorC.equals("0")) {
+                System.out.println("Table C: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorC);
                 buildingAssessmentTab.getNetZeroEmissionsSection().tableC().enterEmissionFactor(0,
-                        String.valueOf(expectedEmissionFactorC));
-                emissionFactorC[0] = buildingAssessmentTab.getNetZeroEmissionsSection().tableC().getEmissionFactor(0);
+                    String.valueOf(expectedEmissionFactorC));
+                emissionFactorC = buildingAssessmentTab.getNetZeroEmissionsSection().tableC().getEmissionFactor(0);
             } else {
-                System.out.println("Table C: Emission factor auto-populated: " + emissionFactorC[0]);
+                System.out.println("Table C: Emission factor auto-populated: " + emissionFactorC);
             }
 
             // Enter consumption
-            buildingAssessmentTab.getNetZeroEmissionsSection().tableC().enterConsumption(0, consumptionC[0]);
+            buildingAssessmentTab.getNetZeroEmissionsSection().tableC().enterConsumption(0, consumptionC);
 
             // Check units auto-population
-            unitsC[0] = buildingAssessmentTab.getNetZeroEmissionsSection().tableC().getUnits(0);
-            System.out.println("Table C: Units auto-populated: " + unitsC[0]);
+            String unitsC = buildingAssessmentTab.getNetZeroEmissionsSection().tableC().getUnits(0);
+            System.out.println("Table C: Units auto-populated: " + unitsC);
 
             // Wait for calculations
             page.waitForTimeout(1000);
 
             // Get and verify totals
-            rowTotalC[0] = buildingAssessmentTab.getNetZeroEmissionsSection().tableC().getRowTotal(0);
-            tableTotalC[0] = buildingAssessmentTab.getNetZeroEmissionsSection().tableC().getTableTotal();
-            System.out.println("Table C: Row total calculated: " + rowTotalC[0]);
-            System.out.println("Table C: Table total calculated: " + tableTotalC[0]);
+            String rowTotalC = buildingAssessmentTab.getNetZeroEmissionsSection().tableC().getRowTotal(0);
+            String tableTotalC = buildingAssessmentTab.getNetZeroEmissionsSection().tableC().getTableTotal();
+            System.out.println("Table C: Row total calculated: " + rowTotalC);
+            System.out.println("Table C: Table total calculated: " + tableTotalC);
 
             // Verify calculation: emission_factor × consumption
-            double actualEmissionFactorC = Double.parseDouble(emissionFactorC[0].replace(",", ""));
-            double consumptionValueC = Double.parseDouble(consumptionC[0]);
+            double actualEmissionFactorC = Double.parseDouble(emissionFactorC.replace(",", ""));
+            double consumptionValueC = Double.parseDouble(consumptionC);
             double calculatedRowTotalC = actualEmissionFactorC * consumptionValueC;
             String expectedRowTotalC = String.format("%,.2f", calculatedRowTotalC);
 
-            assertNotNull(rowTotalC[0], "Table C: Row total should be calculated");
-            assertEquals(expectedRowTotalC, rowTotalC[0].trim(),
-                    String.format("Table C: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                            actualEmissionFactorC, consumptionValueC, expectedRowTotalC, rowTotalC));
+            assertNotNull(rowTotalC, "Table C: Row total should be calculated");
+            assertEquals(expectedRowTotalC, rowTotalC.trim(),
+                String.format("Table C: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
+                    actualEmissionFactorC, consumptionValueC, expectedRowTotalC, rowTotalC));
 
-            assertNotNull(tableTotalC[0], "Table C: Table total should be calculated");
-            assertEquals(expectedRowTotalC, tableTotalC[0].trim(),
+            assertNotNull(tableTotalC, "Table C: Table total should be calculated");
+            assertEquals(expectedRowTotalC, tableTotalC.trim(),
                     "Table C: Table total should equal row total for single row");
 
             System.out.println(String.format("Table C verified: %s, EF=%.2f × Consumption=%.2f = %s ✓",
-                    fuelTypeC, actualEmissionFactorC, consumptionValueC, rowTotalC));
+                fuelTypeC, actualEmissionFactorC, consumptionValueC, rowTotalC));
 
             // ========================================
             // Verify Scope 1 Total (Table A + Table B + Table C)
@@ -477,9 +444,9 @@ public class BuildingProjectTest extends BaseTest {
             page.waitForTimeout(1000); // Wait for scope total calculation
 
             // Parse table totals (remove commas and convert to double)
-            double tableTotalAValue = Double.parseDouble(tableTotalA[0].replace(",", ""));
+            double tableTotalAValue = Double.parseDouble(tableTotalA.replace(",", ""));
             double tableTotalBValue = Double.parseDouble(tableTotalB.replace(",", ""));
-            double tableTotalCValue = Double.parseDouble(tableTotalC[0].replace(",", ""));
+            double tableTotalCValue = Double.parseDouble(tableTotalC.replace(",", ""));
 
             // Calculate expected Scope 1 total
             double calculatedScope1Total = tableTotalAValue + tableTotalBValue + tableTotalCValue;
@@ -490,17 +457,14 @@ public class BuildingProjectTest extends BaseTest {
             assertNotNull(actualScope1Total, "Scope 1 total should be calculated");
 
             assertEquals(expectedScope1Total, actualScope1Total.trim(),
-                    String.format("Scope 1 Total calculation incorrect (%.2f + %.2f + %.2f = %s, Got: %s)",
-                            tableTotalAValue, tableTotalBValue, tableTotalCValue, expectedScope1Total,
-                            actualScope1Total));
+                String.format("Scope 1 Total calculation incorrect (%.2f + %.2f + %.2f = %s, Got: %s)",
+                    tableTotalAValue, tableTotalBValue, tableTotalCValue, expectedScope1Total, actualScope1Total));
 
             System.out.println(String.format("Scope 1 Total Verified: %.2f + %.2f + %.2f = %s",
-                    tableTotalAValue, tableTotalBValue, tableTotalCValue, actualScope1Total));
+                tableTotalAValue, tableTotalBValue, tableTotalCValue, actualScope1Total));
 
             System.out.println("\n=== Scope 1 Testing Complete ===");
 
-        });
-        Allure.step("Enter Scope 2 details", () -> {
             // ========================================
             // SCOPE 2 - Table D (Energy)
             // ========================================
@@ -511,69 +475,66 @@ public class BuildingProjectTest extends BaseTest {
             page.waitForTimeout(500);
 
             // Define test data
-            activityD[0] = "Non Renewable Electricity from Grid​";
-            consumptionD[0] = "100";
+            String activityD = "Non Renewable Electricity from Grid​";
+            String consumptionD = "100";
             double expectedEmissionFactorD = 0.149;
 
             // Enter activity
-            buildingAssessmentTab.getNetZeroEmissionsSection().tableD().enterActivity(0, activityD[0]);
+            buildingAssessmentTab.getNetZeroEmissionsSection().tableD().enterActivity(0, activityD);
 
             // Check emission factor auto-population
-            emissionFactorD[0] = buildingAssessmentTab.getNetZeroEmissionsSection().tableD().getEmissionFactor(0);
-            if (emissionFactorD[0] == null || emissionFactorD[0].trim().isEmpty() || emissionFactorD[0].equals("0")) {
-                System.out.println(
-                        "Table D: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorD);
+            String emissionFactorD = buildingAssessmentTab.getNetZeroEmissionsSection().tableD().getEmissionFactor(0);
+            if (emissionFactorD == null || emissionFactorD.trim().isEmpty() || emissionFactorD.equals("0")) {
+                System.out.println("Table D: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorD);
                 buildingAssessmentTab.getNetZeroEmissionsSection().tableD().enterEmissionFactor(0,
-                        String.valueOf(expectedEmissionFactorD));
-                emissionFactorD[0] = buildingAssessmentTab.getNetZeroEmissionsSection().tableD().getEmissionFactor(0);
+                    String.valueOf(expectedEmissionFactorD));
+                emissionFactorD = buildingAssessmentTab.getNetZeroEmissionsSection().tableD().getEmissionFactor(0);
             } else {
-                System.out.println("Table D: Emission factor auto-populated: " + emissionFactorD[0]);
+                System.out.println("Table D: Emission factor auto-populated: " + emissionFactorD);
             }
 
             // Enter consumption
-            buildingAssessmentTab.getNetZeroEmissionsSection().tableD().enterConsumption(0, consumptionD[0]);
+            buildingAssessmentTab.getNetZeroEmissionsSection().tableD().enterConsumption(0, consumptionD);
 
             // Check units auto-population
-            unitsD[0] = buildingAssessmentTab.getNetZeroEmissionsSection().tableD().getUnits(0);
-            System.out.println("Table D: Units auto-populated: " + unitsD[0]);
+            String unitsD = buildingAssessmentTab.getNetZeroEmissionsSection().tableD().getUnits(0);
+            System.out.println("Table D: Units auto-populated: " + unitsD);
 
             // Wait for calculations
             page.waitForTimeout(1500);
 
             // Get and verify totals
-            rowTotalD[0] = buildingAssessmentTab.getNetZeroEmissionsSection().tableD().getRowTotal(0);
-            tableTotalD[0] = buildingAssessmentTab.getNetZeroEmissionsSection().tableD().getTableTotal();
-            System.out.println("Table D: Row total calculated: " + rowTotalD[0]);
-            System.out.println("Table D: Table total calculated: " + tableTotalD[0]);
+            String rowTotalD = buildingAssessmentTab.getNetZeroEmissionsSection().tableD().getRowTotal(0);
+            String tableTotalD = buildingAssessmentTab.getNetZeroEmissionsSection().tableD().getTableTotal();
+            System.out.println("Table D: Row total calculated: " + rowTotalD);
+            System.out.println("Table D: Table total calculated: " + tableTotalD);
 
             // Verify calculation: emission_factor × consumption
-            double actualEmissionFactorD = Double.parseDouble(emissionFactorD[0].replace(",", ""));
-            double consumptionValueD = Double.parseDouble(consumptionD[0]);
+            double actualEmissionFactorD = Double.parseDouble(emissionFactorD.replace(",", ""));
+            double consumptionValueD = Double.parseDouble(consumptionD);
             double calculatedRowTotalD = actualEmissionFactorD * consumptionValueD;
             String expectedRowTotalD = String.format("%,.2f", calculatedRowTotalD);
 
-            assertNotNull(rowTotalD[0], "Table D: Row total should be calculated");
-            assertEquals(expectedRowTotalD, rowTotalD[0].trim(),
-                    String.format("Table D: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                            actualEmissionFactorD, consumptionValueD, expectedRowTotalD, rowTotalD));
+            assertNotNull(rowTotalD, "Table D: Row total should be calculated");
+            assertEquals(expectedRowTotalD, rowTotalD.trim(),
+                String.format("Table D: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
+                    actualEmissionFactorD, consumptionValueD, expectedRowTotalD, rowTotalD));
 
-            // Retry 5 times if table total is not yet calculated
+            //Retry 5 times if table total is not yet calculated
 
             int retries = 5;
-            while ((tableTotalD == null || tableTotalD[0].trim().isEmpty() || tableTotalD.equals("0.00"))
-                    && retries > 0) {
-                System.out
-                        .println("Table D: Table total not yet calculated, retrying... (" + retries + " retries left)");
+            while ((tableTotalD == null || tableTotalD.trim().isEmpty() || tableTotalD.equals("0.00")) && retries > 0) {
+                System.out.println("Table D: Table total not yet calculated, retrying... (" + retries + " retries left)");
                 page.waitForTimeout(1000);
-                tableTotalD[0] = buildingAssessmentTab.getNetZeroEmissionsSection().tableD().getTableTotal();
+                tableTotalD = buildingAssessmentTab.getNetZeroEmissionsSection().tableD().getTableTotal();
                 retries--;
             }
-            assertNotNull(tableTotalD[0], "Table D: Table total should be calculated");
-            assertEquals(expectedRowTotalD, tableTotalD[0].trim(),
+            assertNotNull(tableTotalD, "Table D: Table total should be calculated");
+            assertEquals(expectedRowTotalD, tableTotalD.trim(),
                     "Table D: Table total should equal row total for single row");
 
             System.out.println(String.format("Table D verified: %s, EF=%.2f × Consumption=%.2f = %s ✓",
-                    activityD, actualEmissionFactorD, consumptionValueD, rowTotalD));
+                activityD, actualEmissionFactorD, consumptionValueD, rowTotalD));
 
             // ========================================
             // Verify Scope 2 Total (equals Table D total since it's the only table)
@@ -584,35 +545,96 @@ public class BuildingProjectTest extends BaseTest {
             // Get actual Scope 2 total from UI
             String actualScope2Total = buildingAssessmentTab.getNetZeroEmissionsSection().getScope2Total();
             assertNotNull(actualScope2Total, "Scope 2 total should be calculated");
+            
 
             // Scope 2 total should equal Table D total (only table in Scope 2)
-            assertEquals(tableTotalD[0].trim(), actualScope2Total.trim(),
-                    String.format("Scope 2 Total should equal Table D total (Got Table D: %s, Scope 2: %s)",
-                            tableTotalD, actualScope2Total));
-
-            System.out.println(String.format("Scope 2 Total Verified: Table D Total (%s) = Scope 2 Total (%s)",
+            assertEquals(tableTotalD.trim(), actualScope2Total.trim(),
+                String.format("Scope 2 Total should equal Table D total (Got Table D: %s, Scope 2: %s)",
                     tableTotalD, actualScope2Total));
 
+            System.out.println(String.format("Scope 2 Total Verified: Table D Total (%s) = Scope 2 Total (%s)",
+                tableTotalD, actualScope2Total));
+
             System.out.println("\n=== Scope 2 Testing Complete ===");
-        });
-        Allure.step("Enter Scope 3 details", () -> {
+
             // ========================================
-            // SCOPE 3 - Tables E, F, G, H, I, J, K, L, M, N, O, P, Q
+            // SCOPE 3 - Tables E, F, G, H
             // ========================================
             System.out.println("\n=== Testing Scope 3 Tables ===");
 
             // Expand Scope 3 section
             buildingAssessmentTab.getNetZeroEmissionsSection().expandScope3();
-            page.waitForTimeout(500); // Wait for section to expand // ========================================
-            // Table E (Waste Disposal) - uses .tableF()
+            page.waitForTimeout(500); // Wait for section to expand
+
             // ========================================
-            System.out.println("=== Testing Table E (Waste Disposal) ===");
+            // Table E (Waste Disposal)
+            // ========================================
+            System.out.println("\n=== Testing Table E (Waste Disposal) ===");
 
             // Define test data
-            String typeOfWasteF = "Aggregates";
-            String quantityGeneratedF = "150";
-            String quantityLandfillF = "80";
-            double expectedEmissionFactorF = 11.0;
+            String typeOfWasteE = "Aggregates";
+            String quantityGeneratedE = "150";
+            String quantityLandfillE = "80";
+            double expectedEmissionFactorE = 11.0;
+
+            // Enter type of waste
+            buildingAssessmentTab.getNetZeroEmissionsSection().tableE().enterTypeOfWaste(0, typeOfWasteE);
+
+            // Check emission factor auto-population
+            String emissionFactorE = buildingAssessmentTab.getNetZeroEmissionsSection().tableE().getEmissionFactor(0);
+            if (emissionFactorE == null || emissionFactorE.trim().isEmpty() || emissionFactorE.equals("0")) {
+                System.out.println("Table E: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorE);
+                buildingAssessmentTab.getNetZeroEmissionsSection().tableE().enterEmissionFactor(0,
+                    String.valueOf(expectedEmissionFactorE));
+                emissionFactorE = buildingAssessmentTab.getNetZeroEmissionsSection().tableE().getEmissionFactor(0);
+            } else {
+                System.out.println("Table E: Emission factor auto-populated: " + emissionFactorE);
+            }
+
+            // Enter quantities
+            buildingAssessmentTab.getNetZeroEmissionsSection().tableE().enterQuantityOfWasteGenerated(0, quantityGeneratedE);
+            buildingAssessmentTab.getNetZeroEmissionsSection().tableE().enterQuantityOfWasteSentToLandfill(0, quantityLandfillE);
+
+            // Check unit auto-population
+            String unitE = buildingAssessmentTab.getNetZeroEmissionsSection().tableE().getUnit(0);
+            System.out.println("Table E: Unit auto-populated: " + unitE);
+
+            // Wait for calculations
+            page.waitForTimeout(1500);
+
+            // Get and verify totals
+            String rowTotalE = buildingAssessmentTab.getNetZeroEmissionsSection().tableE().getRowTotal(0);
+            String tableTotalE = buildingAssessmentTab.getNetZeroEmissionsSection().tableE().getTableTotal();
+            System.out.println("Table E: Row total calculated: " + rowTotalE);
+            System.out.println("Table E: Table total calculated: " + tableTotalE);
+
+            // Verify calculation: emission_factor × quantity_sent_to_landfill
+            double actualEmissionFactorE = Double.parseDouble(emissionFactorE.replace(",", ""));
+            double quantityLandfillValueE = Double.parseDouble(quantityLandfillE);
+            double calculatedRowTotalE = actualEmissionFactorE * quantityLandfillValueE;
+            String expectedRowTotalE = String.format("%,.2f", calculatedRowTotalE);
+
+            assertNotNull(rowTotalE, "Table E: Row total should be calculated");
+            assertEquals(expectedRowTotalE, rowTotalE.trim(),
+                String.format("Table E: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
+                    actualEmissionFactorE, quantityLandfillValueE, expectedRowTotalE, rowTotalE));
+
+            assertNotNull(tableTotalE, "Table E: Table total should be calculated");
+            assertEquals(expectedRowTotalE, tableTotalE.trim(),
+                    "Table E: Table total should equal row total for single row");
+
+            System.out.println(String.format("Table E verified: %s, EF=%.2f × Landfill Qty=%.2f = %s ✓",
+                typeOfWasteE, actualEmissionFactorE, quantityLandfillValueE, rowTotalE));
+
+            // ========================================
+            // Table F (Composed Waste)
+            // ========================================
+            System.out.println("\n=== Testing Table F (Composed Waste) ===");
+
+            // Define test data
+            String typeOfWasteF = "Organic: mixed food and garden waste";
+            String quantityCompostedF = "90";
+            double expectedEmissionFactorF = 8.911;
 
             // Enter type of waste
             buildingAssessmentTab.getNetZeroEmissionsSection().tableF().enterTypeOfWaste(0, typeOfWasteF);
@@ -620,20 +642,16 @@ public class BuildingProjectTest extends BaseTest {
             // Check emission factor auto-population
             String emissionFactorF = buildingAssessmentTab.getNetZeroEmissionsSection().tableF().getEmissionFactor(0);
             if (emissionFactorF == null || emissionFactorF.trim().isEmpty() || emissionFactorF.equals("0")) {
-                System.out.println(
-                        "Table F: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorF);
+                System.out.println("Table F: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorF);
                 buildingAssessmentTab.getNetZeroEmissionsSection().tableF().enterEmissionFactor(0,
-                        String.valueOf(expectedEmissionFactorF));
+                    String.valueOf(expectedEmissionFactorF));
                 emissionFactorF = buildingAssessmentTab.getNetZeroEmissionsSection().tableF().getEmissionFactor(0);
             } else {
                 System.out.println("Table F: Emission factor auto-populated: " + emissionFactorF);
             }
 
-            // Enter quantities
-            buildingAssessmentTab.getNetZeroEmissionsSection().tableF().enterQuantityOfWasteGenerated(0,
-                    quantityGeneratedF);
-            buildingAssessmentTab.getNetZeroEmissionsSection().tableF().enterQuantityOfWasteSentToLandfill(0,
-                    quantityLandfillF);
+            // Enter quantity composted
+            buildingAssessmentTab.getNetZeroEmissionsSection().tableF().enterQuantityOfWasteComposted(0, quantityCompostedF);
 
             // Check unit auto-population
             String unitF = buildingAssessmentTab.getNetZeroEmissionsSection().tableF().getUnit(0);
@@ -648,88 +666,28 @@ public class BuildingProjectTest extends BaseTest {
             System.out.println("Table F: Row total calculated: " + rowTotalF);
             System.out.println("Table F: Table total calculated: " + tableTotalF);
 
-            // Verify calculation: emission_factor × quantity_sent_to_landfill
+            // Verify calculation: emission_factor × quantity_composted
             double actualEmissionFactorF = Double.parseDouble(emissionFactorF.replace(",", ""));
-            double quantityLandfillValueF = Double.parseDouble(quantityLandfillF);
-            double calculatedRowTotalF = actualEmissionFactorF * quantityLandfillValueF;
+            double quantityCompostedValueF = Double.parseDouble(quantityCompostedF);
+            double calculatedRowTotalF = actualEmissionFactorF * quantityCompostedValueF;
             String expectedRowTotalF = String.format("%,.2f", calculatedRowTotalF);
 
             assertNotNull(rowTotalF, "Table F: Row total should be calculated");
             assertEquals(expectedRowTotalF, rowTotalF.trim(),
-                    String.format("Table F: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                            actualEmissionFactorF, quantityLandfillValueF, expectedRowTotalF, rowTotalF));
+                String.format("Table F: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
+                    actualEmissionFactorF, quantityCompostedValueF, expectedRowTotalF, rowTotalF));
 
             assertNotNull(tableTotalF, "Table F: Table total should be calculated");
             assertEquals(expectedRowTotalF, tableTotalF.trim(),
                     "Table F: Table total should equal row total for single row");
 
-            System.out.println(String.format("Table F verified: %s, EF=%.2f × Landfill Qty=%.2f = %s ✓",
-                    typeOfWasteF, actualEmissionFactorF, quantityLandfillValueF, rowTotalF));
+            System.out.println(String.format("Table F verified: %s, EF=%.2f × Quantity Composted=%.2f = %s ✓",
+                typeOfWasteF, actualEmissionFactorF, quantityCompostedValueF, rowTotalF));
 
             // ========================================
-            // Table F (Composed Waste) - uses .tableG()
+            // Table H (Waste Recycled)
             // ========================================
-            System.out.println("=== Testing Table F (Composed Waste) ===");
-
-            // Define test data
-            String typeOfWasteG = "Organic: mixed food and garden waste";
-            String quantityCompostedG = "90";
-            double expectedEmissionFactorG = 8.911;
-
-            // Enter type of waste
-            buildingAssessmentTab.getNetZeroEmissionsSection().tableG().enterTypeOfWaste(0, typeOfWasteG);
-
-            // Check emission factor auto-population
-            String emissionFactorG = buildingAssessmentTab.getNetZeroEmissionsSection().tableG().getEmissionFactor(0);
-            if (emissionFactorG == null || emissionFactorG.trim().isEmpty() || emissionFactorG.equals("0")) {
-                System.out.println(
-                        "Table G: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorG);
-                buildingAssessmentTab.getNetZeroEmissionsSection().tableG().enterEmissionFactor(0,
-                        String.valueOf(expectedEmissionFactorG));
-                emissionFactorG = buildingAssessmentTab.getNetZeroEmissionsSection().tableG().getEmissionFactor(0);
-            } else {
-                System.out.println("Table G: Emission factor auto-populated: " + emissionFactorG);
-            }
-
-            // Enter quantity composted
-            buildingAssessmentTab.getNetZeroEmissionsSection().tableG().enterQuantityOfWasteComposted(0,
-                    quantityCompostedG);
-
-            // Check unit auto-population
-            String unitG = buildingAssessmentTab.getNetZeroEmissionsSection().tableG().getUnit(0);
-            System.out.println("Table G: Unit auto-populated: " + unitG);
-
-            // Wait for calculations
-            page.waitForTimeout(1500);
-
-            // Get and verify totals
-            String rowTotalG = buildingAssessmentTab.getNetZeroEmissionsSection().tableG().getRowTotal(0);
-            String tableTotalG = buildingAssessmentTab.getNetZeroEmissionsSection().tableG().getTableTotal();
-            System.out.println("Table G: Row total calculated: " + rowTotalG);
-            System.out.println("Table G: Table total calculated: " + tableTotalG);
-
-            // Verify calculation: emission_factor × quantity_composted
-            double actualEmissionFactorG = Double.parseDouble(emissionFactorG.replace(",", ""));
-            double quantityCompostedValueG = Double.parseDouble(quantityCompostedG);
-            double calculatedRowTotalG = actualEmissionFactorG * quantityCompostedValueG;
-            String expectedRowTotalG = String.format("%,.2f", calculatedRowTotalG);
-
-            assertNotNull(rowTotalG, "Table G: Row total should be calculated");
-            assertEquals(expectedRowTotalG, rowTotalG.trim(),
-                    String.format("Table G: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                            actualEmissionFactorG, quantityCompostedValueG, expectedRowTotalG, rowTotalG));
-
-            assertNotNull(tableTotalG, "Table G: Table total should be calculated");
-            assertEquals(expectedRowTotalG, tableTotalG.trim(),
-                    "Table G: Table total should equal row total for single row");
-
-            System.out.println(String.format("Table G verified: %s, EF=%.2f × Quantity Composted=%.2f = %s ✓",
-                    typeOfWasteG, actualEmissionFactorG, quantityCompostedValueG, rowTotalG));
-
-            // ========================================
-            // Table G (Waste Recycled) - uses .tableH()
-            // ========================================
-            System.out.println("=== Testing Table G (Waste Recycled) ===");
+            System.out.println("\n=== Testing Table H (Waste Recycled) ===");
 
             // Define test data
             String typeOfWasteH = "Asphalt";
@@ -742,18 +700,16 @@ public class BuildingProjectTest extends BaseTest {
             // Check emission factor auto-population
             String emissionFactorH = buildingAssessmentTab.getNetZeroEmissionsSection().tableH().getEmissionFactor(0);
             if (emissionFactorH == null || emissionFactorH.trim().isEmpty() || emissionFactorH.equals("0")) {
-                System.out.println(
-                        "Table H: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorH);
+                System.out.println("Table H: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorH);
                 buildingAssessmentTab.getNetZeroEmissionsSection().tableH().enterEmissionFactor(0,
-                        String.valueOf(expectedEmissionFactorH));
+                    String.valueOf(expectedEmissionFactorH));
                 emissionFactorH = buildingAssessmentTab.getNetZeroEmissionsSection().tableH().getEmissionFactor(0);
             } else {
                 System.out.println("Table H: Emission factor auto-populated: " + emissionFactorH);
             }
 
             // Enter quantity recycled
-            buildingAssessmentTab.getNetZeroEmissionsSection().tableH().enterQuantityOfWasteRecycled(0,
-                    quantityRecycledH);
+            buildingAssessmentTab.getNetZeroEmissionsSection().tableH().enterQuantityOfWasteRecycled(0, quantityRecycledH);
 
             // Check unit auto-population
             String unitH = buildingAssessmentTab.getNetZeroEmissionsSection().tableH().getUnit(0);
@@ -776,20 +732,20 @@ public class BuildingProjectTest extends BaseTest {
 
             assertNotNull(rowTotalH, "Table H: Row total should be calculated");
             assertEquals(expectedRowTotalH, rowTotalH.trim(),
-                    String.format("Table H: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                            actualEmissionFactorH, quantityRecycledValueH, expectedRowTotalH, rowTotalH));
+                String.format("Table H: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
+                    actualEmissionFactorH, quantityRecycledValueH, expectedRowTotalH, rowTotalH));
 
             assertNotNull(tableTotalH, "Table H: Table total should be calculated");
             assertEquals(expectedRowTotalH, tableTotalH.trim(),
                     "Table H: Table total should equal row total for single row");
 
             System.out.println(String.format("Table H verified: %s, EF=%.2f × Quantity Recycled=%.2f = %s ✓",
-                    typeOfWasteH, actualEmissionFactorH, quantityRecycledValueH, rowTotalH));
+                typeOfWasteH, actualEmissionFactorH, quantityRecycledValueH, rowTotalH));
 
             // ========================================
-            // Table H (Waste Incinerated) - uses .tableI()
+            // Table I (Waste Incinerated)
             // ========================================
-            System.out.println("=== Testing Table H (Waste Incinerated) ===");
+            System.out.println("\n=== Testing Table I (Waste Incinerated) ===");
 
             // Define test data
             String typeOfWasteI = "Glass";
@@ -802,18 +758,16 @@ public class BuildingProjectTest extends BaseTest {
             // Check emission factor auto-population
             String emissionFactorI = buildingAssessmentTab.getNetZeroEmissionsSection().tableI().getEmissionFactor(0);
             if (emissionFactorI == null || emissionFactorI.trim().isEmpty() || emissionFactorI.equals("0")) {
-                System.out.println(
-                        "Table I: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorI);
+                System.out.println("Table I: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorI);
                 buildingAssessmentTab.getNetZeroEmissionsSection().tableI().enterEmissionFactor(0,
-                        String.valueOf(expectedEmissionFactorI));
+                    String.valueOf(expectedEmissionFactorI));
                 emissionFactorI = buildingAssessmentTab.getNetZeroEmissionsSection().tableI().getEmissionFactor(0);
             } else {
                 System.out.println("Table I: Emission factor auto-populated: " + emissionFactorI);
             }
 
             // Enter quantity incinerated
-            buildingAssessmentTab.getNetZeroEmissionsSection().tableI().enterQuantityOfWasteIncinerated(0,
-                    quantityIncineratedI);
+            buildingAssessmentTab.getNetZeroEmissionsSection().tableI().enterQuantityOfWasteIncinerated(0, quantityIncineratedI);
 
             // Check unit auto-population
             String unitI = buildingAssessmentTab.getNetZeroEmissionsSection().tableI().getUnit(0);
@@ -836,20 +790,20 @@ public class BuildingProjectTest extends BaseTest {
 
             assertNotNull(rowTotalI, "Table I: Row total should be calculated");
             assertEquals(expectedRowTotalI, rowTotalI.trim(),
-                    String.format("Table I: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                            actualEmissionFactorI, quantityIncineratedValueI, expectedRowTotalI, rowTotalI));
+                String.format("Table I: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
+                    actualEmissionFactorI, quantityIncineratedValueI, expectedRowTotalI, rowTotalI));
 
             assertNotNull(tableTotalI, "Table I: Table total should be calculated");
             assertEquals(expectedRowTotalI, tableTotalI.trim(),
                     "Table I: Table total should equal row total for single row");
 
             System.out.println(String.format("Table I verified: %s, EF=%.2f × Quantity Incinerated=%.2f = %s ✓",
-                    typeOfWasteI, actualEmissionFactorI, quantityIncineratedValueI, rowTotalI));
+                typeOfWasteI, actualEmissionFactorI, quantityIncineratedValueI, rowTotalI));
 
             // ========================================
-            // Table I (WTT - Well to Tank) - uses .tableJ()
+            // Table J (WTT - Well to Tank)
             // ========================================
-            System.out.println("=== Testing Table I (WTT - Well to Tank) ===");
+            System.out.println("\n=== Testing Table J (WTT - Well to Tank) ===");
 
             // Define test data
             String fuelJ = "LNG";
@@ -862,10 +816,9 @@ public class BuildingProjectTest extends BaseTest {
             // Check emission factor auto-population
             String emissionFactorJ = buildingAssessmentTab.getNetZeroEmissionsSection().tableJ().getEmissionFactor(0);
             if (emissionFactorJ == null || emissionFactorJ.trim().isEmpty() || emissionFactorJ.equals("0")) {
-                System.out.println(
-                        "Table J: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorJ);
+                System.out.println("Table J: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorJ);
                 buildingAssessmentTab.getNetZeroEmissionsSection().tableJ().enterEmissionFactor(0,
-                        String.valueOf(expectedEmissionFactorJ));
+                    String.valueOf(expectedEmissionFactorJ));
                 emissionFactorJ = buildingAssessmentTab.getNetZeroEmissionsSection().tableJ().getEmissionFactor(0);
             } else {
                 System.out.println("Table J: Emission factor auto-populated: " + emissionFactorJ);
@@ -895,20 +848,20 @@ public class BuildingProjectTest extends BaseTest {
 
             assertNotNull(rowTotalJ, "Table J: Row total should be calculated");
             assertEquals(expectedRowTotalJ, rowTotalJ.trim(),
-                    String.format("Table J: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                            actualEmissionFactorJ, consumptionValueJ, expectedRowTotalJ, rowTotalJ));
+                String.format("Table J: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
+                    actualEmissionFactorJ, consumptionValueJ, expectedRowTotalJ, rowTotalJ));
 
             assertNotNull(tableTotalJ, "Table J: Table total should be calculated");
             assertEquals(expectedRowTotalJ, tableTotalJ.trim(),
                     "Table J: Table total should equal row total for single row");
 
             System.out.println(String.format("Table J verified: %s, EF=%.2f × Consumption=%.2f = %s ✓",
-                    fuelJ, actualEmissionFactorJ, consumptionValueJ, rowTotalJ));
+                fuelJ, actualEmissionFactorJ, consumptionValueJ, rowTotalJ));
 
             // ========================================
-            // Table J (Employee Commute) - uses .tableK() - 2 rows
+            // Table K (Employee Commute) - 2 rows
             // ========================================
-            System.out.println("=== Testing Table J (Employee Commute) ===");
+            System.out.println("\n=== Testing Table K (Employee Commute) ===");
 
             // Define test data - Row 0
             String vehicleTypeK0 = "Ferry";
@@ -932,10 +885,9 @@ public class BuildingProjectTest extends BaseTest {
             // Row 0: Check emission factor auto-population
             String emissionFactorK0 = buildingAssessmentTab.getNetZeroEmissionsSection().tableK().getEmissionFactor(0);
             if (emissionFactorK0 == null || emissionFactorK0.trim().isEmpty() || emissionFactorK0.equals("0")) {
-                System.out.println("Table K Row 0: Emission factor NOT auto-populated, entering manually: "
-                        + expectedEmissionFactorK0);
+                System.out.println("Table K Row 0: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorK0);
                 buildingAssessmentTab.getNetZeroEmissionsSection().tableK().enterEmissionFactor(0,
-                        String.valueOf(expectedEmissionFactorK0));
+                    String.valueOf(expectedEmissionFactorK0));
                 emissionFactorK0 = buildingAssessmentTab.getNetZeroEmissionsSection().tableK().getEmissionFactor(0);
             } else {
                 System.out.println("Table K Row 0: Emission factor auto-populated: " + emissionFactorK0);
@@ -960,11 +912,11 @@ public class BuildingProjectTest extends BaseTest {
 
             assertNotNull(rowTotalK0, "Table K Row 0: Row total should be calculated");
             assertEquals(expectedRowTotalK0, rowTotalK0.trim(),
-                    String.format("Table K Row 0: calculation incorrect (%.2f × %.5f = %s, Got: %s)",
-                            distanceValueK0, actualEmissionFactorK0, expectedRowTotalK0, rowTotalK0));
+                String.format("Table K Row 0: calculation incorrect (%.2f × %.5f = %s, Got: %s)",
+                    distanceValueK0, actualEmissionFactorK0, expectedRowTotalK0, rowTotalK0));
 
             System.out.println(String.format("Table K Row 0 verified: %s/%s/%s, EF=%.5f × Distance=%.2f = %s ✓",
-                    vehicleTypeK0, vehicleSizeK0, fuelK0, actualEmissionFactorK0, distanceValueK0, rowTotalK0));
+                vehicleTypeK0, vehicleSizeK0, fuelK0, actualEmissionFactorK0, distanceValueK0, rowTotalK0));
 
             // Add Row 1
             System.out.println("Table K: Adding row 1");
@@ -978,10 +930,9 @@ public class BuildingProjectTest extends BaseTest {
             // Row 1: Check emission factor auto-population
             String emissionFactorK1 = buildingAssessmentTab.getNetZeroEmissionsSection().tableK().getEmissionFactor(1);
             if (emissionFactorK1 == null || emissionFactorK1.trim().isEmpty() || emissionFactorK1.equals("0")) {
-                System.out.println("Table K Row 1: Emission factor NOT auto-populated, entering manually: "
-                        + expectedEmissionFactorK1);
+                System.out.println("Table K Row 1: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorK1);
                 buildingAssessmentTab.getNetZeroEmissionsSection().tableK().enterEmissionFactor(1,
-                        String.valueOf(expectedEmissionFactorK1));
+                    String.valueOf(expectedEmissionFactorK1));
                 emissionFactorK1 = buildingAssessmentTab.getNetZeroEmissionsSection().tableK().getEmissionFactor(1);
             } else {
                 System.out.println("Table K Row 1: Emission factor auto-populated: " + emissionFactorK1);
@@ -1006,11 +957,11 @@ public class BuildingProjectTest extends BaseTest {
 
             assertNotNull(rowTotalK1, "Table K Row 1: Row total should be calculated");
             assertEquals(expectedRowTotalK1, rowTotalK1.trim(),
-                    String.format("Table K Row 1: calculation incorrect (%.2f × %.5f = %s, Got: %s)",
-                            distanceValueK1, actualEmissionFactorK1, expectedRowTotalK1, rowTotalK1));
+                String.format("Table K Row 1: calculation incorrect (%.2f × %.5f = %s, Got: %s)",
+                    distanceValueK1, actualEmissionFactorK1, expectedRowTotalK1, rowTotalK1));
 
             System.out.println(String.format("Table K Row 1 verified: %s/%s/%s, EF=%.5f × Distance=%.2f = %s ✓",
-                    vehicleTypeK1, vehicleSizeK1, fuelK1, actualEmissionFactorK1, distanceValueK1, rowTotalK1));
+                vehicleTypeK1, vehicleSizeK1, fuelK1, actualEmissionFactorK1, distanceValueK1, rowTotalK1));
 
             // Verify Table K total = row0 + row1
             String tableTotalK = buildingAssessmentTab.getNetZeroEmissionsSection().tableK().getTableTotal();
@@ -1020,15 +971,15 @@ public class BuildingProjectTest extends BaseTest {
             String expectedTableTotalK = String.format("%,.2f", calculatedTableTotalK);
 
             assertEquals(expectedTableTotalK, tableTotalK.trim(),
-                    String.format("Table K: Table total should equal sum of rows (%.2f + %.2f = %s, Got: %s)",
-                            row0ValueK, row1ValueK, expectedTableTotalK, tableTotalK));
+                String.format("Table K: Table total should equal sum of rows (%.2f + %.2f = %s, Got: %s)",
+                    row0ValueK, row1ValueK, expectedTableTotalK, tableTotalK));
 
             System.out.println("Table K: Table total verified (sum of rows): " + tableTotalK);
 
             // ========================================
-            // Table K (Business Travel) - uses .tableL() - 2 rows
+            // Table L (Business Travel) - 2 rows
             // ========================================
-            System.out.println("=== Testing Table K (Business Travel) ===");
+            System.out.println("\n=== Testing Table L (Business Travel) ===");
 
             // Define test data - Row 0
             String vehicleTypeL0 = "Cars (by size)";
@@ -1052,10 +1003,9 @@ public class BuildingProjectTest extends BaseTest {
             // Row 0: Check emission factor auto-population
             String emissionFactorL0 = buildingAssessmentTab.getNetZeroEmissionsSection().tableL().getEmissionFactor(0);
             if (emissionFactorL0 == null || emissionFactorL0.trim().isEmpty() || emissionFactorL0.equals("0")) {
-                System.out.println("Table L Row 0: Emission factor NOT auto-populated, entering manually: "
-                        + expectedEmissionFactorL0);
+                System.out.println("Table L Row 0: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorL0);
                 buildingAssessmentTab.getNetZeroEmissionsSection().tableL().enterEmissionFactor(0,
-                        String.valueOf(expectedEmissionFactorL0));
+                    String.valueOf(expectedEmissionFactorL0));
                 emissionFactorL0 = buildingAssessmentTab.getNetZeroEmissionsSection().tableL().getEmissionFactor(0);
             } else {
                 System.out.println("Table L Row 0: Emission factor auto-populated: " + emissionFactorL0);
@@ -1080,11 +1030,11 @@ public class BuildingProjectTest extends BaseTest {
 
             assertNotNull(rowTotalL0, "Table L Row 0: Row total should be calculated");
             assertEquals(expectedRowTotalL0, rowTotalL0.trim(),
-                    String.format("Table L Row 0: calculation incorrect (%.2f × %.6f = %s, Got: %s)",
-                            distanceValueL0, actualEmissionFactorL0, expectedRowTotalL0, rowTotalL0));
+                String.format("Table L Row 0: calculation incorrect (%.2f × %.6f = %s, Got: %s)",
+                    distanceValueL0, actualEmissionFactorL0, expectedRowTotalL0, rowTotalL0));
 
             System.out.println(String.format("Table L Row 0 verified: %s/%s/%s, EF=%.6f × Distance=%.2f = %s ✓",
-                    vehicleTypeL0, vehicleSizeL0, fuelL0, actualEmissionFactorL0, distanceValueL0, rowTotalL0));
+                vehicleTypeL0, vehicleSizeL0, fuelL0, actualEmissionFactorL0, distanceValueL0, rowTotalL0));
 
             // Add Row 1
             System.out.println("Table L: Adding row 1");
@@ -1098,10 +1048,9 @@ public class BuildingProjectTest extends BaseTest {
             // Row 1: Check emission factor auto-population
             String emissionFactorL1 = buildingAssessmentTab.getNetZeroEmissionsSection().tableL().getEmissionFactor(1);
             if (emissionFactorL1 == null || emissionFactorL1.trim().isEmpty() || emissionFactorL1.equals("0")) {
-                System.out.println("Table L Row 1: Emission factor NOT auto-populated, entering manually: "
-                        + expectedEmissionFactorL1);
+                System.out.println("Table L Row 1: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorL1);
                 buildingAssessmentTab.getNetZeroEmissionsSection().tableL().enterEmissionFactor(1,
-                        String.valueOf(expectedEmissionFactorL1));
+                    String.valueOf(expectedEmissionFactorL1));
                 emissionFactorL1 = buildingAssessmentTab.getNetZeroEmissionsSection().tableL().getEmissionFactor(1);
             } else {
                 System.out.println("Table L Row 1: Emission factor auto-populated: " + emissionFactorL1);
@@ -1126,11 +1075,11 @@ public class BuildingProjectTest extends BaseTest {
 
             assertNotNull(rowTotalL1, "Table L Row 1: Row total should be calculated");
             assertEquals(expectedRowTotalL1, rowTotalL1.trim(),
-                    String.format("Table L Row 1: calculation incorrect (%.2f × %.5f = %s, Got: %s)",
-                            distanceValueL1, actualEmissionFactorL1, expectedRowTotalL1, rowTotalL1));
+                String.format("Table L Row 1: calculation incorrect (%.2f × %.5f = %s, Got: %s)",
+                    distanceValueL1, actualEmissionFactorL1, expectedRowTotalL1, rowTotalL1));
 
             System.out.println(String.format("Table L Row 1 verified: %s/%s/%s, EF=%.5f × Distance=%.2f = %s ✓",
-                    vehicleTypeL1, vehicleSizeL1, fuelL1, actualEmissionFactorL1, distanceValueL1, rowTotalL1));
+                vehicleTypeL1, vehicleSizeL1, fuelL1, actualEmissionFactorL1, distanceValueL1, rowTotalL1));
 
             // Verify Table L total = row0 + row1
             String tableTotalL = buildingAssessmentTab.getNetZeroEmissionsSection().tableL().getTableTotal();
@@ -1140,79 +1089,28 @@ public class BuildingProjectTest extends BaseTest {
             String expectedTableTotalL = String.format("%,.2f", calculatedTableTotalL);
 
             assertEquals(expectedTableTotalL, tableTotalL.trim(),
-                    String.format("Table L: Table total should equal sum of rows (%.2f + %.2f = %s, Got: %s)",
-                            row0ValueL, row1ValueL, expectedTableTotalL, tableTotalL));
+                String.format("Table L: Table total should equal sum of rows (%.2f + %.2f = %s, Got: %s)",
+                    row0ValueL, row1ValueL, expectedTableTotalL, tableTotalL));
 
             System.out.println("Table L: Table total verified (sum of rows): " + tableTotalL);
 
             // ========================================
-            // Table L (Flights) - SKIPPED - uses .tableM() - PLACEHOLDER
+            // Table M (Flights) - PLACEHOLDER
             // ========================================
-            System.out.println("=== Table L (Flights) - Skipped for now ===");
-            // TODO: Implement Table L (Flights) testing when ready
-
-            // ========================================
-            // Table M (Food prepared) - uses .tableN()
-            // ========================================
-            System.out.println("=== Testing Table M (Food prepared) ===");
-
-            // Define test data
-            String foodTypeM = "1 standard breakfast";
-            String quantityM = "100";
-            double expectedEmissionFactorM = 0.84;
-
-            // Enter food type
-            buildingAssessmentTab.getNetZeroEmissionsSection().tableN().enterFoodType(0, foodTypeM);
-
-            // Check emission factor auto-population
-            String emissionFactorM = buildingAssessmentTab.getNetZeroEmissionsSection().tableN().getEmissionFactor(0);
-            if (emissionFactorM == null || emissionFactorM.trim().isEmpty() || emissionFactorM.equals("0")) {
-                System.out.println(
-                        "Table M: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorM);
-                buildingAssessmentTab.getNetZeroEmissionsSection().tableN().enterEmissionFactor(0,
-                        String.valueOf(expectedEmissionFactorM));
-                emissionFactorM = buildingAssessmentTab.getNetZeroEmissionsSection().tableN().getEmissionFactor(0);
-            } else {
-                System.out.println("Table M: Emission factor auto-populated: " + emissionFactorM);
-            }
-
-            // Enter quantity
-            buildingAssessmentTab.getNetZeroEmissionsSection().tableN().enterQuantity(0, quantityM);
-
-            // Select units
-            buildingAssessmentTab.getNetZeroEmissionsSection().tableN().selectUnits(0, "breakfast");
-
-            // Wait for calculations
-            page.waitForTimeout(1500);
-
-            // Get and verify totals
-            String rowTotalM = buildingAssessmentTab.getNetZeroEmissionsSection().tableN().getRowTotal(0);
-            String tableTotalM = buildingAssessmentTab.getNetZeroEmissionsSection().tableN().getTableTotal();
-            System.out.println("Table M: Row total calculated: " + rowTotalM);
-            System.out.println("Table M: Table total calculated: " + tableTotalM);
-
-            // Verify calculation: emission_factor × quantity
-            double actualEmissionFactorM = Double.parseDouble(emissionFactorM.replace(",", ""));
-            double quantityValueM = Double.parseDouble(quantityM);
-            double calculatedRowTotalM = actualEmissionFactorM * quantityValueM;
-            String expectedRowTotalM = String.format("%,.2f", calculatedRowTotalM);
-
-            assertNotNull(rowTotalM, "Table M: Row total should be calculated");
-            assertEquals(expectedRowTotalM, rowTotalM.trim(),
-                    String.format("Table M: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                            actualEmissionFactorM, quantityValueM, expectedRowTotalM, rowTotalM));
-
-            assertNotNull(tableTotalM, "Table M: Table total should be calculated");
-            assertEquals(expectedRowTotalM, tableTotalM.trim(),
-                    "Table M: Table total should equal row total for single row");
-
-            System.out.println(String.format("Table M verified: %s, EF=%.2f × Quantity=%.2f = %s ✓",
-                    foodTypeM, actualEmissionFactorM, quantityValueM, rowTotalM));
+            System.out.println("\n=== Table M (Flights) - Skipped for now ===");
+            // TODO: Implement Table M testing when ready
 
             // ========================================
-            // Table N (Logistics & Supply) - uses .tableO()
+            // Table N (Food prepared)
             // ========================================
-            System.out.println("=== Testing Table N (Logistics & Supply) ===");
+            System.out.println("\n=== Testing Table N (Food prepared) ===");
+
+            
+
+            // ========================================
+            // Table O (Logistics & Supply)
+            // ========================================
+            System.out.println("\n=== Testing Table O (Logistics & Supply) ===");
 
             // Define test data
             String vehicleO = "HGV";
@@ -1234,10 +1132,9 @@ public class BuildingProjectTest extends BaseTest {
             // Check emission factor auto-population
             String emissionFactorO = buildingAssessmentTab.getNetZeroEmissionsSection().tableO().getEmissionFactor(0);
             if (emissionFactorO == null || emissionFactorO.trim().isEmpty() || emissionFactorO.equals("0")) {
-                System.out.println(
-                        "Table O: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorO);
+                System.out.println("Table O: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorO);
                 buildingAssessmentTab.getNetZeroEmissionsSection().tableO().enterEmissionFactor(0,
-                        String.valueOf(expectedEmissionFactorO));
+                    String.valueOf(expectedEmissionFactorO));
                 emissionFactorO = buildingAssessmentTab.getNetZeroEmissionsSection().tableO().getEmissionFactor(0);
             } else {
                 System.out.println("Table O: Emission factor auto-populated: " + emissionFactorO);
@@ -1265,20 +1162,20 @@ public class BuildingProjectTest extends BaseTest {
 
             assertNotNull(rowTotalO, "Table O: Row total should be calculated");
             assertEquals(expectedRowTotalO, rowTotalO.trim(),
-                    String.format("Table O: Row total calculation incorrect (%.2f × %.2f × %.2f = %s, Got: %s)",
-                            weightValueO, distanceValueO, actualEmissionFactorO, expectedRowTotalO, rowTotalO));
+                String.format("Table O: Row total calculation incorrect (%.2f × %.2f × %.2f = %s, Got: %s)",
+                    weightValueO, distanceValueO, actualEmissionFactorO, expectedRowTotalO, rowTotalO));
 
             assertNotNull(tableTotalO, "Table O: Table total should be calculated");
             assertEquals(expectedRowTotalO, tableTotalO.trim(),
                     "Table O: Table total should equal row total for single row");
 
             System.out.println(String.format("Table O verified: %s/%s/%s, Weight=%.2f × Distance=%.2f × EF=%.2f = %s ✓",
-                    vehicleO, typeO, fuelO, weightValueO, distanceValueO, actualEmissionFactorO, rowTotalO));
+                vehicleO, typeO, fuelO, weightValueO, distanceValueO, actualEmissionFactorO, rowTotalO));
 
             // ========================================
-            // Table O (Primary Materials) - uses .tableP()
+            // Table P (Primary Materials)
             // ========================================
-            System.out.println("=== Testing Table O (Primary Materials) ===");
+            System.out.println("\n=== Testing Table P (Primary Materials) ===");
 
             // Define test data
             String materialP = "Bricks";
@@ -1291,10 +1188,9 @@ public class BuildingProjectTest extends BaseTest {
             // Check emission factor auto-population
             String emissionFactorP = buildingAssessmentTab.getNetZeroEmissionsSection().tableP().getEmissionFactor(0);
             if (emissionFactorP == null || emissionFactorP.trim().isEmpty() || emissionFactorP.equals("0")) {
-                System.out.println(
-                        "Table P: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorP);
+                System.out.println("Table P: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorP);
                 buildingAssessmentTab.getNetZeroEmissionsSection().tableP().enterEmissionFactor(0,
-                        String.valueOf(expectedEmissionFactorP));
+                    String.valueOf(expectedEmissionFactorP));
                 emissionFactorP = buildingAssessmentTab.getNetZeroEmissionsSection().tableP().getEmissionFactor(0);
             } else {
                 System.out.println("Table P: Emission factor auto-populated: " + emissionFactorP);
@@ -1304,8 +1200,7 @@ public class BuildingProjectTest extends BaseTest {
             buildingAssessmentTab.getNetZeroEmissionsSection().tableP().enterQuantity(0, quantityP);
 
             // Check units auto-population (if applicable)
-            // String unitsP =
-            // buildingAssessmentTab.getNetZeroEmissionsSection().tableP().getUnits(0);
+            // String unitsP = buildingAssessmentTab.getNetZeroEmissionsSection().tableP().getUnits(0);
             // System.out.println("Table P: Units auto-populated: " + unitsP);
 
             // Wait for calculations
@@ -1325,20 +1220,20 @@ public class BuildingProjectTest extends BaseTest {
 
             assertNotNull(rowTotalP, "Table P: Row total should be calculated");
             assertEquals(expectedRowTotalP, rowTotalP.trim(),
-                    String.format("Table P: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                            actualEmissionFactorP, quantityValueP, expectedRowTotalP, rowTotalP));
+                String.format("Table P: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
+                    actualEmissionFactorP, quantityValueP, expectedRowTotalP, rowTotalP));
 
             assertNotNull(tableTotalP, "Table P: Table total should be calculated");
             assertEquals(expectedRowTotalP, tableTotalP.trim(),
                     "Table P: Table total should equal row total for single row");
 
             System.out.println(String.format("Table P verified: %s, EF=%.2f × Quantity=%.2f = %s ✓",
-                    materialP, actualEmissionFactorP, quantityValueP, rowTotalP));
+                materialP, actualEmissionFactorP, quantityValueP, rowTotalP));
 
             // ========================================
-            // Table P (Recycled Materials) - uses .tableQ()
+            // Table Q (Recycled Materials)
             // ========================================
-            System.out.println("=== Testing Table P (Recycled Materials) ===");
+            System.out.println("\n=== Testing Table Q (Recycled Materials) ===");
 
             // Define test data - Using data provided for construction materials
             String materialQ = "Asbestos"; // Example recycled material
@@ -1351,10 +1246,9 @@ public class BuildingProjectTest extends BaseTest {
             // Check emission factor auto-population
             String emissionFactorQ = buildingAssessmentTab.getNetZeroEmissionsSection().tableQ().getEmissionFactor(0);
             if (emissionFactorQ == null || emissionFactorQ.trim().isEmpty() || emissionFactorQ.equals("0")) {
-                System.out.println(
-                        "Table Q: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorQ);
+                System.out.println("Table Q: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorQ);
                 buildingAssessmentTab.getNetZeroEmissionsSection().tableQ().enterEmissionFactor(0,
-                        String.valueOf(expectedEmissionFactorQ));
+                    String.valueOf(expectedEmissionFactorQ));
                 emissionFactorQ = buildingAssessmentTab.getNetZeroEmissionsSection().tableQ().getEmissionFactor(0);
             } else {
                 System.out.println("Table Q: Emission factor auto-populated: " + emissionFactorQ);
@@ -1364,8 +1258,7 @@ public class BuildingProjectTest extends BaseTest {
             buildingAssessmentTab.getNetZeroEmissionsSection().tableQ().enterQuantity(0, quantityQ);
 
             // Check units auto-population (if applicable)
-            // String unitsP =
-            // buildingAssessmentTab.getNetZeroEmissionsSection().tableP().getUnits(0);
+            // String unitsP = buildingAssessmentTab.getNetZeroEmissionsSection().tableP().getUnits(0);
             // System.out.println("Table P: Units auto-populated: " + unitsP);
 
             // Wait for calculations
@@ -1385,21 +1278,20 @@ public class BuildingProjectTest extends BaseTest {
 
             assertNotNull(rowTotalQ, "Table Q: Row total should be calculated");
             assertEquals(expectedRowTotalQ, rowTotalQ.trim(),
-                    String.format("Table Q: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                            actualEmissionFactorQ, quantityValueQ, expectedRowTotalQ, rowTotalQ));
+                String.format("Table Q: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
+                    actualEmissionFactorQ, quantityValueQ, expectedRowTotalQ, rowTotalQ));
 
             assertNotNull(tableTotalQ, "Table Q: Table total should be calculated");
             assertEquals(expectedRowTotalQ, tableTotalQ.trim(),
                     "Table Q: Table total should equal row total for single row");
 
             System.out.println(String.format("Table Q verified: %s, EF=%.2f × Quantity=%.2f = %s ✓",
-                    materialQ, actualEmissionFactorQ, quantityValueQ, rowTotalQ));
+                materialQ, actualEmissionFactorQ, quantityValueQ, rowTotalQ));
 
             // ========================================
-            // Table Q (Additional Materials - uses .tableR() - Note: May overlap with
-            // recycled materials)
+            // Table R (Additional Materials - Note: May overlap with recycled materials)
             // ========================================
-            System.out.println("=== Testing Table Q (Additional Materials) ===");
+            System.out.println("\n=== Testing Table R (Additional Materials) ===");
 
             // Define test data
             String materialR = "Clothing";
@@ -1412,10 +1304,9 @@ public class BuildingProjectTest extends BaseTest {
             // Check emission factor auto-population
             String emissionFactorR = buildingAssessmentTab.getNetZeroEmissionsSection().tableR().getEmissionFactor(0);
             if (emissionFactorR == null || emissionFactorR.trim().isEmpty() || emissionFactorR.equals("0")) {
-                System.out.println(
-                        "Table R: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorR);
+                System.out.println("Table R: Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactorR);
                 buildingAssessmentTab.getNetZeroEmissionsSection().tableR().enterEmissionFactor(0,
-                        String.valueOf(expectedEmissionFactorR));
+                    String.valueOf(expectedEmissionFactorR));
                 emissionFactorR = buildingAssessmentTab.getNetZeroEmissionsSection().tableR().getEmissionFactor(0);
             } else {
                 System.out.println("Table R: Emission factor auto-populated: " + emissionFactorR);
@@ -1425,8 +1316,7 @@ public class BuildingProjectTest extends BaseTest {
             buildingAssessmentTab.getNetZeroEmissionsSection().tableR().enterQuantity(0, quantityR);
 
             // Check units auto-population (if applicable)
-            // String unitsR =
-            // buildingAssessmentTab.getNetZeroEmissionsSection().tableR().getUnits(0);
+            // String unitsR = buildingAssessmentTab.getNetZeroEmissionsSection().tableR().getUnits(0);
             // System.out.println("Table R: Units auto-populated: " + unitsR);
 
             // Wait for calculations
@@ -1446,17 +1336,17 @@ public class BuildingProjectTest extends BaseTest {
 
             assertNotNull(rowTotalR, "Table R: Row total should be calculated");
             assertEquals(expectedRowTotalR, rowTotalR.trim(),
-                    String.format("Table R: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                            actualEmissionFactorR, quantityValueR, expectedRowTotalR, rowTotalR));
+                String.format("Table R: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
+                    actualEmissionFactorR, quantityValueR, expectedRowTotalR, rowTotalR));
 
             assertNotNull(tableTotalR, "Table R: Table total should be calculated");
             assertEquals(expectedRowTotalR, tableTotalR.trim(),
                     "Table R: Table total should equal row total for single row");
 
             System.out.println(String.format("Table R verified: %s, EF=%.2f × Quantity=%.2f = %s ✓",
-                    materialR, actualEmissionFactorR, quantityValueR, rowTotalR));
+                materialR, actualEmissionFactorR, quantityValueR, rowTotalR));
 
-            System.out.println("\n=== All Scope 3 Tables (E-Q) Testing Complete ===");
+            System.out.println("\n=== All Scope 3 Tables (E-R) Testing Complete ===");
 
             // ========================================
             // SUMMARY OF SCOPES VALIDATION
@@ -1519,11 +1409,11 @@ public class BuildingProjectTest extends BaseTest {
 
                 double calculatedTotal = scope1Kg + scope2Kg + scope3Kg;
                 assertEquals(calculatedTotal, totalKg, 0.01,
-                        String.format("Summary total should equal sum of scopes: %.2f + %.2f + %.2f = %.2f (Got: %.2f)",
-                                scope1Kg, scope2Kg, scope3Kg, calculatedTotal, totalKg));
+                    String.format("Summary total should equal sum of scopes: %.2f + %.2f + %.2f = %.2f (Got: %.2f)",
+                        scope1Kg, scope2Kg, scope3Kg, calculatedTotal, totalKg));
 
                 System.out.println(String.format("✓ Total emissions validation: %.2f + %.2f + %.2f = %.2f KgCO2e",
-                        scope1Kg, scope2Kg, scope3Kg, totalKg));
+                    scope1Kg, scope2Kg, scope3Kg, totalKg));
             } catch (NumberFormatException e) {
                 System.out.println("⚠ Could not parse emission values for numeric validation: " + e.getMessage());
             }
@@ -1536,12 +1426,11 @@ public class BuildingProjectTest extends BaseTest {
             page.waitForTimeout(2000);
             System.out.println("✓ Emissions data saved successfully");
 
-            // Navigate to Net Zero Energy tab
+            //Navigate to Net Zero Energy tab
             System.out.println("\n=== Navigating to Net Zero Energy Tab ===");
             buildingAssessmentTab.goToNetZeroEnergy();
             System.out.println("✓ Navigated to Net Zero Energy Tab");
-        });
-        Allure.step("Net Zero Energy Tab - Data Retention Verification", () -> {
+
             // ========================================
             // ENERGY SECTION - Verify data retention from Emissions tables
             // ========================================
@@ -1559,10 +1448,8 @@ public class BuildingProjectTest extends BaseTest {
 
             // Get values from Energy Table A
             String energyTableA_Fuel = buildingAssessmentTab.getNetZeroEnergySection().tableA().getFuel(0);
-            String energyTableA_EmissionFactor = buildingAssessmentTab.getNetZeroEnergySection().tableA()
-                    .getEmissionFactor(0);
-            String energyTableA_Consumption = buildingAssessmentTab.getNetZeroEnergySection().tableA()
-                    .getConsumption(0);
+            String energyTableA_EmissionFactor = buildingAssessmentTab.getNetZeroEnergySection().tableA().getEmissionFactor(0);
+            String energyTableA_Consumption = buildingAssessmentTab.getNetZeroEnergySection().tableA().getConsumption(0);
             String energyTableA_Units = buildingAssessmentTab.getNetZeroEnergySection().tableA().getUnits(0);
             String energyTableA_RowTotal = buildingAssessmentTab.getNetZeroEnergySection().tableA().getRowTotal(0);
             String energyTableA_TableTotal = buildingAssessmentTab.getNetZeroEnergySection().tableA().getTableTotal();
@@ -1577,40 +1464,36 @@ public class BuildingProjectTest extends BaseTest {
 
             // Verify data matches Emissions Table A
             // String comparisons for text fields
-            assertEquals(fuelTypeA[0], energyTableA_Fuel,
-                    "Energy Table A: Fuel should match Emissions Table A");
-            assertEquals(unitsA[0], energyTableA_Units,
-                    "Energy Table A: Units should match Emissions Table A");
+            assertEquals(fuelTypeA, energyTableA_Fuel,
+                "Energy Table A: Fuel should match Emissions Table A");
+            assertEquals(unitsA, energyTableA_Units,
+                "Energy Table A: Units should match Emissions Table A");
 
-            // Numeric comparisons for number fields (parse to handle formatting differences
-            // like "100" vs "100.00")
-            assertEquals(Double.parseDouble(emissionFactorA[0].replace(",", "")),
-                    Double.parseDouble(energyTableA_EmissionFactor.replace(",", "")), 0.01,
-                    "Energy Table A: Emission Factor should match Emissions Table A");
-            assertEquals(Double.parseDouble(consumptionA[0]),
-                    Double.parseDouble(energyTableA_Consumption.replace(",", "")), 0.01,
-                    "Energy Table A: Consumption should match Emissions Table A");
-            assertEquals(Double.parseDouble(rowTotalA[0].replace(",", "")),
-                    Double.parseDouble(energyTableA_RowTotal.replace(",", "")), 0.01,
-                    "Energy Table A: Row Total should match Emissions Table A");
-            assertEquals(Double.parseDouble(tableTotalA[0].replace(",", "")),
-                    Double.parseDouble(energyTableA_TableTotal.replace(",", "")), 0.01,
-                    "Energy Table A: Table Total should match Emissions Table A");
+            // Numeric comparisons for number fields (parse to handle formatting differences like "100" vs "100.00")
+            assertEquals(Double.parseDouble(emissionFactorA.replace(",", "")),
+                Double.parseDouble(energyTableA_EmissionFactor.replace(",", "")), 0.01,
+                "Energy Table A: Emission Factor should match Emissions Table A");
+            assertEquals(Double.parseDouble(consumptionA),
+                Double.parseDouble(energyTableA_Consumption.replace(",", "")), 0.01,
+                "Energy Table A: Consumption should match Emissions Table A");
+            assertEquals(Double.parseDouble(rowTotalA.replace(",", "")),
+                Double.parseDouble(energyTableA_RowTotal.replace(",", "")), 0.01,
+                "Energy Table A: Row Total should match Emissions Table A");
+            assertEquals(Double.parseDouble(tableTotalA.replace(",", "")),
+                Double.parseDouble(energyTableA_TableTotal.replace(",", "")), 0.01,
+                "Energy Table A: Table Total should match Emissions Table A");
 
             System.out.println("✓ Energy Table A data matches Emissions Table A");
 
             // ========================================
             // Energy Table B = Emissions Table C (Mobile Combustion)
             // ========================================
-            System.out
-                    .println("\n=== Verifying Energy Table B (should match Emissions Table C - Mobile Combustion) ===");
+            System.out.println("\n=== Verifying Energy Table B (should match Emissions Table C - Mobile Combustion) ===");
 
             // Get values from Energy Table B
             String energyTableB_Fuel = buildingAssessmentTab.getNetZeroEnergySection().tableB().getFuel(0);
-            String energyTableB_EmissionFactor = buildingAssessmentTab.getNetZeroEnergySection().tableB()
-                    .getEmissionFactor(0);
-            String energyTableB_Consumption = buildingAssessmentTab.getNetZeroEnergySection().tableB()
-                    .getConsumption(0);
+            String energyTableB_EmissionFactor = buildingAssessmentTab.getNetZeroEnergySection().tableB().getEmissionFactor(0);
+            String energyTableB_Consumption = buildingAssessmentTab.getNetZeroEnergySection().tableB().getConsumption(0);
             String energyTableB_Units = buildingAssessmentTab.getNetZeroEnergySection().tableB().getUnits(0);
             String energyTableB_RowTotal = buildingAssessmentTab.getNetZeroEnergySection().tableB().getRowTotal(0);
             String energyTableB_TableTotal = buildingAssessmentTab.getNetZeroEnergySection().tableB().getTableTotal();
@@ -1625,25 +1508,24 @@ public class BuildingProjectTest extends BaseTest {
 
             // Verify data matches Emissions Table C
             // String comparisons for text fields
-            assertEquals(fuelTypeC[0], energyTableB_Fuel,
-                    "Energy Table B: Fuel should match Emissions Table C");
-            assertEquals(unitsC[0], energyTableB_Units,
-                    "Energy Table B: Units should match Emissions Table C");
+            assertEquals(fuelTypeC, energyTableB_Fuel,
+                "Energy Table B: Fuel should match Emissions Table C");
+            assertEquals(unitsC, energyTableB_Units,
+                "Energy Table B: Units should match Emissions Table C");
 
-            // Numeric comparisons for number fields (parse to handle formatting differences
-            // like "100" vs "100.00")
-            assertEquals(Double.parseDouble(emissionFactorC[0].replace(",", "")),
-                    Double.parseDouble(energyTableB_EmissionFactor.replace(",", "")), 0.01,
-                    "Energy Table B: Emission Factor should match Emissions Table C");
-            assertEquals(Double.parseDouble(consumptionC[0]),
-                    Double.parseDouble(energyTableB_Consumption.replace(",", "")), 0.01,
-                    "Energy Table B: Consumption should match Emissions Table C");
-            assertEquals(Double.parseDouble(rowTotalC[0].replace(",", "")),
-                    Double.parseDouble(energyTableB_RowTotal.replace(",", "")), 0.01,
-                    "Energy Table B: Row Total should match Emissions Table C");
-            assertEquals(Double.parseDouble(tableTotalC[0].replace(",", "")),
-                    Double.parseDouble(energyTableB_TableTotal.replace(",", "")), 0.01,
-                    "Energy Table B: Table Total should match Emissions Table C");
+            // Numeric comparisons for number fields (parse to handle formatting differences like "100" vs "100.00")
+            assertEquals(Double.parseDouble(emissionFactorC.replace(",", "")),
+                Double.parseDouble(energyTableB_EmissionFactor.replace(",", "")), 0.01,
+                "Energy Table B: Emission Factor should match Emissions Table C");
+            assertEquals(Double.parseDouble(consumptionC),
+                Double.parseDouble(energyTableB_Consumption.replace(",", "")), 0.01,
+                "Energy Table B: Consumption should match Emissions Table C");
+            assertEquals(Double.parseDouble(rowTotalC.replace(",", "")),
+                Double.parseDouble(energyTableB_RowTotal.replace(",", "")), 0.01,
+                "Energy Table B: Row Total should match Emissions Table C");
+            assertEquals(Double.parseDouble(tableTotalC.replace(",", "")),
+                Double.parseDouble(energyTableB_TableTotal.replace(",", "")), 0.01,
+                "Energy Table B: Table Total should match Emissions Table C");
 
             System.out.println("✓ Energy Table B data matches Emissions Table C");
 
@@ -1658,10 +1540,8 @@ public class BuildingProjectTest extends BaseTest {
 
             // Get values from Energy Table C
             String energyTableC_Activity = buildingAssessmentTab.getNetZeroEnergySection().tableC().getActivity(0);
-            String energyTableC_EmissionFactor = buildingAssessmentTab.getNetZeroEnergySection().tableC()
-                    .getEmissionFactor(0);
-            String energyTableC_Consumption = buildingAssessmentTab.getNetZeroEnergySection().tableC()
-                    .getConsumption(0);
+            String energyTableC_EmissionFactor = buildingAssessmentTab.getNetZeroEnergySection().tableC().getEmissionFactor(0);
+            String energyTableC_Consumption = buildingAssessmentTab.getNetZeroEnergySection().tableC().getConsumption(0);
             String energyTableC_Units = buildingAssessmentTab.getNetZeroEnergySection().tableC().getUnits(0);
             String energyTableC_RowTotal = buildingAssessmentTab.getNetZeroEnergySection().tableC().getRowTotal(0);
             String energyTableC_TableTotal = buildingAssessmentTab.getNetZeroEnergySection().tableC().getTableTotal();
@@ -1676,25 +1556,24 @@ public class BuildingProjectTest extends BaseTest {
 
             // Verify data matches Emissions Table D
             // String comparisons for text fields
-            assertEquals(activityD[0], energyTableC_Activity,
-                    "Energy Table C: Activity should match Emissions Table D");
-            assertEquals(unitsD[0], energyTableC_Units,
-                    "Energy Table C: Units should match Emissions Table D");
+            assertEquals(activityD, energyTableC_Activity,
+                "Energy Table C: Activity should match Emissions Table D");
+            assertEquals(unitsD, energyTableC_Units,
+                "Energy Table C: Units should match Emissions Table D");
 
-            // Numeric comparisons for number fields (parse to handle formatting differences
-            // like "100" vs "100.00")
-            assertEquals(Double.parseDouble(emissionFactorD[0].replace(",", "")),
-                    Double.parseDouble(energyTableC_EmissionFactor.replace(",", "")), 0.01,
-                    "Energy Table C: Emission Factor should match Emissions Table D");
-            assertEquals(Double.parseDouble(consumptionD[0]),
-                    Double.parseDouble(energyTableC_Consumption.replace(",", "")), 0.01,
-                    "Energy Table C: Consumption should match Emissions Table D");
-            assertEquals(Double.parseDouble(rowTotalD[0].replace(",", "")),
-                    Double.parseDouble(energyTableC_RowTotal.replace(",", "")), 0.01,
-                    "Energy Table C: Row Total should match Emissions Table D");
-            assertEquals(Double.parseDouble(tableTotalD[0].replace(",", "")),
-                    Double.parseDouble(energyTableC_TableTotal.replace(",", "")), 0.01,
-                    "Energy Table C: Table Total should match Emissions Table D");
+            // Numeric comparisons for number fields (parse to handle formatting differences like "100" vs "100.00")
+            assertEquals(Double.parseDouble(emissionFactorD.replace(",", "")),
+                Double.parseDouble(energyTableC_EmissionFactor.replace(",", "")), 0.01,
+                "Energy Table C: Emission Factor should match Emissions Table D");
+            assertEquals(Double.parseDouble(consumptionD),
+                Double.parseDouble(energyTableC_Consumption.replace(",", "")), 0.01,
+                "Energy Table C: Consumption should match Emissions Table D");
+            assertEquals(Double.parseDouble(rowTotalD.replace(",", "")),
+                Double.parseDouble(energyTableC_RowTotal.replace(",", "")), 0.01,
+                "Energy Table C: Row Total should match Emissions Table D");
+            assertEquals(Double.parseDouble(tableTotalD.replace(",", "")),
+                Double.parseDouble(energyTableC_TableTotal.replace(",", "")), 0.01,
+                "Energy Table C: Table Total should match Emissions Table D");
 
             System.out.println("✓ Energy Table C data matches Emissions Table D");
 
@@ -1714,22 +1593,22 @@ public class BuildingProjectTest extends BaseTest {
             String expectedEnergyScope1TotalStr = String.format("%,.2f", expectedEnergyScope1Total);
 
             assertEquals(expectedEnergyScope1TotalStr, energyScope1Total.trim(),
-                    String.format("Energy Scope 1 Total should equal Table A + Table B (%.2f + %.2f = %s, Got: %s)",
-                            energyTableATotal, energyTableBTotal, expectedEnergyScope1TotalStr, energyScope1Total));
+                String.format("Energy Scope 1 Total should equal Table A + Table B (%.2f + %.2f = %s, Got: %s)",
+                    energyTableATotal, energyTableBTotal, expectedEnergyScope1TotalStr, energyScope1Total));
 
             System.out.println(String.format("✓ Energy Scope 1 Total verified: %.2f + %.2f = %s",
-                    energyTableATotal, energyTableBTotal, energyScope1Total));
+                energyTableATotal, energyTableBTotal, energyScope1Total));
 
             // Get Energy Scope 2 Total (should equal Energy Table C)
             String energyScope2Total = buildingAssessmentTab.getNetZeroEnergySection().getScope2Total();
             System.out.println("Energy Scope 2 Total: " + energyScope2Total);
 
             assertEquals(energyTableC_TableTotal.trim(), energyScope2Total.trim(),
-                    String.format("Energy Scope 2 Total should equal Table C total (Got Table C: %s, Scope 2: %s)",
-                            energyTableC_TableTotal, energyScope2Total));
+                String.format("Energy Scope 2 Total should equal Table C total (Got Table C: %s, Scope 2: %s)",
+                    energyTableC_TableTotal, energyScope2Total));
 
             System.out.println(String.format("✓ Energy Scope 2 Total verified: Table C Total (%s) = Scope 2 Total (%s)",
-                    energyTableC_TableTotal, energyScope2Total));
+                energyTableC_TableTotal, energyScope2Total));
 
             // ========================================
             // Verify Energy Summary of Scopes
@@ -1749,12 +1628,9 @@ public class BuildingProjectTest extends BaseTest {
             String energySummaryTotalMtCO2e = buildingAssessmentTab.getNetZeroEnergySection().getSummaryTotalMtCO2e();
 
             System.out.println("Energy Summary Table Values:");
-            System.out.println(
-                    "  Scope 1: " + energySummaryScope1KgCO2e + " KgCO2e | " + energySummaryScope1MtCO2e + " MtCO2e");
-            System.out.println(
-                    "  Scope 2: " + energySummaryScope2KgCO2e + " KgCO2e | " + energySummaryScope2MtCO2e + " MtCO2e");
-            System.out.println(
-                    "  Total:   " + energySummaryTotalKgCO2e + " KgCO2e | " + energySummaryTotalMtCO2e + " MtCO2e");
+            System.out.println("  Scope 1: " + energySummaryScope1KgCO2e + " KgCO2e | " + energySummaryScope1MtCO2e + " MtCO2e");
+            System.out.println("  Scope 2: " + energySummaryScope2KgCO2e + " KgCO2e | " + energySummaryScope2MtCO2e + " MtCO2e");
+            System.out.println("  Total:   " + energySummaryTotalKgCO2e + " KgCO2e | " + energySummaryTotalMtCO2e + " MtCO2e");
 
             // Validate summary values are not null/empty
             assertNotNull(energySummaryScope1KgCO2e, "Energy Summary Scope 1 KgCO2e should not be null");
@@ -1773,20 +1649,19 @@ public class BuildingProjectTest extends BaseTest {
 
                 double calculatedEnergyTotal = energyScope1Kg + energyScope2Kg;
                 assertEquals(calculatedEnergyTotal, energyTotalKg, 0.01,
-                        String.format("Energy Summary total should equal sum of scopes: %.2f + %.2f = %.2f (Got: %.2f)",
-                                energyScope1Kg, energyScope2Kg, calculatedEnergyTotal, energyTotalKg));
+                    String.format("Energy Summary total should equal sum of scopes: %.2f + %.2f = %.2f (Got: %.2f)",
+                        energyScope1Kg, energyScope2Kg, calculatedEnergyTotal, energyTotalKg));
 
                 System.out.println(String.format("✓ Energy Total validation: %.2f + %.2f = %.2f KgCO2e",
-                        energyScope1Kg, energyScope2Kg, energyTotalKg));
+                    energyScope1Kg, energyScope2Kg, energyTotalKg));
             } catch (NumberFormatException e) {
-                System.out
-                        .println("⚠ Could not parse energy emission values for numeric validation: " + e.getMessage());
+                System.out.println("⚠ Could not parse energy emission values for numeric validation: " + e.getMessage());
             }
 
             System.out.println("\n✓ Energy Summary of Scopes Validation Complete");
             System.out.println("\n✓ All Energy Tables verified - Data successfully retained from Emissions tables");
-        });
-        Allure.step("Net Zero Water Tab - Data Entry and Verification", () -> {
+
+            // ========================================
             // NET ZERO WATER SECTION
             // ========================================
             System.out.println("\n=== Navigating to Net Zero Water Section ===");
@@ -1795,6 +1670,7 @@ public class BuildingProjectTest extends BaseTest {
             System.out.println("✓ Navigated to Net Zero Water Section");
 
             // TODO: Check if reporting period is retained
+
 
             // ========================================
             // a. Consumption - Table A (Potable Water)
@@ -1806,7 +1682,8 @@ public class BuildingProjectTest extends BaseTest {
 
             System.out.println("\n=== Filling Table A (Potable Water) ===");
             buildingAssessmentTab.getNetZeroWaterSection().tableA().fillRow(
-                    0, "Cooking", "Reverse Osmosis", "RO", "123.00", "Avg", "132");
+                0, "Cooking", "Reverse Osmosis", "RO", "123.00", "Avg", "132"
+            );
             page.waitForTimeout(1500);
 
             // Verify KL/annum calculation
@@ -1822,7 +1699,8 @@ public class BuildingProjectTest extends BaseTest {
             // ========================================
             System.out.println("\n=== Filling Table B (Non-Potable Water) ===");
             buildingAssessmentTab.getNetZeroWaterSection().tableB().fillRow(
-                    0, "Handwashing", "Tertiary treated / Fresh", "DM", "123.00", "Avg", "123");
+                0, "Handwashing", "Tertiary treated / Fresh", "DM", "123.00", "Avg", "123"
+            );
             page.waitForTimeout(1500);
 
             // Verify KL/annum calculation
@@ -1847,7 +1725,8 @@ public class BuildingProjectTest extends BaseTest {
 
             System.out.println("\n=== Filling Table C (Recycled on-site) ===");
             buildingAssessmentTab.getNetZeroWaterSection().tableC().fillRow(
-                    0, "Treated Blackwater", "STP output", "Treated", "60", "Avg", "5");
+                0, "Treated Blackwater", "STP output", "", "0.00", "", ""
+            );
             page.waitForTimeout(1500);
 
             String onsiteTableTotal = buildingAssessmentTab.getNetZeroWaterSection().tableC().getTableTotal();
@@ -1859,7 +1738,8 @@ public class BuildingProjectTest extends BaseTest {
             // ========================================
             System.out.println("\n=== Filling Table D (Recycled off-site) ===");
             buildingAssessmentTab.getNetZeroWaterSection().tableD().fillRow(
-                    0, "Reclaimed water from Municipality", "River", "Fresh water", "20.00", "Avg", "50");
+                0, "Reclaimed water from Municipality", "", "", "0.00", "", ""
+            );
             page.waitForTimeout(1500);
 
             String offsiteTableTotal = buildingAssessmentTab.getNetZeroWaterSection().tableD().getTableTotal();
@@ -1880,7 +1760,8 @@ public class BuildingProjectTest extends BaseTest {
 
             System.out.println("\n=== Filling Table E (Run-off for treatment) ===");
             buildingAssessmentTab.getNetZeroWaterSection().tableE().fillRow(
-                    0, "Hard surface run-off", "Roads, Courtyards", "NA", "102", "kL/hr", "Avg", "63");
+                0, "Hard surface run-off", "Roads, Courtyards", "", "", "kL/hr", "", ""
+            );
             page.waitForTimeout(1500);
 
             String treatmentTableTotal = buildingAssessmentTab.getNetZeroWaterSection().tableE().getTableTotal();
@@ -1892,7 +1773,8 @@ public class BuildingProjectTest extends BaseTest {
             // ========================================
             System.out.println("\n=== Filling Table F (Run-off for recharge) ===");
             buildingAssessmentTab.getNetZeroWaterSection().tableF().fillRow(
-                    0, "Roof run-off", "Terraces, roofs, platforms", "NA", "1421", "kL/hr", "Avg", "132");
+                0, "Roof run-off", "Terraces, roofs, platforms", "", "", "kL/hr", "", ""
+            );
             page.waitForTimeout(1500);
 
             String rechargeTableTotal = buildingAssessmentTab.getNetZeroWaterSection().tableF().getTableTotal();
@@ -1904,7 +1786,8 @@ public class BuildingProjectTest extends BaseTest {
             // ========================================
             System.out.println("\n=== Filling Table G (Run-off outside boundary) ===");
             buildingAssessmentTab.getNetZeroWaterSection().tableG().fillRow(
-                    0, "Recharging groundwater outside", "Groundwater", "NA", "132", "kL/hr", "Avg", "63");
+                0, "Recharging groundwater outside", "", "", "", "", "", ""
+            );
             page.waitForTimeout(1500);
 
             String outsideTableTotal = buildingAssessmentTab.getNetZeroWaterSection().tableG().getTableTotal();
@@ -1925,7 +1808,8 @@ public class BuildingProjectTest extends BaseTest {
 
             System.out.println("\n=== Filling Table H (Freshwater provision) ===");
             buildingAssessmentTab.getNetZeroWaterSection().tableH().fillRow(
-                    0, "Groundwater", "kLd", "312");
+                0, "Groundwater", "kLd", ""
+            );
             page.waitForTimeout(1500);
 
             String freshwaterTableTotal = buildingAssessmentTab.getNetZeroWaterSection().tableH().getTableTotal();
@@ -1933,24 +1817,19 @@ public class BuildingProjectTest extends BaseTest {
             System.out.println("✓ Table H (Freshwater provision) filled successfully");
 
             // Get freshwater provision total
-            String freshwaterProvisionTotal = buildingAssessmentTab.getNetZeroWaterSection()
-                    .getFreshwaterProvisionTotal();
-            System.out
-                    .println("\n=== Freshwater Provision Section Total: " + freshwaterProvisionTotal + " KL/annum ===");
+            String freshwaterProvisionTotal = buildingAssessmentTab.getNetZeroWaterSection().getFreshwaterProvisionTotal();
+            System.out.println("\n=== Freshwater Provision Section Total: " + freshwaterProvisionTotal + " KL/annum ===");
 
             // Get annual freshwater requirement (auto-calculated)
-            String annualFreshwaterRequirement = buildingAssessmentTab.getNetZeroWaterSection()
-                    .getAnnualFreshwaterRequirement();
-            System.out.println("\n=== Annual Freshwater Requirement (Auto-calculated): " + annualFreshwaterRequirement
-                    + " KL/annum ===");
+            String annualFreshwaterRequirement = buildingAssessmentTab.getNetZeroWaterSection().getAnnualFreshwaterRequirement();
+            System.out.println("\n=== Annual Freshwater Requirement (Auto-calculated): " + annualFreshwaterRequirement + " KL/annum ===");
 
             // Save water data
             System.out.println("\n=== Saving Water Data ===");
-            // buildingAssessmentTab.getNetZeroWaterSection().clickSave();
-            // page.waitForTimeout(2000);
+            buildingAssessmentTab.getNetZeroWaterSection().clickSave();
+            page.waitForTimeout(2000);
             System.out.println("✓ Water data saved successfully");
-        });
-        Allure.step("Net Zero Waste Tab - Data Entry", () -> {
+
             // ========================================
             // NET ZERO WASTE SECTION
             // ========================================
@@ -1960,10 +1839,10 @@ public class BuildingProjectTest extends BaseTest {
             System.out.println("✓ Navigated to Net Zero Waste Section");
 
             // Enter reporting period for waste
-            // System.out.println("\n=== Entering Waste Reporting Period ===");
-            // buildingAssessmentTab.getNetZeroWasteSection().enterReportingPeriodFrom("01/01/2024");
-            // buildingAssessmentTab.getNetZeroWasteSection().enterReportingPeriodTo("12/31/2024");
-            // System.out.println("✓ Waste reporting period entered");
+            System.out.println("\n=== Entering Waste Reporting Period ===");
+            buildingAssessmentTab.getNetZeroWasteSection().enterReportingPeriodFrom("01/01/2024");
+            buildingAssessmentTab.getNetZeroWasteSection().enterReportingPeriodTo("12/31/2024");
+            System.out.println("✓ Waste reporting period entered");
 
             // ========================================
             // Table A (Waste Generated)
@@ -2072,25 +1951,12 @@ public class BuildingProjectTest extends BaseTest {
             System.out.println("\n=== Waste to be Reduced (Auto-calculated): " + wasteToBeReduced + " Tonnes ===");
             System.out.println("✓ All waste tables filled successfully");
 
-        });
-
-        // Save all assessment data
-        Allure.step("Saving All Assessment Data", () -> {
-            System.out.println("\n=== Saving All Assessment Data ===");
-            // navigate to emissions tab, open summary of scope, click save.
-            buildingAssessmentTab.goToNetZeroEmissions();
-            System.out.println("Navigated to Emissions Section");
-            page.waitForTimeout(1000);
-            buildingAssessmentTab.getNetZeroEmissionsSection().expandSummaryOfScopes();
-            System.out.println("Expanded Summary of Scopes");
-            page.waitForTimeout(500);
-            buildingAssessmentTab.getNetZeroEmissionsSection().clickSave();
-            System.out.println("Clicked Save on Emissions Section");
+            // Save waste data
+            System.out.println("\n=== Saving Waste Data ===");
+            buildingAssessmentTab.getNetZeroWasteSection().clickSave();
             page.waitForTimeout(2000);
-            System.out.println("✓ All assessment data saved successfully");
-        });
+            System.out.println("✓ Waste data saved successfully");
 
-        Allure.step("Carbon Offset and Net Zero Milestone Tabs - Data Entry", () -> {
             // ========================================
             // CARBON OFFSET TAB
             // ========================================
@@ -2098,28 +1964,28 @@ public class BuildingProjectTest extends BaseTest {
             buildingProjectPage.goToCarbonOffsetTab();
             page.waitForTimeout(1000);
 
-            assertTrue(buildingCarbonOffsetTab.isTabDisplayed(), "Carbon Offset tab should be displayed");
+            BuildingCarbonOffsetTab carbonOffsetTab = pageManager.getBuildingCarbonOffsetTab();
+            assertTrue(carbonOffsetTab.isTabDisplayed(), "Carbon Offset tab should be displayed");
             System.out.println("✓ Navigated to Carbon Offset Tab");
 
             System.out.println("\n=== Filling Carbon Offset Data ===");
-            buildingCarbonOffsetTab.fillRow(0, "01/01/2024", "1000", "950", "");
+            carbonOffsetTab.fillRow(0, "01/01/2024", "1000", "950", "In progress");
             page.waitForTimeout(1500);
 
             // Get cumulative total
-            String carbonOffsetCumulative = buildingCarbonOffsetTab.getCumulativeTotal(0);
+            String carbonOffsetCumulative = carbonOffsetTab.getCumulativeTotal(0);
             System.out.println("Carbon Offset - Row 0 Cumulative: " + carbonOffsetCumulative);
 
-            String carbonOffsetTableTotal = buildingCarbonOffsetTab.getTotalCumulative();
+            String carbonOffsetTableTotal = carbonOffsetTab.getTotalCumulative();
             System.out.println("Carbon Offset - Table Total Cumulative: " + carbonOffsetTableTotal);
             System.out.println("✓ Carbon offset data entered successfully");
 
             // Save carbon offset data
             System.out.println("\n=== Saving Carbon Offset Data ===");
-            buildingCarbonOffsetTab.clickSave();
+            carbonOffsetTab.clickSave();
             page.waitForTimeout(2000);
             System.out.println("✓ Carbon offset data saved successfully");
-        });
-        Allure.step("Net Zero Milestone Tab - Data Entry", () -> {
+
             // ========================================
             // NET ZERO MILESTONE TAB
             // ========================================
@@ -2127,33 +1993,40 @@ public class BuildingProjectTest extends BaseTest {
             buildingProjectPage.goToNetZeroMilestoneTab();
             page.waitForTimeout(1000);
 
-            assertTrue(buildingNetZeroMilestoneTab.isTabDisplayed(), "Net Zero Milestone tab should be displayed");
+            BuildingNetZeroMilestoneTab milestoneTab = pageManager.getBuildingNetZeroMilestoneTab();
+            assertTrue(milestoneTab.isTabDisplayed(), "Net Zero Milestone tab should be displayed");
             System.out.println("✓ Navigated to Net Zero Milestone Tab");
 
             System.out.println("\n=== Setting Units Header to KgCO2e ===");
-            buildingNetZeroMilestoneTab.selectUnitsHeader("KgCO2e");
+            milestoneTab.selectUnitsHeader("KgCO2e");
             page.waitForTimeout(500);
-            String selectedUnits = buildingNetZeroMilestoneTab.getSelectedUnitsHeader();
+            String selectedUnits = milestoneTab.getSelectedUnitsHeader();
             System.out.println("Units Header: " + selectedUnits);
 
             System.out.println("\n=== Filling Net Zero Milestone Data ===");
-            buildingNetZeroMilestoneTab.fillRow(0, "2024", "500", "450", "In progress");
+            milestoneTab.fillRow(0, "2024", "500", "450", "In progress");
             page.waitForTimeout(1500);
 
             // Get cumulative reduction
-            String milestoneCumulative = buildingNetZeroMilestoneTab.getCumulativeReduction(0);
+            String milestoneCumulative = milestoneTab.getCumulativeReduction(0);
             System.out.println("Net Zero Milestone - Row 0 Cumulative: " + milestoneCumulative);
 
-            String milestoneTableTotal = buildingNetZeroMilestoneTab.getTotalCumulative();
+            String milestoneTableTotal = milestoneTab.getTotalCumulative();
             System.out.println("Net Zero Milestone - Table Total Cumulative: " + milestoneTableTotal);
             System.out.println("✓ Net zero milestone data entered successfully");
 
+            // Save milestone data
+            System.out.println("\n=== Saving Net Zero Milestone Data ===");
+            milestoneTab.clickSave();
+            page.waitForTimeout(2000);
+            System.out.println("✓ Net zero milestone data saved successfully");
+
+            System.out.println("\n=== ALL TESTS COMPLETE ===");
         });
     }
 
     /**
-     * Helper method to parse emission values from string (handles commas and
-     * whitespace)
+     * Helper method to parse emission values from string (handles commas and whitespace)
      */
     private double parseEmissionValue(String value) {
         if (value == null || value.trim().isEmpty()) {
@@ -2162,5 +2035,81 @@ public class BuildingProjectTest extends BaseTest {
         // Remove commas and trim whitespace
         String cleaned = value.trim().replace(",", "");
         return Double.parseDouble(cleaned);
+    }
+
+    // ========================================
+    // HELPER METHODS FOR TEST VALIDATION
+    // ========================================
+
+    /**
+     * Helper to validate emission factor auto-population with fallback to manual entry
+     */
+    private String validateAndSetEmissionFactor(String actualEmissionFactor, double expectedEmissionFactor,
+                                                  String tableName, int rowIndex,
+                                                  java.util.function.BiConsumer<Integer, String> setEmissionFactorFn) {
+        if (actualEmissionFactor == null || actualEmissionFactor.trim().isEmpty() || actualEmissionFactor.equals("0")) {
+            System.out.println(tableName + ": Emission factor NOT auto-populated, entering manually: " + expectedEmissionFactor);
+            setEmissionFactorFn.accept(rowIndex, String.valueOf(expectedEmissionFactor));
+            return String.valueOf(expectedEmissionFactor);
+        } else {
+            System.out.println(tableName + ": Emission factor auto-populated: " + actualEmissionFactor);
+            return actualEmissionFactor;
+        }
+    }
+
+    /**
+     * Helper to validate single-value table calculations (most common pattern)
+     */
+    private void validateSingleRowTableCalculation(String tableName, String fieldName, double emissionFactor,
+                                                     double inputValue, String rowTotal, String tableTotal) {
+        double calculated = emissionFactor * inputValue;
+        String expected = String.format("%,.2f", calculated);
+
+        assertNotNull(rowTotal, tableName + ": Row total should be calculated");
+        assertEquals(expected, rowTotal.trim(),
+            String.format("%s: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
+                tableName, emissionFactor, inputValue, expected, rowTotal));
+
+        assertNotNull(tableTotal, tableName + ": Table total should be calculated");
+        assertEquals(expected, tableTotal.trim(),
+            tableName + ": Table total should equal row total for single row");
+
+        System.out.println(String.format("%s verified: %s, EF=%.2f × %s=%.2f = %s ✓",
+            tableName, fieldName, emissionFactor, "Input", inputValue, rowTotal));
+    }
+
+    /**
+     * Helper to validate multi-row table total equals sum of row totals
+     */
+    private void validateMultiRowTableTotal(String tableName, String tableTotal, String... rowTotals) {
+        double sum = 0;
+        for (String rowTotal : rowTotals) {
+            sum += Double.parseDouble(rowTotal.replace(",", ""));
+        }
+        String expectedTotal = String.format("%,.2f", sum);
+
+        assertEquals(expectedTotal, tableTotal.trim(),
+            String.format("%s: Table total should equal sum of rows (Expected: %s, Got: %s)",
+                tableName, expectedTotal, tableTotal));
+
+        System.out.println(tableName + ": Table total verified (sum of rows): " + tableTotal);
+    }
+
+    /**
+     * Helper to wait with retry logic for table total calculation
+     */
+    private String waitForTableTotalWithRetry(String tableName, java.util.function.Supplier<String> getTableTotalFn,
+                                               int maxRetries, int waitMs) {
+        String tableTotal = getTableTotalFn.get();
+        int retries = maxRetries;
+
+        while ((tableTotal == null || tableTotal.trim().isEmpty() || tableTotal.equals("0.00")) && retries > 0) {
+            System.out.println(tableName + ": Table total not yet calculated, retrying... (" + retries + " retries left)");
+            page.waitForTimeout(waitMs);
+            tableTotal = getTableTotalFn.get();
+            retries--;
+        }
+
+        return tableTotal;
     }
 }

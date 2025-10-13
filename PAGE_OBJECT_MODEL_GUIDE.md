@@ -33,7 +33,7 @@ public LoginPage(Page page) {
 
 // ❌ Bad - Creating locators repeatedly
 public void enterEmail(String email) {
-    page.locator("#gnfz-login-email").fill(email); // Don't do this
+    page.locator("#gnfz-login-email").pressSequentially(email); // Don't do this - create locator once
 }
 ```
 
@@ -127,11 +127,11 @@ public class LoginPage {
 
     // Actions
     public void enterEmail(String email) {
-        emailField.fill(email);
+        InputHelper.humanizedInput(page, emailField, email);
     }
 
     public void enterPassword(String password) {
-        passwordField.fill(password);
+        InputHelper.humanizedInput(page, passwordField, password);
     }
 
     public void clickSignInButton() {
@@ -230,7 +230,7 @@ public void clickSignInButton() {
 ```java
 public void enterEmail(String email) {
     try {
-        emailField.fill(email);
+        InputHelper.humanizedInput(page, emailField, email);
     } catch (TimeoutError e) {
         throw new AssertionError("Email field not found or not interactable", e);
     }
@@ -241,9 +241,9 @@ public void enterEmail(String email) {
 
 ### Before (Old Pattern)
 ```java
-// Multiple locator creations
-page.locator("#gnfz-login-email").fill(email);
-page.locator("#gnfz-login-password").fill(password);
+// Multiple locator creations and non-humanized input
+page.locator("#gnfz-login-email").pressSequentially(email);
+page.locator("#gnfz-login-password").pressSequentially(password);
 page.locator("button[type='submit']").click();
 
 // New page objects every time

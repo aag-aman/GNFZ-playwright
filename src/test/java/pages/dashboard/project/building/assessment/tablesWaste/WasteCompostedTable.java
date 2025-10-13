@@ -3,6 +3,8 @@ package pages.dashboard.project.building.assessment.tablesWaste;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import utils.InputHelper;
+
 /**
  * WasteCompostedTable - Table D for Waste Composted
  *
@@ -45,26 +47,11 @@ public class WasteCompostedTable {
     }
 
     public void enterType(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator typeInput = getTypeInput(rowIndex);
-        typeInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        typeInput.scrollIntoViewIfNeeded();
-        typeInput.click();
-        page.waitForTimeout(100);
-        typeInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
-        page.waitForTimeout(500);
-        page.keyboard().press("Enter");
-        page.waitForTimeout(1000);
+        InputHelper.humanizedInput(page, getTypeInput(rowIndex), value);
     }
 
     public void enterQuantity(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator quantityInput = getQuantityInput(rowIndex);
-        quantityInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        quantityInput.scrollIntoViewIfNeeded();
-        quantityInput.fill(value);
-        quantityInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getQuantityInput(rowIndex), value);
     }
 
     public String getType(int rowIndex) {

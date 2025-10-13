@@ -4,6 +4,8 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.SelectOption;
 
+import utils.InputHelper;
+
 /**
  * BuildingNetZeroMilestoneTab - Net Zero Milestone tab for Building project
  * This tab tracks planned and actual emission reduction milestones over time
@@ -32,17 +34,17 @@ public class BuildingNetZeroMilestoneTab {
     private final Locator saveButton;
 
     // Row patterns (dynamic)
-    private static final String ROW_PATTERN = "#records_%d";
+    private static final String ROW_PATTERN = "#netZeroTargets #records_%d";
     private static final String YEAR_INPUT_PATTERN = "#NZM_yearpicker_%d";
     private static final String PLANNED_INPUT_PATTERN = "#net_zero_milestone_planned_%d";
     private static final String ACTUAL_INPUT_PATTERN = "#net_zero_milestone_actual_%d";
-    private static final String CUMULATIVE_INPUT_PATTERN = "#records_%d td:nth-child(4) input[readonly]";
-    private static final String UNITS_TEXT_PATTERN = "#records_%d td:nth-child(5)";
-    private static final String ATTACH_ICON_PATTERN = "#records_%d a i.bi-paperclip";
+    private static final String CUMULATIVE_INPUT_PATTERN = "#netZeroTargets #records_%d td:nth-child(4) input[readonly]";
+    private static final String UNITS_TEXT_PATTERN = "#netZeroTargets #records_%d td:nth-child(5)";
+    private static final String ATTACH_ICON_PATTERN = "#netZeroTargets #records_%d a i.bi-paperclip";
     private static final String STATUS_SELECT_PATTERN = "#gnfz-net-zero-milestone-status-%d";
-    private static final String CHAT_ICON_PATTERN = "#records_%d img.chat-icon";
-    private static final String REMOVE_ROW_PATTERN = "#records_%d i.bi-trash";
-    private static final String ADD_ROW_PATTERN = "#records_%d i.bi-plus-square";
+    private static final String CHAT_ICON_PATTERN = "#netZeroTargets #records_%d img.chat-icon";
+    private static final String REMOVE_ROW_PATTERN = "#netZeroTargets #records_%d i.bi-trash";
+    private static final String ADD_ROW_PATTERN = "#netZeroTargets #records_%d i.bi-plus-square";
 
     public BuildingNetZeroMilestoneTab(Page page) {
         this.page = page;
@@ -60,12 +62,13 @@ public class BuildingNetZeroMilestoneTab {
         this.unitsHeaderSelect = page.locator("tr.bg-readonly select.source-type");
 
         // Table total row
-        this.totalLabel = page.locator("tr.border-bottom-white td:has-text('Total')");
-        this.totalCumulativeInput = page.locator("tr.border-bottom-white td:nth-child(4) input[readonly]");
-        this.totalUnitsText = page.locator("tr.border-bottom-white td:nth-child(5)");
+        this.totalLabel = page.locator("#netZeroTargets tr.border-bottom-white td:has-text('Total')");
+        this.totalCumulativeInput = page
+                .locator("#netZeroTargets tr.border-bottom-white td:nth-child(2) input[readonly]");
+        this.totalUnitsText = page.locator("#netZeroTargets tr.border-bottom-white td:nth-child(3)");
 
         // Actions
-        this.saveButton = page.locator("button#gnfz-save");
+        this.saveButton = page.locator("#netZeroTargets button#gnfz-save");
     }
 
     /**
@@ -152,7 +155,7 @@ public class BuildingNetZeroMilestoneTab {
 
         // Wait for yearpicker dropdown to appear
         page.locator(".yearpicker-container").waitFor(new Locator.WaitForOptions()
-            .setState(com.microsoft.playwright.options.WaitForSelectorState.VISIBLE));
+                .setState(com.microsoft.playwright.options.WaitForSelectorState.VISIBLE));
 
         // Click on the year in the yearpicker
         page.locator(String.format(".yearpicker-items:has-text('%s')", year)).click();
@@ -172,11 +175,9 @@ public class BuildingNetZeroMilestoneTab {
     }
 
     public void enterPlannedReduction(int rowIndex, String value) {
-        page.waitForLoadState();
         Locator plannedInput = getPlannedInput(rowIndex);
-        plannedInput.scrollIntoViewIfNeeded();
-        plannedInput.click();
-        plannedInput.fill(value);
+        InputHelper.humanizedInput(page, plannedInput, value);
+        plannedInput.evaluate("el => el.blur()");
         page.waitForTimeout(500);
     }
 
@@ -198,11 +199,9 @@ public class BuildingNetZeroMilestoneTab {
     }
 
     public void enterActualReduction(int rowIndex, String value) {
-        page.waitForLoadState();
         Locator actualInput = getActualInput(rowIndex);
-        actualInput.scrollIntoViewIfNeeded();
-        actualInput.click();
-        actualInput.fill(value);
+        InputHelper.humanizedInput(page, actualInput, value);
+        actualInput.evaluate("el => el.blur()");
         page.waitForTimeout(500);
     }
 
@@ -327,14 +326,23 @@ public class BuildingNetZeroMilestoneTab {
      */
     public void fillRow(int rowIndex, String year, String plannedReduction, String actualReduction, String status) {
         enterYear(rowIndex, year);
+        System.out.println("Entered year: " + year);
+
+        // Trigger blur on year field to enable other fields
+        getYearInput(rowIndex).evaluate("el => el.blur()");
+        page.waitForTimeout(1000);
+
         if (plannedReduction != null && !plannedReduction.isEmpty()) {
             enterPlannedReduction(rowIndex, plannedReduction);
+            System.out.println("Entered planned reduction: " + plannedReduction);
         }
         if (actualReduction != null && !actualReduction.isEmpty()) {
             enterActualReduction(rowIndex, actualReduction);
+            System.out.println("Entered actual reduction: " + actualReduction);
         }
         if (status != null && !status.isEmpty()) {
             selectStatus(rowIndex, status);
+            System.out.println("Selected status: " + status);
         }
     }
 
@@ -369,7 +377,7 @@ public class BuildingNetZeroMilestoneTab {
      */
     public int getRowCount() {
         page.waitForLoadState();
-        return page.locator("tr[id^='records_']").count();
+        return page.locator("#netZeroTargets tr[id^='records_']").count();
     }
 
     /**

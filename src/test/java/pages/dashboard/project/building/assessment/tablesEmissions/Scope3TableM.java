@@ -3,6 +3,8 @@ package pages.dashboard.project.building.assessment.tablesEmissions;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import utils.InputHelper;
+
 /**
  * Scope3TableM - Table M for Scope 3 Emissions (Flights)
  *
@@ -81,29 +83,11 @@ public class Scope3TableM {
      * Enter methods for specific columns - with humanlike delays for autocomplete
      */
     public void enterOrigin(int rowIndex, String iataCode) {
-        page.waitForLoadState();
-        Locator originInput = getOriginInput(rowIndex);
-        originInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        originInput.scrollIntoViewIfNeeded();
-        originInput.click();
-        page.waitForTimeout(100);
-        originInput.pressSequentially(iataCode, new Locator.PressSequentiallyOptions().setDelay(150));
-        page.waitForTimeout(500);
-        page.keyboard().press("Enter");
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getOriginInput(rowIndex), iataCode);
     }
 
     public void enterDestination(int rowIndex, String iataCode) {
-        page.waitForLoadState();
-        Locator destinationInput = getDestinationInput(rowIndex);
-        destinationInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        destinationInput.scrollIntoViewIfNeeded();
-        destinationInput.click();
-        page.waitForTimeout(100);
-        destinationInput.pressSequentially(iataCode, new Locator.PressSequentiallyOptions().setDelay(150));
-        page.waitForTimeout(500);
-        page.keyboard().press("Enter");
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getDestinationInput(rowIndex), iataCode);
     }
 
     public void selectClass(int rowIndex, String flightClass) {
@@ -125,23 +109,11 @@ public class Scope3TableM {
     }
 
     public void enterNoOfPassengers(int rowIndex, String passengers) {
-        page.waitForLoadState();
-        Locator passengersInput = getNoOfPassengersInput(rowIndex);
-        passengersInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        passengersInput.scrollIntoViewIfNeeded();
-        passengersInput.fill(passengers);
-        passengersInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getNoOfPassengersInput(rowIndex), passengers);
     }
 
     public void enterTotalEmissions(int rowIndex, String totalEmissions) {
-        page.waitForLoadState();
-        Locator emissionsInput = getTotalEmissionsInput(rowIndex);
-        emissionsInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        emissionsInput.scrollIntoViewIfNeeded();
-        emissionsInput.fill(totalEmissions);
-        emissionsInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getTotalEmissionsInput(rowIndex), totalEmissions);
     }
 
     /**

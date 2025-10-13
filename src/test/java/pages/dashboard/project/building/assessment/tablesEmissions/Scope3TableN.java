@@ -3,6 +3,8 @@ package pages.dashboard.project.building.assessment.tablesEmissions;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import utils.InputHelper;
+
 /**
  * Scope3TableN - Table N for Scope 3 Emissions (Food)
  *
@@ -69,36 +71,15 @@ public class Scope3TableN {
      * Enter methods for specific columns
      */
     public void enterFoodType(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator foodTypeInput = getFoodTypeInput(rowIndex);
-        foodTypeInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        foodTypeInput.scrollIntoViewIfNeeded();
-        foodTypeInput.click();
-        page.waitForTimeout(100);
-        foodTypeInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
-        page.waitForTimeout(500);
-        page.keyboard().press("Enter");
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getFoodTypeInput(rowIndex), value);
     }
 
     public void enterEmissionFactor(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator emissionFactorInput = getEmissionFactorInput(rowIndex);
-        emissionFactorInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        emissionFactorInput.scrollIntoViewIfNeeded();
-        emissionFactorInput.fill(value);
-        emissionFactorInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getEmissionFactorInput(rowIndex), value);
     }
 
     public void enterQuantity(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator quantityInput = getQuantityInput(rowIndex);
-        quantityInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        quantityInput.scrollIntoViewIfNeeded();
-        quantityInput.fill(value);
-        quantityInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getQuantityInput(rowIndex), value);
     }
 
     public void selectUnits(int rowIndex, String value) {

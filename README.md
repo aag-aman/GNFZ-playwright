@@ -386,11 +386,11 @@ public class LoginPage {
     }
 
     public void enterEmail(String email) {
-        emailField.fill(email);
+        InputHelper.humanizedInput(page, emailField, email);
     }
 
     public void enterPassword(String password) {
-        passwordField.fill(password);
+        InputHelper.humanizedInput(page, passwordField, password);
     }
 
     public void clickSignInButton() {

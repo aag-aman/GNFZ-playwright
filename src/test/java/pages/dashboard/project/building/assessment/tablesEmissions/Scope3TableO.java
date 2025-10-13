@@ -3,6 +3,8 @@ package pages.dashboard.project.building.assessment.tablesEmissions;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import utils.InputHelper;
+
 /**
  * Scope3TableO - Table O for Scope 3 Emissions (Logistics & Supply)
  *
@@ -85,72 +87,29 @@ public class Scope3TableO {
      * Enter methods for specific columns
      */
     public void enterVehicle(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator vehicleInput = getVehicleInput(rowIndex);
-        vehicleInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        vehicleInput.scrollIntoViewIfNeeded();
-        vehicleInput.click();
-        page.waitForTimeout(100);
-        vehicleInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
-        page.waitForTimeout(500);
-        page.keyboard().press("Enter");
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getVehicleInput(rowIndex), value);
     }
 
     public void enterType(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator typeInput = getTypeInput(rowIndex);
-        typeInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        typeInput.scrollIntoViewIfNeeded();
-        typeInput.click();
-        page.waitForTimeout(100);
-        typeInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
-        page.waitForTimeout(500);
-        page.keyboard().press("Enter");
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getTypeInput(rowIndex), value);
     }
 
     public void enterFuel(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator fuelInput = getFuelInput(rowIndex);
-        fuelInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        fuelInput.scrollIntoViewIfNeeded();
-        fuelInput.click();
-        page.waitForTimeout(100);
-        fuelInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
-        page.waitForTimeout(500);
-        page.keyboard().press("Enter");
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getFuelInput(rowIndex), value);
     }
 
+
     public void enterEmissionFactor(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator emissionFactorInput = getEmissionFactorInput(rowIndex);
-        emissionFactorInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        emissionFactorInput.scrollIntoViewIfNeeded();
-        emissionFactorInput.fill(value);
-        emissionFactorInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getEmissionFactorInput(rowIndex), value);
     }
 
     public void enterWeightTonnes(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator weightInput = getWeightTonnesInput(rowIndex);
-        weightInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        weightInput.scrollIntoViewIfNeeded();
-        weightInput.fill(value);
-        weightInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getWeightTonnesInput(rowIndex), value);
     }
 
+
     public void enterDistanceKm(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator distanceInput = getDistanceKmInput(rowIndex);
-        distanceInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        distanceInput.scrollIntoViewIfNeeded();
-        distanceInput.fill(value);
-        distanceInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getDistanceKmInput(rowIndex), value);
     }
 
     public void selectUnits(int rowIndex, String value) {

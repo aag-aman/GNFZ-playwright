@@ -9,6 +9,7 @@ import pages.dashboard.project.building.assessment.tablesWaste.WasteIncineratedT
 import pages.dashboard.project.building.assessment.tablesWaste.WasteCompostedTable;
 import pages.dashboard.project.building.assessment.tablesWaste.WasteRecycledTable;
 import pages.dashboard.project.building.assessment.tablesWaste.WasteReusedTable;
+import utils.InputHelper;
 
 /**
  * NetZeroWasteSection - Net Zero Waste section in Assessment tab
@@ -120,48 +121,11 @@ public class NetZeroWasteSection {
      * ========================================
      */
     public void enterReportingPeriodFrom(String fromDate) {
-        page.waitForLoadState();
-        reportingPeriodFrom.fill(fromDate);
+        InputHelper.selectDateFromDatepicker(page, reportingPeriodFrom, fromDate);
     }
 
     public void enterReportingPeriodTo(String toDate) {
-        page.waitForLoadState();
-        reportingPeriodTo.waitFor();
-
-        // Focus and click to trigger datepicker
-        page.waitForTimeout(2000);
-        reportingPeriodTo.focus();
-        page.waitForTimeout(2000);
-        reportingPeriodTo.click();
-        page.waitForTimeout(1100);
-
-        // Wait for datepicker to appear
-        Locator datepicker = page.locator("#ui-datepicker-div");
-        datepicker.waitFor();
-
-        // Parse date (format: MM/DD/YYYY)
-        String[] dateParts = toDate.split("/");
-        String monthValue = String.valueOf(Integer.parseInt(dateParts[0]) - 1); // Month is 0-indexed
-        String year = dateParts[2];
-        String day = String.valueOf(Integer.parseInt(dateParts[1])); // Remove leading zero
-
-        // Select month from dropdown
-        Locator monthDropdown = page.locator(".ui-datepicker-month");
-        monthDropdown.selectOption(monthValue);
-        page.waitForTimeout(200);
-
-        // Select year from dropdown
-        Locator yearDropdown = page.locator(".ui-datepicker-year");
-        yearDropdown.selectOption(year);
-        page.waitForTimeout(200);
-
-        // Click on the day in the calendar
-        Locator dayButton = page.locator(".ui-datepicker-calendar td a");
-        dayButton.filter(new Locator.FilterOptions().setHasText(day)).first().click();
-
-        page.waitForTimeout(300);
-
-        reportingPeriodTo.fill(toDate);
+        InputHelper.selectDateFromDatepicker(page, reportingPeriodTo, toDate);
     }
 
     public void checkBaseline() {

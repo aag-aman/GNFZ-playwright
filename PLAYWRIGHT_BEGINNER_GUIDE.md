@@ -79,10 +79,10 @@ void testMethodName() {
 Instead of writing locators directly in tests, we use Page Objects:
 
 ```java
-// ❌ Don't do this in tests
+// ❌ Don't do this in tests (also using deprecated .fill())
 page.locator("#email").fill("user@example.com");
 
-// ✅ Do this instead
+// ✅ Do this instead (page object handles humanized input)
 pageManager.getLoginPage().enterEmail("user@example.com");
 ```
 
@@ -209,7 +209,22 @@ page.locator("#hidden-button").click(new Locator.ClickOptions().setForce(true));
 
 ### Typing Text
 ```java
-// Clear and type
+// Humanized typing (RECOMMENDED - triggers validation/auto-population)
+// Use InputHelper utility for clean, maintainable code
+import utils.InputHelper;
+
+Locator searchField = page.locator("#search");
+InputHelper.humanizedInput(page, searchField, "playwright testing");
+
+// Manual implementation (if you need custom behavior)
+searchField.click();
+page.waitForTimeout(100);
+searchField.pressSequentially("playwright testing", new Locator.PressSequentiallyOptions().setDelay(150));
+page.waitForTimeout(500);
+page.keyboard().press("Enter");
+page.waitForTimeout(1500);
+
+// Quick fill (AVOID - doesn't trigger input events properly)
 page.locator("#search").fill("playwright testing");
 
 // Type without clearing (append)
@@ -574,15 +589,15 @@ public class UserManagementPage {
     }
 
     public void enterFirstName(String firstName) {
-        firstNameField.fill(firstName);
+        InputHelper.humanizedInput(page, firstNameField, firstName);
     }
 
     public void enterLastName(String lastName) {
-        lastNameField.fill(lastName);
+        InputHelper.humanizedInput(page, lastNameField, lastName);
     }
 
     public void enterEmail(String email) {
-        emailField.fill(email);
+        InputHelper.humanizedInput(page, emailField, email);
     }
 
     public void selectRole(String role) {
@@ -935,8 +950,9 @@ page.locator("button[type='submit']")
 // Click
 element.click()
 
-// Type
-element.fill("text")
+// Type (humanized - RECOMMENDED using InputHelper)
+import utils.InputHelper;
+InputHelper.humanizedInput(page, element, "text");
 
 // Select dropdown
 element.selectOption("value")

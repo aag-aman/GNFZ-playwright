@@ -1,6 +1,9 @@
 package pages.dashboard.project.building.assessment.tablesEmissions;
 
 import com.microsoft.playwright.Page;
+
+import utils.InputHelper;
+
 import com.microsoft.playwright.Locator;
 
 /**
@@ -70,44 +73,15 @@ public class Scope1TableA {
      * Enter methods for specific columns
      */
     public void enterFuel(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator fuelInput = getFuelInput(rowIndex);
-        // Wait for element to be attached to DOM (less strict than visible)
-        fuelInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        // Scroll into view if needed
-        fuelInput.scrollIntoViewIfNeeded();
-        // Click to focus first
-        fuelInput.click();
-        page.waitForTimeout(100);
-        // Enter value human-like with delays (increased to 150ms for better auto-population trigger)
-        fuelInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(150));
-        page.waitForTimeout(500);
-        // Press Enter to trigger calculation or blur to defocus
-        page.keyboard().press("Enter");
-        // Wait longer for emission factor auto-population to complete
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getFuelInput(rowIndex), value);
     }
 
     public void enterEmissionFactor(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator emissionFactorInput = getEmissionFactorInput(rowIndex);
-        emissionFactorInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        emissionFactorInput.scrollIntoViewIfNeeded();
-        emissionFactorInput.fill(value);
-
-        // Defocus the field to trigger any validation/calculation
-        emissionFactorInput.blur();
-        page.waitForTimeout(500);
+        InputHelper.humanizedInput(page, getEmissionFactorInput(rowIndex), value);
     }
 
     public void enterConsumption(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator consumptionInput = getConsumptionInput(rowIndex);
-        consumptionInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        consumptionInput.scrollIntoViewIfNeeded();
-        consumptionInput.fill(value);
-        consumptionInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getConsumptionInput(rowIndex), value);
     }
 
     public void selectUnits(int rowIndex, String value) {

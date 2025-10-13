@@ -2,6 +2,7 @@ package pages.authentication;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import utils.InputHelper;
 
 /**
  * ForgotPasswordPage - Page Object Model for the Forgot Password page
@@ -94,7 +95,7 @@ public class ForgotPasswordPage {
      * Playwright automatically waits for the element to be ready before typing.
      */
     public void enterEmail(String email) {
-        emailField.fill(email);
+        InputHelper.humanizedInputNoEnter(page, emailField, email);
     }
 
     /**

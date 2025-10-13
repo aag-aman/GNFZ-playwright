@@ -3,6 +3,7 @@ package pages.dashboard.project.building;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import utils.InputHelper;
 
 /**
  * BuildingBasicInfoTab - Basic Info tab for Building project
@@ -42,7 +43,7 @@ public class BuildingBasicInfoTab {
 
     public void enterProjectTitle(String title) {
         page.waitForLoadState();
-        projectTitleField.pressSequentially(title);
+        InputHelper.humanizedInputNoEnter(page, projectTitleField, title);
     }
 
     public String getProjectTitle() {
@@ -51,8 +52,7 @@ public class BuildingBasicInfoTab {
     }
 
     public void enterTargetCertificationArea(String area) {
-        page.waitForLoadState();
-        targetCertificationArea.fill(area);
+        InputHelper.humanizedInputNoEnter(page, targetCertificationArea, area);
     }
 
     public String getTargetCertificationArea() {
@@ -61,8 +61,7 @@ public class BuildingBasicInfoTab {
     }
 
     public void enterGrossArea(String area) {
-        page.waitForLoadState();
-        grossArea.fill(area);
+        InputHelper.humanizedInputNoEnter(page, grossArea, area);
     }
 
     public String getGrossArea() {
@@ -71,41 +70,7 @@ public class BuildingBasicInfoTab {
     }
 
     public void enterStartDate(String date) {
-        page.waitForLoadState();
-        startDate.waitFor();
-
-        // Focus and click to trigger datepicker
-        page.waitForTimeout(2000);
-        startDate.focus();
-        page.waitForTimeout(2000);
-        startDate.click();
-        page.waitForTimeout(1100);
-
-        // Wait for datepicker to appear
-        Locator datepicker = page.locator("#ui-datepicker-div");
-        datepicker.waitFor();
-
-        // Parse date (format: MM/DD/YYYY)
-        String[] dateParts = date.split("/");
-        String monthValue = String.valueOf(Integer.parseInt(dateParts[0]) - 1); // Month is 0-indexed (0=Jan, 11=Dec)
-        String year = dateParts[2];
-        String day = String.valueOf(Integer.parseInt(dateParts[1])); // Remove leading zero
-
-        // Select month from dropdown
-        Locator monthDropdown = page.locator(".ui-datepicker-month");
-        monthDropdown.selectOption(monthValue);
-        page.waitForTimeout(200);
-
-        // Select year from dropdown
-        Locator yearDropdown = page.locator(".ui-datepicker-year");
-        yearDropdown.selectOption(year);
-        page.waitForTimeout(200);
-
-        // Click on the day in the calendar
-        Locator dayButton = page.locator(".ui-datepicker-calendar td a");
-        dayButton.filter(new Locator.FilterOptions().setHasText(day)).first().click();
-
-        page.waitForTimeout(300);
+        InputHelper.selectDateFromDatepicker(page, startDate, date);
     }
 
     public String getStartDate() {

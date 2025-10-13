@@ -3,6 +3,8 @@ package pages.dashboard.project.building.assessment.tablesEmissions;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import utils.InputHelper;
+
 /**
  * Scope3TableG - Table G for Scope 3 Emissions (Composed Waste)
  *
@@ -70,50 +72,18 @@ public class Scope3TableG {
      * Enter methods for specific columns
      */
     public void enterTypeOfWaste(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator typeOfWasteInput = getTypeOfWasteInput(rowIndex);
-        typeOfWasteInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        typeOfWasteInput.scrollIntoViewIfNeeded();
-        typeOfWasteInput.click();
-        page.waitForTimeout(100);
-        typeOfWasteInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(100));
-        page.waitForTimeout(500);
-        page.keyboard().press("Enter");
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getTypeOfWasteInput(rowIndex), value);
     }
 
     public void enterEmissionFactor(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator emissionFactorInput = getEmissionFactorInput(rowIndex);
-        emissionFactorInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        emissionFactorInput.scrollIntoViewIfNeeded();
-
-        // Slower input
-        emissionFactorInput.click();
-        emissionFactorInput.clear();
-        emissionFactorInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
-
-        // Defocus and wait longer
-        emissionFactorInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getEmissionFactorInput(rowIndex), value);
     }
 
     public void enterQuantityOfWasteComposted(int rowIndex, String value) {
-        page.waitForLoadState();
-        Locator quantityCompostedInput = getQuantityCompostedInput(rowIndex);
-        quantityCompostedInput.waitFor(new Locator.WaitForOptions().setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
-        quantityCompostedInput.scrollIntoViewIfNeeded();
-
-        // Slower input
-        quantityCompostedInput.click();
-        quantityCompostedInput.clear();
-        quantityCompostedInput.pressSequentially(value, new Locator.PressSequentiallyOptions().setDelay(50));
-
-        // Defocus and wait longer for calculation
-        quantityCompostedInput.blur();
-        page.waitForTimeout(1500);
+        InputHelper.humanizedInput(page, getQuantityCompostedInput(rowIndex), value);
     }
 
+    
     public void selectUnit(int rowIndex, String value) {
         page.waitForLoadState();
         Locator unitSelect = getUnitSelect(rowIndex);
