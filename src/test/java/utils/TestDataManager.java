@@ -180,4 +180,29 @@ public class TestDataManager {
         List<Map<String, String>> testCases = loadSignUpRegressionData();
         return filterSignUpByType(testCases, "negative");
     }
+
+    /**
+     * Get user by role from users.json
+     */
+    public static Map<String, String> getUserByRole(String role) throws IOException {
+        List<Map<String, String>> users = loadTestData("users.json");
+        return users.stream()
+            .filter(user -> role.equals(user.get("role")))
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("No user found with role: " + role));
+    }
+
+    /**
+     * Get project owner user
+     */
+    public static Map<String, String> getProjectOwnerUser() throws IOException {
+        return getUserByRole("projectOwner");
+    }
+
+    /**
+     * Get team member user
+     */
+    public static Map<String, String> getTeamMemberUser() throws IOException {
+        return getUserByRole("teamMember");
+    }
 }

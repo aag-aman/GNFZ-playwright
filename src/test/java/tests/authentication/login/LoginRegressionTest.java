@@ -1,6 +1,8 @@
 package tests.authentication.login;
 
 import io.qameta.allure.*;
+import pages.authentication.LoginPage;
+
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -11,6 +13,8 @@ import com.microsoft.playwright.Page;
 import java.io.IOException;
 import java.util.Map;
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @Epic("User Authentication")
 @Feature("Login Functionality")
@@ -31,28 +35,28 @@ public class LoginRegressionTest extends BaseTest {
         String password = testData.get("password");
         String expectedSuccess = testData.get("expectedSuccess");
         String description = testData.get("description");
-
+        LoginPage loginPage = pageManager.getLoginPage();
         System.out.println("Running test: " + description);
 
         // Navigate to login page
         Allure.step("Navigate to login page", () -> {
-            pageManager.getLoginPage().navigateToLogin();
+            loginPage.navigateToLogin();
         });
 
         // Perform login
         Allure.step("Enter login credentials", () -> {
-            pageManager.getLoginPage().enterEmail(email);
-            pageManager.getLoginPage().enterPassword(password);
+            loginPage.enterEmail(email);
+            loginPage.enterPassword(password);
         });
 
         Allure.step("Click sign in button", () -> {
-            pageManager.getLoginPage().clickSignInButton();
+            loginPage.clickSignInButton();
         });
 
         if ("List of projects".equals(expectedSuccess)) {
             // Positive test case - expect successful login
             Allure.step("Verify successful login", () -> {
-                page.waitForURL("**/project/list", new Page.WaitForURLOptions().setTimeout(10000));
+                assertTrue(loginPage.isLoginSuccess(), "Login should be successful");
 
                 // Take screenshot on success
                 takeScreenshot("Success Screenshot - " + description);

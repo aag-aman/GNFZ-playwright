@@ -2,6 +2,9 @@ package pages.dashboard;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
+
+import java.util.regex.Pattern;
 
 /**
  * ProjectSelectionPage - Page object for selecting project type
@@ -46,9 +49,8 @@ public class ProjectSelectionPage {
 
     public ProjectSelectionPage(Page page) {
         this.page = page;
-
         // Initialize page locators
-        this.pageHeader = page.locator("h3");
+        this.pageHeader = page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setName(Pattern.compile("Net Zero certification", Pattern.CASE_INSENSITIVE)));
 
         // Initialize project type locators
         this.buildingOption = page.locator("//*[@id=\"project-categories\"]/div[1]/div/div");

@@ -1,7 +1,14 @@
 [
   {
     "username": "aman.gupta@promantusinc.com",
-    "password": "Vrishabh@@2025",
-    "expectedSuccess": "List of projects"
+    "password": "Vrishabh2025!",
+    "expectedSuccess": "List of projects",
+    "role": "projectOwner"
+  },
+  {
+    "username": "vigneshkumar@promantus.com",
+    "password": "Vignesh1234",
+    "expectedSuccess": "List of projects",
+    "role": "teamMember"
   }
 ]

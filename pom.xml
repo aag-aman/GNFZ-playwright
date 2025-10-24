@@ -107,6 +107,27 @@
                 <artifactId>maven-surefire-report-plugin</artifactId>
                 <version>3.1.2</version>
             </plugin>
+
+            <!-- Maven Clean Plugin to remove old reports and traces -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <filesets>
+                        <!-- Clean test traces -->
+                        <fileset>
+                            <directory>test-results</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                        <!-- Clean root-level allure-results (if it exists) -->
+                        <fileset>
+                            <directory>allure-results</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

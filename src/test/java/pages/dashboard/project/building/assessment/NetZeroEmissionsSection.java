@@ -101,7 +101,7 @@ public class NetZeroEmissionsSection {
         this.scope3Section = page.locator("[ftestcaseref='scope_3']");
         this.summaryOfScopes = page.locator("[ftestcaseref='scope_summary']");
 
-        // View toggles - TODO: Get actual ftestcaseref values for these
+        // View toggles
         this.scope1SummaryView = page.locator("[ftestcaseref='scope1_summary_view']");
         this.scope1DetailedView = page.locator("[ftestcaseref='scope1_detailed_view']");
         this.scope2SummaryView = page.locator("[ftestcaseref='scope2_summary_view']");
@@ -116,7 +116,7 @@ public class NetZeroEmissionsSection {
 
         // Summary of Scopes table - scoped within the summary section using ID
         // Using the parent div ID to ensure we target the correct table
-        String summaryTableBase = "#flush-collapse__Summary .summary-table tbody";
+        String summaryTableBase = "#flush-collapse__Summary .summary-table tbody"; //TODO: Add ftestcaseref
 
         // Row 2: Scope 1 (a. Scope 1)
         this.summaryScope1KgCO2e = page.locator(summaryTableBase + " tr:has-text('a. Scope 1') td:nth-child(2)");
@@ -139,7 +139,7 @@ public class NetZeroEmissionsSection {
         // Summary section additional fields
         this.moreStandardsInput = page.locator("#more_standards");
         this.viewUploadLink = page.locator("a:has-text('View/Upload')");
-        this.saveButton = page.locator("#flush-collapse__Summary #gnfz-save");
+        this.saveButton = page.locator("#flush-collapse__Summary #gnfz-save"); //TODO: Add ftestcaseref
 
         // Initialize table objects - each table knows its own structure
         this.tableA = new Scope1TableA(page);
@@ -171,7 +171,15 @@ public class NetZeroEmissionsSection {
      */
     public boolean isSectionDisplayed() {
         page.waitForLoadState();
-        return sectionHeader.isVisible();
+
+        //retry 3 times
+        for (int i = 0; i < 3; i++) {
+            if (sectionHeader.isVisible()) {
+                return true;
+            }
+            page.waitForTimeout(3000);
+        }
+        return false;
     }
 
     /**
@@ -183,8 +191,18 @@ public class NetZeroEmissionsSection {
         InputHelper.selectDateFromDatepicker(page, reportingPeriodFrom, fromDate);
     }
 
+    public String getReportingPeriodFrom() {
+        page.waitForLoadState();
+        return reportingPeriodFrom.inputValue().trim();
+    }
+
     public void enterReportingPeriodTo(String toDate) {
         InputHelper.selectDateFromDatepicker(page, reportingPeriodTo, toDate);
+    }
+
+    public String getReportingPeriodTo() {
+        page.waitForLoadState();
+        return reportingPeriodTo.inputValue().trim();
     }
 
     public void checkBaseline() {
@@ -237,10 +255,34 @@ public class NetZeroEmissionsSection {
         page.waitForLoadState();
     }
 
+    public boolean isScope1SectionDisplayed() {
+        page.waitForLoadState();
+        //retry 3 times
+        for (int i = 0; i < 3; i++) {
+            if (scope1DetailedView.isVisible()) {
+                return true;
+            }
+            page.waitForTimeout(3000);
+        }
+        return false;
+    }
+
     public void expandScope2() {
         page.waitForLoadState();
         scope2Section.click();
         page.waitForLoadState();
+    }
+
+    public boolean isScope2SectionDisplayed() {
+        page.waitForLoadState();
+        //retry 3 times
+        for (int i = 0; i < 3; i++) {
+            if (scope2DetailedView.isVisible()) {
+                return true;
+            }
+            page.waitForTimeout(3000);
+        }
+        return false;
     }
 
     public void expandScope3() {
@@ -249,10 +291,34 @@ public class NetZeroEmissionsSection {
         page.waitForLoadState();
     }
 
+    public boolean isScope3SectionDisplayed() {
+        page.waitForLoadState();
+        //retry 3 times
+        for (int i = 0; i < 3; i++) {
+            if (scope3DetailedView.isVisible()) {
+                return true;
+            }
+            page.waitForTimeout(3000);
+        }
+        return false;
+    }
+
     public void expandSummaryOfScopes() {
         page.waitForLoadState();
         summaryOfScopes.click();
         page.waitForLoadState();
+    }
+
+    public boolean isSummaryOfScopesDisplayed() {
+        page.waitForLoadState();
+        //retry 3 times
+        for (int i = 0; i < 3; i++) {
+            if (saveButton.isVisible()) {
+                return true;
+            }
+            page.waitForTimeout(3000);
+        }
+        return false;
     }
 
     /**

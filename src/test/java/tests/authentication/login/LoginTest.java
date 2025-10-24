@@ -25,6 +25,7 @@ public class LoginTest extends BaseTest {
         String email = validUser.get("username");
         String password = validUser.get("password");
         String expectedSuccess = validUser.get("expectedSuccess");
+        
 
         // Navigate to login page
         Allure.step("Navigate to login page", () -> {

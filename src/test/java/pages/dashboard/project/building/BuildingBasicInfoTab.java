@@ -24,7 +24,7 @@ public class BuildingBasicInfoTab {
         this.page = page;
 
         // Initialize form field locators
-        this.projectIdField = page.locator("#building_spaceId");
+        this.projectIdField = page.locator("#building_spaceId"); // Read-only field
         this.projectTitleField = page.locator("#building_spaceTitle");
         this.targetCertificationArea = page.locator("#gnfz-basic-info-form-targetCertArea");
         this.grossArea = page.locator("#gnfz-basic-info-form-grossArea");

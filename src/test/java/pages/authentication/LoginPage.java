@@ -61,4 +61,9 @@ public class LoginPage {
     public Locator getSignInButton() {
         return signInButton;
     }
+
+    public boolean isLoginSuccess(){
+        page.waitForURL("**/project/list", new Page.WaitForURLOptions().setTimeout(10000));
+        return page.url().contains("/project/list");
+    }
 }

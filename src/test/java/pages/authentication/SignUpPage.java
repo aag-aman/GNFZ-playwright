@@ -56,8 +56,7 @@ public class SignUpPage {
                 .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^Password$"))).locator("small");
         this.confirmPasswordError = page.locator("div")
                 .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^Confirm Password$"))).locator("small");
-        this.errorMessage = page.locator(
-                "body > app-root > gnfz-sign-up-design > div > div > div > div.col-12.col-lg-5.form-column > section > div > div > div:nth-child(2) > form > div:nth-child(4) > div:nth-child(2) > small");
+        this.errorMessage = page.locator("gnfz-sign-up-design form div.mt-2 small.text-danger");
         this.successMessage = page.locator(".success-message, .alert-success");
         this.loginLink = page.locator("a[href*='login'], a:has-text('Login')");
     }
@@ -208,7 +207,16 @@ public class SignUpPage {
     }
 
     public String getErrorMessage() {
-        return errorMessage.textContent();
+        page.waitForLoadState();
+        if (errorMessage.isVisible()) {
+            return errorMessage.textContent().trim();
+        }
+        return "";
+    }
+
+    public boolean isErrorMessageVisible() {
+        page.waitForLoadState();
+        return errorMessage.isVisible();
     }
 
     public String getSuccessMessage() {

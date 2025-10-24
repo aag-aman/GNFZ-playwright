@@ -76,7 +76,7 @@ public class BuildingProjectPage {
         this.currentProjectBreadcrumb = page.locator("li.breadcrumb-item.active");
 
         // Initialize page header
-        this.pageHeader = page.locator("h3:has-text('Net Zero certification for')");
+        this.pageHeader = page.locator("h3:has-text('Net Zero certification')");
 
         // Initialize tab radio inputs
         this.tab1Input = page.locator("#tab1");
@@ -114,7 +114,15 @@ public class BuildingProjectPage {
      */
     public boolean isPageDisplayed() {
         page.waitForLoadState();
-        return pageHeader.isVisible();
+        //retry 3 times
+        for (int i = 0; i < 3; i++) {
+            if (isPageHeaderVisible()) {
+                return true;
+            }
+            page.waitForTimeout(3000);
+        }
+
+        return false;
     }
 
     /**

@@ -2,6 +2,7 @@ package utils;
 
 import io.qameta.allure.Allure;
 import io.qameta.allure.model.Status;
+import java.io.ByteArrayInputStream;
 
 /**
  * ReportUtils - Utility class for Allure reporting functions
@@ -42,7 +43,7 @@ public class ReportUtils {
      */
     public static void addScreenshot(byte[] screenshot, String name) {
         if (screenshot != null) {
-            Allure.addAttachment(name, "image/png", new String(screenshot), ".png");
+            Allure.addAttachment(name, "image/png", new ByteArrayInputStream(screenshot), ".png");
         }
     }
 
@@ -52,7 +53,7 @@ public class ReportUtils {
     public static void addTrace(byte[] trace, String testClassName) {
         if (trace != null) {
             Allure.addAttachment("Playwright Trace - " + testClassName,
-                "application/zip", new String(trace), ".zip");
+                "application/zip", new ByteArrayInputStream(trace), ".zip");
         }
     }
 

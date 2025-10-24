@@ -130,10 +130,10 @@ public class SignUpTest extends BaseTest {
             }
 
             
-            //Captcha may block sign-up, so we check that captcha error is shown
+            //Check if error message is visible email already exists.
             System.out.println("Error Message: " + signUpPage.getErrorMessage());
-            assertTrue(signUpPage.getErrorMessage().contains("captcha"),
-                    "Captcha error should be visible indicating form submission was attempted");
+            assertTrue(signUpPage.getErrorMessage().contains("email"),
+                    "Email error should be visible indicating form submission was attempted");
 
 
         });

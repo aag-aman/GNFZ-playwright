@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Product Defects",
+    "description": "Issues related to product functionality",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*AssertionError.*"
+  },
+  {
+    "name": "Test Defects",
+    "description": "Issues related to test implementation",
+    "matchedStatuses": ["broken"],
+    "messageRegex": ".*NullPointerException.*|.*NoSuchElementException.*"
+  },
+  {
+    "name": "Timeout Issues",
+    "description": "Tests failed due to timeouts",
+    "matchedStatuses": ["broken", "failed"],
+    "messageRegex": ".*TimeoutError.*|.*timeout.*"
+  },
+  {
+    "name": "Locator Issues",
+    "description": "Element locator issues",
+    "matchedStatuses": ["broken"],
+    "messageRegex": ".*Locator.*|.*Element.*not.*found.*"
+  },
+  {
+    "name": "Network Issues",
+    "description": "Issues related to network connectivity",
+    "matchedStatuses": ["broken"],
+    "messageRegex": ".*NetworkError.*|.*Connection.*refused.*"
+  },
+  {
+    "name": "Ignored Tests",
+    "description": "Tests that were skipped or disabled",
+    "matchedStatuses": ["skipped"]
+  }
+]

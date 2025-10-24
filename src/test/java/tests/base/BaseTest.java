@@ -4,6 +4,8 @@ import com.microsoft.playwright.*;
 import io.qameta.allure.Allure;
 import org.junit.jupiter.api.*;
 import pages.PageManager;
+import steps.AuthenticationSteps;
+import steps.BuildingSteps;
 import utils.BrowserManager;
 import utils.ReportUtils;
 
@@ -30,6 +32,10 @@ public abstract class BaseTest {
     protected BrowserContext context;
     protected Page page;
     protected PageManager pageManager;
+
+    // Reusable workflow steps
+    protected AuthenticationSteps authSteps;
+    protected BuildingSteps buildingSteps;
 
     // Trace file management
     private static String runFolder;
@@ -82,6 +88,10 @@ public abstract class BaseTest {
         // Create page and initialize PageManager
         page = context.newPage();
         pageManager = new PageManager(page);
+
+        // Initialize reusable workflow steps
+        authSteps = new AuthenticationSteps(pageManager);
+        buildingSteps = new BuildingSteps(pageManager);
     }
 
     @AfterEach
