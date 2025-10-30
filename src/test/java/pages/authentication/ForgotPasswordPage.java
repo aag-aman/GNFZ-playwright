@@ -2,6 +2,7 @@ package pages.authentication;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import utils.AutoStep;
 import utils.InputHelper;
 
 /**
@@ -71,6 +72,7 @@ public class ForgotPasswordPage {
      * For beginners: This method handles navigation to the forgot password page.
      * It checks if we're already on the right page to avoid unnecessary navigation.
      */
+    @AutoStep
     public void navigateToForgotPassword() {
         String baseUrl = System.getProperty("baseUrl", "https://dev-platform.globalnetworkforzero.com");
         String currentUrl = page.url();
@@ -94,6 +96,7 @@ public class ForgotPasswordPage {
      * For beginners: This method types the email into the email input field.
      * Playwright automatically waits for the element to be ready before typing.
      */
+    @AutoStep
     public void enterEmail(String email) {
         InputHelper.humanizedInputNoEnter(page, emailField, email);
     }
@@ -104,6 +107,7 @@ public class ForgotPasswordPage {
      * For beginners: This method clicks the button to submit the forgot password request.
      * Playwright automatically waits for the button to be clickable.
      */
+    @AutoStep
     public void clickSubmitButton() {
         submitButton.click();
     }
@@ -116,6 +120,7 @@ public class ForgotPasswordPage {
      * For beginners: This is a convenience method that combines entering email
      * and clicking submit. It's useful when you want to do both actions together.
      */
+    @AutoStep
     public void requestPasswordReset(String email) {
         enterEmail(email);
         clickSubmitButton();
@@ -133,6 +138,7 @@ public class ForgotPasswordPage {
      * For beginners: This method gets the text from the confirmation header element.
      * Use this to verify that the correct success message is displayed.
      */
+    @AutoStep
     public String getConfirmationHeader() {
         return confirmationHeader.textContent();
     }
@@ -142,6 +148,7 @@ public class ForgotPasswordPage {
      *
      * @return String containing the confirmation message text
      */
+    @AutoStep
     public String getConfirmationMessage() {
         return confirmationMessage.textContent();
     }
@@ -154,6 +161,7 @@ public class ForgotPasswordPage {
      * For beginners: This method gets error text shown when something goes wrong
      * (like invalid email format). Use this to verify proper error handling.
      */
+    @AutoStep
     public String getErrorMessage() {
         return errorMessage.textContent();
     }
@@ -163,6 +171,7 @@ public class ForgotPasswordPage {
      *
      * @return String containing the page header text
      */
+    @AutoStep
     public String getPageHeader() {
         return pageHeader.textContent();
     }
@@ -172,6 +181,7 @@ public class ForgotPasswordPage {
      *
      * @return String containing the page sub-header text
      */
+    @AutoStep
     public String getPageSubHeader() {
         return pageSubHeader.textContent();
     }
@@ -181,6 +191,7 @@ public class ForgotPasswordPage {
      *
      * @return String containing the back to login message
      */
+    @AutoStep
     public String getBackToLoginMessage() {
         return backToLoginMessage.textContent();
     }
@@ -197,6 +208,7 @@ public class ForgotPasswordPage {
      * For beginners: This method checks if we're on the right page by looking
      * for the page header. It's the main way to verify page navigation worked.
      */
+    @AutoStep
     public boolean isPageDisplayed() {
         page.waitForLoadState();
         emailField.waitFor();
@@ -208,6 +220,7 @@ public class ForgotPasswordPage {
      *
      * @return true if email field is visible, false otherwise
      */
+    @AutoStep
     public boolean isEmailFieldVisible() {
         return emailField.isVisible();
     }
@@ -217,6 +230,7 @@ public class ForgotPasswordPage {
      *
      * @return true if submit button is visible, false otherwise
      */
+    @AutoStep
     public boolean isSubmitButtonVisible() {
         return submitButton.isVisible();
     }
@@ -229,6 +243,7 @@ public class ForgotPasswordPage {
      * For beginners: Some buttons might be visible but disabled (grayed out).
      * This method checks if the button can actually be clicked.
      */
+    @AutoStep
     public boolean isSubmitButtonEnabled() {
         return submitButton.isEnabled();
     }
@@ -238,6 +253,7 @@ public class ForgotPasswordPage {
      *
      * @return true if confirmation is displayed, false otherwise
      */
+    @AutoStep
     public boolean isConfirmationDisplayed() {
         return confirmationHeader.isVisible();
     }
@@ -250,6 +266,7 @@ public class ForgotPasswordPage {
      * For beginners: This is useful for negative testing - when you expect
      * something to fail and want to verify an error message appears.
      */
+    @AutoStep
     public boolean isErrorMessageDisplayed() {
         return errorMessage.isVisible();
     }
@@ -259,6 +276,7 @@ public class ForgotPasswordPage {
      *
      * @return true if back to login link is visible, false otherwise
      */
+    @AutoStep
     public boolean isBackToLoginLinkVisible() {
         return backToLoginLink.isVisible();
     }
@@ -273,6 +291,7 @@ public class ForgotPasswordPage {
      * For beginners: This method empties the email field. It's good practice
      * to clear fields before entering new text to avoid mixing old and new text.
      */
+    @AutoStep
     public void clearEmailField() {
         emailField.clear();
     }
@@ -285,6 +304,7 @@ public class ForgotPasswordPage {
      * For beginners: This method reads what's currently typed in the email field.
      * Use this to verify that text was entered correctly in your tests.
      */
+    @AutoStep
     public String getEmailFieldValue() {
         return emailField.inputValue();
     }
@@ -299,6 +319,7 @@ public class ForgotPasswordPage {
      * For beginners: This method clicks the link to go back to the login page.
      * Note: This will navigate away from the forgot password page.
      */
+    @AutoStep
     public void clickBackToLoginLink() {
         backToLoginLink.click();
     }

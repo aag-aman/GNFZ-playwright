@@ -54,53 +54,41 @@ public class ForgotPasswordRegressionTest extends BaseTest {
         // Step 1: Get the page object once and reuse it throughout the test
         ForgotPasswordPage forgotPasswordPage = pageManager.getForgotPasswordPage();
 
-        // Step 2: Extract test data
+        // Extract test data
         String email = testData.get("email");
 
-        // Step 3: Navigate to forgot password page
-        Allure.step("Navigate to forgot password page", () -> {
-            forgotPasswordPage.navigateToForgotPassword();
-        });
+        // Navigate to forgot password page - @AutoStep handles step creation
+        forgotPasswordPage.navigateToForgotPassword();
 
-        // Step 4: Verify page loaded correctly
-        Allure.step("Verify forgot password page is displayed", () -> {
-            assertTrue(forgotPasswordPage.isPageDisplayed(),
-                    "Forgot password page should be displayed");
-        });
+        // Verify page loaded correctly - @AutoStep handles step creation
+        assertTrue(forgotPasswordPage.isPageDisplayed(),
+                "Forgot password page should be displayed");
 
-        // Step 5: Enter email and verify it was entered correctly
-        Allure.step("Enter email: " + email, () -> {
-            // Clear any existing text first (good practice)
-            forgotPasswordPage.clearEmailField();
+        // Clear any existing text first (good practice)
+        forgotPasswordPage.clearEmailField();
 
-            // Enter the test email
-            forgotPasswordPage.enterEmail(email);
+        // Enter the test email - @AutoStep handles step creation with parameter visible
+        forgotPasswordPage.enterEmail(email);
 
-            // Verify email was entered correctly (defensive testing)
-            String enteredEmail = forgotPasswordPage.getEmailFieldValue();
-            assertEquals(email, enteredEmail,
-                    "Email should be entered correctly");
-        });
+        // Verify email was entered correctly (defensive testing)
+        String enteredEmail = forgotPasswordPage.getEmailFieldValue();
+        assertEquals(email, enteredEmail,
+                "Email should be entered correctly");
 
-        // Step 6: Submit the form
-        Allure.step("Submit forgot password request", () -> {
-            forgotPasswordPage.clickSubmitButton();
-        });
+        // Submit the form - @AutoStep handles step creation
+        forgotPasswordPage.clickSubmitButton();
 
-        // Step 7: Verify no error occurred for valid email
-        Allure.step("Verify no error message for valid email format", () -> {
-            // Give a brief moment for any potential error messages to appear
-            // Note: Playwright has auto-wait, but some error messages might take a moment
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+        // Give a brief moment for any potential error messages to appear
+        // Note: Playwright has auto-wait, but some error messages might take a moment
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
-            // Verify no error message is shown (this means the email format was accepted)
-            assertFalse(forgotPasswordPage.isErrorMessageDisplayed(),
-                    "No error message should be displayed for valid email format: " + email);
-        });
+        // Verify no error message is shown (this means the email format was accepted)
+        assertFalse(forgotPasswordPage.isErrorMessageDisplayed(),
+                "No error message should be displayed for valid email format: " + email);
 
         // Step 8: Take screenshot for reporting (helps with debugging)
         takeScreenshot("Forgot Password Valid Email Test - " + email.replaceAll("[^a-zA-Z0-9]", "_"));
@@ -142,65 +130,50 @@ public class ForgotPasswordRegressionTest extends BaseTest {
         // Step 1: Get the page object once and reuse it throughout the test
         ForgotPasswordPage forgotPasswordPage = pageManager.getForgotPasswordPage();
 
-        // Step 2: Extract test data
+        // Extract test data
         String email = testData.get("email");
         String expectedError = testData.get("expectedError");
 
-        // Step 3: Navigate to forgot password page
-        Allure.step("Navigate to forgot password page", () -> {
-            forgotPasswordPage.navigateToForgotPassword();
-        });
+        // Navigate to forgot password page - @AutoStep handles step creation
+        forgotPasswordPage.navigateToForgotPassword();
 
-        // Step 4: Verify page loaded correctly
-        Allure.step("Verify forgot password page is displayed", () -> {
-            assertTrue(forgotPasswordPage.isPageDisplayed(),
-                    "Forgot password page should be displayed");
-        });
+        // Verify page loaded correctly - @AutoStep handles step creation
+        assertTrue(forgotPasswordPage.isPageDisplayed(),
+                "Forgot password page should be displayed");
 
-        // Step 5: Enter invalid email (or leave empty for empty field tests)
-        Allure.step("Enter invalid email: '" + email + "'", () -> {
-            // Clear field first
-            forgotPasswordPage.clearEmailField();
+        // Clear field first
+        forgotPasswordPage.clearEmailField();
 
-            // Only enter email if it's not empty (some tests check empty field validation)
-            if (!email.trim().isEmpty()) {
-                forgotPasswordPage.enterEmail(email);
-            }
-        });
+        // Only enter email if it's not empty (some tests check empty field validation)
+        if (!email.trim().isEmpty()) {
+            forgotPasswordPage.enterEmail(email);
+        }
 
-        // Step 6: Submit the form with invalid data
-        Allure.step("Submit forgot password request with invalid data", () -> {
-            forgotPasswordPage.clickSubmitButton();
-        });
+        // Submit the form with invalid data - @AutoStep handles step creation
+        forgotPasswordPage.clickSubmitButton();
 
-        // Step 7: Verify appropriate error handling
-        Allure.step("Verify error handling for invalid email", () -> {
-            // Give a bit more time for error message to appear (some validations might be
-            // slower)
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+        // Give a bit more time for error message to appear (some validations might be slower)
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
-            // Check if error message is displayed (this depends on your app's validation
-            // behavior)
-            if (forgotPasswordPage.isErrorMessageDisplayed()) {
-                String actualError = forgotPasswordPage.getErrorMessage();
-                assertNotNull(actualError,
-                        "Error message should be displayed for invalid email: " + email);
+        // Check if error message is displayed (this depends on your app's validation behavior)
+        if (forgotPasswordPage.isErrorMessageDisplayed()) {
+            String actualError = forgotPasswordPage.getErrorMessage();
+            assertNotNull(actualError,
+                    "Error message should be displayed for invalid email: " + email);
 
-                // For debugging: attach both expected and actual error messages to report
-                Allure.addAttachment("Expected Error", expectedError);
-                Allure.addAttachment("Actual Error", actualError);
-            } else {
-                // If no error message, at least verify we haven't proceeded successfully
-                // (this is a fallback check in case the app doesn't show specific error
-                // messages)
-                assertFalse(forgotPasswordPage.isConfirmationDisplayed(),
-                        "Confirmation should not be displayed for invalid email: " + email);
-            }
-        });
+            // For debugging: attach both expected and actual error messages to report
+            Allure.addAttachment("Expected Error", expectedError);
+            Allure.addAttachment("Actual Error", actualError);
+        } else {
+            // If no error message, at least verify we haven't proceeded successfully
+            // (this is a fallback check in case the app doesn't show specific error messages)
+            assertFalse(forgotPasswordPage.isConfirmationDisplayed(),
+                    "Confirmation should not be displayed for invalid email: " + email);
+        }
 
         // Step 8: Take screenshot for reporting
         takeScreenshot("Forgot Password Invalid Email Test - " + description.replaceAll("[^a-zA-Z0-9]", "_"));
@@ -235,57 +208,47 @@ public class ForgotPasswordRegressionTest extends BaseTest {
     @Story("Form Validation")
     @Severity(SeverityLevel.MINOR)
     void testFormValidation() {
-        // Step 1: Get the page object once and reuse it throughout the test
+        // Get the page object once and reuse it throughout the test
         ForgotPasswordPage forgotPasswordPage = pageManager.getForgotPasswordPage();
 
-        // Step 2: Navigate to forgot password page
-        Allure.step("Navigate to forgot password page", () -> {
-            forgotPasswordPage.navigateToForgotPassword();
-        });
+        // Navigate to forgot password page - @AutoStep handles step creation
+        forgotPasswordPage.navigateToForgotPassword();
 
-        // Step 3: Test email field interactions
-        Allure.step("Test email field interactions", () -> {
-            // Verify field is initially empty (good practice to check initial state)
-            String initialValue = forgotPasswordPage.getEmailFieldValue();
-            assertTrue(initialValue == null || initialValue.isEmpty(),
-                    "Email field should be initially empty");
+        // Verify field is initially empty (good practice to check initial state)
+        String initialValue = forgotPasswordPage.getEmailFieldValue();
+        assertTrue(initialValue == null || initialValue.isEmpty(),
+                "Email field should be initially empty");
 
-            // Test entering text
-            forgotPasswordPage.enterEmail("test@example.com");
-            String enteredValue = forgotPasswordPage.getEmailFieldValue();
-            assertEquals("test@example.com", enteredValue,
-                    "Email should be entered correctly");
+        // Test entering text - @AutoStep handles step creation
+        forgotPasswordPage.enterEmail("test@example.com");
+        String enteredValue = forgotPasswordPage.getEmailFieldValue();
+        assertEquals("test@example.com", enteredValue,
+                "Email should be entered correctly");
 
-            // Test clearing the field
-            forgotPasswordPage.clearEmailField();
-            String clearedValue = forgotPasswordPage.getEmailFieldValue();
-            assertTrue(clearedValue == null || clearedValue.isEmpty(),
-                    "Email field should be cleared");
-        });
+        // Test clearing the field - @AutoStep handles step creation
+        forgotPasswordPage.clearEmailField();
+        String clearedValue = forgotPasswordPage.getEmailFieldValue();
+        assertTrue(clearedValue == null || clearedValue.isEmpty(),
+                "Email field should be cleared");
 
-        // Step 4: Test submit button functionality
-        Allure.step("Test submit button functionality", () -> {
-            assertTrue(forgotPasswordPage.isSubmitButtonEnabled(),
-                    "Submit button should be enabled");
-        });
+        // Test submit button functionality
+        assertTrue(forgotPasswordPage.isSubmitButtonEnabled(),
+                "Submit button should be enabled");
 
-        // Step 5: Test back to login link if it exists
-        Allure.step("Test back to login link if available", () -> {
-            if (forgotPasswordPage.isBackToLoginLinkVisible()) {
-                String backToLoginMessage = forgotPasswordPage.getBackToLoginMessage();
-                assertNotNull(backToLoginMessage,
-                        "Back to login message should be present");
+        // Test back to login link if it exists
+        if (forgotPasswordPage.isBackToLoginLinkVisible()) {
+            String backToLoginMessage = forgotPasswordPage.getBackToLoginMessage();
+            assertNotNull(backToLoginMessage,
+                    "Back to login message should be present");
 
-                // Test clicking the link (Note: this might navigate away from the page)
-                forgotPasswordPage.clickBackToLoginLink();
+            // Test clicking the link (Note: this might navigate away from the page)
+            forgotPasswordPage.clickBackToLoginLink();
 
-                // Note: You might want to verify navigation here depending on your app's
-                // behavior
-                // For example: check if we're redirected to login page
-            }
-        });
+            // Note: You might want to verify navigation here depending on your app's behavior
+            // For example: check if we're redirected to login page
+        }
 
-        // Step 6: Take screenshot for reporting
+        // Take screenshot for reporting
         takeScreenshot("Forgot Password Form Validation Test");
     }
 
@@ -302,27 +265,22 @@ public class ForgotPasswordRegressionTest extends BaseTest {
     @Story("Page Navigation")
     @Severity(SeverityLevel.MINOR)
     void testPageNavigation() {
-        // Step 1: Get the page object once and reuse it throughout the test
+        // Get the page object once and reuse it throughout the test
         ForgotPasswordPage forgotPasswordPage = pageManager.getForgotPasswordPage();
 
-        // Step 2: Test direct navigation to the page
-        Allure.step("Test direct navigation to forgot password page", () -> {
-            forgotPasswordPage.navigateToForgotPassword();
+        // Test direct navigation to the page - @AutoStep handles step creation
+        forgotPasswordPage.navigateToForgotPassword();
 
-            assertTrue(forgotPasswordPage.isPageDisplayed(),
-                    "Should be able to navigate directly to forgot password page");
-        });
+        assertTrue(forgotPasswordPage.isPageDisplayed(),
+                "Should be able to navigate directly to forgot password page");
 
-        // Step 3: Test page reload functionality
-        Allure.step("Test page reload", () -> {
-            // Reload the current page (useful to test if page handles refresh correctly)
-            page.reload();
+        // Reload the current page (useful to test if page handles refresh correctly)
+        page.reload();
 
-            assertTrue(forgotPasswordPage.isPageDisplayed(),
-                    "Page should still be displayed after reload");
-        });
+        assertTrue(forgotPasswordPage.isPageDisplayed(),
+                "Page should still be displayed after reload");
 
-        // Step 4: Take screenshot for reporting
+        // Take screenshot for reporting
         takeScreenshot("Forgot Password Navigation Test");
     }
 }

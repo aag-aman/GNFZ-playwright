@@ -4,7 +4,8 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 import utils.InputHelper;
-
+import utils.WaitHelper;
+import utils.AutoStep;
 /**
  * WasteReusedTable - Table F for Waste Reused
  *
@@ -18,6 +19,7 @@ public class WasteReusedTable {
     private static final String ADD_ROW_BUTTON_PATTERN = "#Reused_table_tr_row_add_%d";
     private static final String ATTACH_BUTTON_PATTERN = "#Reused_table_tr_row_upload_%d";
     private static final String REMOVE_ROW_BUTTON_PATTERN = "#Reused_table_tr_row_trash_%d";
+    private static final String ALL_ROWS_PATTERN = "input[ftestcaseref^='reused_type_of_waste_']";
 
     private final Locator tableTotal;
 
@@ -46,34 +48,46 @@ public class WasteReusedTable {
         return page.locator(String.format(REMOVE_ROW_BUTTON_PATTERN, rowIndex));
     }
 
+    private Locator getAllRows() {
+        return page.locator(ALL_ROWS_PATTERN);
+    }
+
+    @AutoStep
     public void enterType(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getTypeInput(rowIndex), value);
     }
 
+    @AutoStep
     public void enterQuantity(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getQuantityInput(rowIndex), value);
     }
 
+    @AutoStep
     public String getType(int rowIndex) {
         return getTypeInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getQuantity(int rowIndex) {
         return getQuantityInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getTableTotal() {
         return this.tableTotal.inputValue();
     }
 
+    @AutoStep
     public void addRow(int currentRowIndex) {
         page.waitForLoadState();
+        int initialCount = getAllRows().count();
         Locator addButton = getAddRowButton(currentRowIndex);
         addButton.waitFor();
         addButton.click();
-        page.waitForTimeout(500);
+        // WaitHelper.waitForNewRow(page, getAllRows(), initialCount, 30000);
     }
 
+    @AutoStep
     public void removeRow(int rowIndex) {
         page.waitForLoadState();
         Locator removeButton = getRemoveRowButton(rowIndex);
@@ -81,6 +95,7 @@ public class WasteReusedTable {
         removeButton.click();
     }
 
+    @AutoStep
     public void attach(int rowIndex) {
         page.waitForLoadState();
         Locator attachButton = getAttachButton(rowIndex);
@@ -88,6 +103,7 @@ public class WasteReusedTable {
         attachButton.click();
     }
 
+    @AutoStep
     public void fillRow(int rowIndex, String type, String quantity) {
         enterType(rowIndex, type);
         enterQuantity(rowIndex, quantity);

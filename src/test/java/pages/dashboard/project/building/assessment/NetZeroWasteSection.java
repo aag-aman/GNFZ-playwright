@@ -11,6 +11,7 @@ import pages.dashboard.project.building.assessment.tablesWaste.WasteRecycledTabl
 import pages.dashboard.project.building.assessment.tablesWaste.WasteReusedTable;
 import utils.InputHelper;
 
+import utils.AutoStep;
 /**
  * NetZeroWasteSection - Net Zero Waste section in Assessment tab
  * Handles waste-related data entry
@@ -110,6 +111,7 @@ public class NetZeroWasteSection {
      * SECTION VISIBILITY
      * ========================================
      */
+    @AutoStep
     public boolean isSectionDisplayed() {
         page.waitForLoadState();
         return sectionHeader.isVisible();
@@ -120,24 +122,29 @@ public class NetZeroWasteSection {
      * REPORTING PERIOD
      * ========================================
      */
+    @AutoStep
     public void enterReportingPeriodFrom(String fromDate) {
         InputHelper.selectDateFromDatepicker(page, reportingPeriodFrom, fromDate);
     }
 
+    @AutoStep
     public void enterReportingPeriodTo(String toDate) {
         InputHelper.selectDateFromDatepicker(page, reportingPeriodTo, toDate);
     }
 
+    @AutoStep
     public void checkBaseline() {
         page.waitForLoadState();
         baselineCheck.check();
     }
 
+    @AutoStep
     public void uncheckBaseline() {
         page.waitForLoadState();
         baselineCheck.uncheck();
     }
 
+    @AutoStep
     public void clickAddNewPeriod() {
         page.waitForLoadState();
         addNewPeriodButton.click();
@@ -148,36 +155,42 @@ public class NetZeroWasteSection {
      * SECTION VISIBILITY (Expand/Collapse)
      * ========================================
      */
+    @AutoStep
     public void expandGenerated() {
         page.waitForLoadState();
         generatedSection.click();
         page.waitForLoadState();
     }
 
+    @AutoStep
     public void expandLandfill() {
         page.waitForLoadState();
         landfillSection.click();
         page.waitForLoadState();
     }
 
+    @AutoStep
     public void expandIncinerated() {
         page.waitForLoadState();
         incineratedSection.click();
         page.waitForLoadState();
     }
 
+    @AutoStep
     public void expandComposted() {
         page.waitForLoadState();
         compostedSection.click();
         page.waitForLoadState();
     }
 
+    @AutoStep
     public void expandRecycled() {
         page.waitForLoadState();
         recycledSection.click();
         page.waitForLoadState();
     }
 
+    @AutoStep
     public void expandReused() {
         page.waitForLoadState();
         reusedSection.click();
@@ -189,36 +202,43 @@ public class NetZeroWasteSection {
      * SECTION TOTALS (Read-only, auto-calculated)
      * ========================================
      */
+    @AutoStep
     public String getGeneratedTotal() {
         page.waitForLoadState();
         return generatedTotal.textContent().trim();
     }
 
+    @AutoStep
     public String getLandfillTotal() {
         page.waitForLoadState();
         return landfillTotal.textContent().trim();
     }
 
+    @AutoStep
     public String getIncineratedTotal() {
         page.waitForLoadState();
         return incineratedTotal.textContent().trim();
     }
 
+    @AutoStep
     public String getCompostedTotal() {
         page.waitForLoadState();
         return compostedTotal.textContent().trim();
     }
 
+    @AutoStep
     public String getRecycledTotal() {
         page.waitForLoadState();
         return recycledTotal.textContent().trim();
     }
 
+    @AutoStep
     public String getReusedTotal() {
         page.waitForLoadState();
         return reusedTotal.textContent().trim();
     }
 
+    @AutoStep
     public String getWasteToBeReduced() {
         page.waitForLoadState();
         return wasteToBeReduced.textContent().trim();
@@ -229,6 +249,7 @@ public class NetZeroWasteSection {
      * SAVE BUTTON
      * ========================================
      */
+    @AutoStep
     public void clickSave() {
         page.waitForLoadState();
         saveButton.scrollIntoViewIfNeeded();
@@ -243,31 +264,37 @@ public class NetZeroWasteSection {
      */
 
     // a. Generated
+    @AutoStep
     public WasteGeneratedTable tableA() {
         return tableA;
     }
 
     // b. Sent to Landfill
+    @AutoStep
     public WasteLandfillTable tableB() {
         return tableB;
     }
 
     // c. Incinerated
+    @AutoStep
     public WasteIncineratedTable tableC() {
         return tableC;
     }
 
     // d. Composted
+    @AutoStep
     public WasteCompostedTable tableD() {
         return tableD;
     }
 
     // e. Recycled
+    @AutoStep
     public WasteRecycledTable tableE() {
         return tableE;
     }
 
     // f. Reused
+    @AutoStep
     public WasteReusedTable tableF() {
         return tableF;
     }

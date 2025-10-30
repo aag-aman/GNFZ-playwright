@@ -13,6 +13,7 @@ import pages.dashboard.project.building.assessment.tablesWater.RainwaterRecharge
 import pages.dashboard.project.building.assessment.tablesWater.RainwaterOutsideBoundaryTable;
 import pages.dashboard.project.building.assessment.tablesWater.FreshwaterProvisionTable;
 
+import utils.AutoStep;
 /**
  * NetZeroWaterSection - Net Zero Water section in Assessment tab
  * Handles water-related data entry
@@ -132,6 +133,7 @@ public class NetZeroWaterSection {
      * SECTION VISIBILITY
      * ========================================
      */
+    @AutoStep
     public boolean isSectionDisplayed() {
         page.waitForLoadState();
         return sectionHeader.isVisible();
@@ -142,24 +144,29 @@ public class NetZeroWaterSection {
      * REPORTING PERIOD
      * ========================================
      */
+    @AutoStep
     public void enterReportingPeriodFrom(String fromDate) {
         InputHelper.selectDateFromDatepicker(page, reportingPeriodFrom, fromDate);
     }
 
+    @AutoStep
     public void enterReportingPeriodTo(String toDate) {
         InputHelper.selectDateFromDatepicker(page, reportingPeriodTo, toDate);
     }
 
+    @AutoStep
     public void checkBaseline() {
         page.waitForLoadState();
         baselineCheck.check();
     }
 
+    @AutoStep
     public void uncheckBaseline() {
         page.waitForLoadState();
         baselineCheck.uncheck();
     }
 
+    @AutoStep
     public void clickAddNewPeriod() {
         page.waitForLoadState();
         addNewPeriodButton.click();
@@ -170,24 +177,28 @@ public class NetZeroWaterSection {
      * SECTION VISIBILITY (Expand/Collapse)
      * ========================================
      */
+    @AutoStep
     public void expandConsumption() {
         page.waitForLoadState();
         consumptionSection.click();
         page.waitForLoadState();
     }
 
+    @AutoStep
     public void expandSupply() {
         page.waitForLoadState();
         supplySection.click();
         page.waitForLoadState();
     }
 
+    @AutoStep
     public void expandRainwater() {
         page.waitForLoadState();
         rainwaterSection.click();
         page.waitForLoadState();
     }
 
+    @AutoStep
     public void expandFreshwaterProvision() {
         page.waitForLoadState();
         freshwaterProvisionSection.click();
@@ -199,34 +210,42 @@ public class NetZeroWaterSection {
      * VIEW TOGGLES (Summary/Detailed)
      * ========================================
      */
+    @AutoStep
     public void switchToConsumptionSummaryView() {
         consumptionSummaryView.click();
     }
 
+    @AutoStep
     public void switchToConsumptionDetailedView() {
         consumptionDetailedView.click();
     }
 
+    @AutoStep
     public void switchToSupplySummaryView() {
         supplySummaryView.click();
     }
 
+    @AutoStep
     public void switchToSupplyDetailedView() {
         supplyDetailedView.click();
     }
 
+    @AutoStep
     public void switchToRainwaterSummaryView() {
         rainwaterSummaryView.click();
     }
 
+    @AutoStep
     public void switchToRainwaterDetailedView() {
         rainwaterDetailedView.click();
     }
 
+    @AutoStep
     public void switchToFreshwaterProvisionSummaryView() {
         freshwaterProvisionSummaryView.click();
     }
 
+    @AutoStep
     public void switchToFreshwaterProvisionDetailedView() {
         freshwaterProvisionDetailedView.click();
     }
@@ -236,26 +255,31 @@ public class NetZeroWaterSection {
      * SECTION TOTALS (Read-only, auto-calculated)
      * ========================================
      */
+    @AutoStep
     public String getConsumptionTotal() {
         page.waitForLoadState();
         return consumptionTotal.textContent().trim();
     }
 
+    @AutoStep
     public String getSupplyTotal() {
         page.waitForLoadState();
         return supplyTotal.textContent().trim();
     }
 
+    @AutoStep
     public String getRainwaterTotal() {
         page.waitForLoadState();
         return rainwaterTotal.textContent().trim();
     }
 
+    @AutoStep
     public String getFreshwaterProvisionTotal() {
         page.waitForLoadState();
         return freshwaterProvisionTotal.textContent().trim();
     }
 
+    @AutoStep
     public String getAnnualFreshwaterRequirement() {
         page.waitForLoadState();
         return annualFreshwaterRequirement.textContent().trim();
@@ -266,6 +290,7 @@ public class NetZeroWaterSection {
      * SAVE BUTTON
      * ========================================
      */
+    @AutoStep
     public void clickSave() {
         page.waitForLoadState();
         saveButton.scrollIntoViewIfNeeded();
@@ -280,37 +305,45 @@ public class NetZeroWaterSection {
      */
 
     // a. Consumption Tables
+    @AutoStep
     public ConsumptionPotableTable tableA() {
         return tableA;
     }
 
+    @AutoStep
     public ConsumptionNonPotableTable tableB() {
         return tableB;
     }
 
     // b. Supply Tables
+    @AutoStep
     public SupplyRecycledOnsiteTable tableC() {
         return tableC;
     }
 
+    @AutoStep
     public SupplyRecycledOffsiteTable tableD() {
         return tableD;
     }
 
     // c. Rainwater Tables
+    @AutoStep
     public RainwaterTreatmentTable tableE() {
         return tableE;
     }
 
+    @AutoStep
     public RainwaterRechargeTable tableF() {
         return tableF;
     }
 
+    @AutoStep
     public RainwaterOutsideBoundaryTable tableG() {
         return tableG;
     }
 
     // d. Freshwater Provision Table
+    @AutoStep
     public FreshwaterProvisionTable tableH() {
         return tableH;
     }

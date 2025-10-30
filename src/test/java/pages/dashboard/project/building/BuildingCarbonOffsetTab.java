@@ -5,6 +5,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.SelectOption;
 import utils.InputHelper;
 
+import utils.AutoStep;
 /**
  * BuildingCarbonOffsetTab - Carbon Offset tab for Building project
  * This tab tracks planned and actual carbon offset emissions to offset the building's emissions
@@ -67,11 +68,13 @@ public class BuildingCarbonOffsetTab {
     /**
      * Tab visibility
      */
+    @AutoStep
     public boolean isTabDisplayed() {
         page.waitForLoadState();
         return tabContent.isVisible();
     }
 
+    @AutoStep
     public boolean isCarbonOffsetTableVisible() {
         page.waitForLoadState();
         return carbonOffsetTable.isVisible();
@@ -80,6 +83,7 @@ public class BuildingCarbonOffsetTab {
     /**
      * Get instruction text
      */
+    @AutoStep
     public String getInstructionText() {
         page.waitForLoadState();
         return instructionText.textContent().trim();
@@ -88,24 +92,28 @@ public class BuildingCarbonOffsetTab {
     /**
      * Tooltip interactions
      */
+    @AutoStep
     public void hoverOverPlannedTooltip() {
         page.waitForLoadState();
         plannedTooltipIcon.hover();
         page.waitForTimeout(300);
     }
 
+    @AutoStep
     public String getPlannedTooltipText() {
         page.waitForLoadState();
         hoverOverPlannedTooltip();
         return plannedTooltipText.textContent().trim();
     }
 
+    @AutoStep
     public void hoverOverCumulativeTooltip() {
         page.waitForLoadState();
         cumulativeTooltipIcon.hover();
         page.waitForTimeout(300);
     }
 
+    @AutoStep
     public String getCumulativeTooltipText() {
         page.waitForLoadState();
         hoverOverCumulativeTooltip();
@@ -119,6 +127,7 @@ public class BuildingCarbonOffsetTab {
         return page.locator(String.format(DATE_INPUT_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public void enterDate(int rowIndex, String date) {
         page.waitForLoadState();
         Locator dateInput = getDateInput(rowIndex);
@@ -132,6 +141,7 @@ public class BuildingCarbonOffsetTab {
         page.waitForTimeout(1000);
     }
 
+    @AutoStep
     public String getDate(int rowIndex) {
         page.waitForLoadState();
         return getDateInput(rowIndex).inputValue();
@@ -144,6 +154,7 @@ public class BuildingCarbonOffsetTab {
         return page.locator(String.format(PLANNED_INPUT_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public void enterPlannedEmissions(int rowIndex, String value) {
         Locator plannedInput = getPlannedInput(rowIndex);
         InputHelper.humanizedInput(page, plannedInput, value);
@@ -151,11 +162,13 @@ public class BuildingCarbonOffsetTab {
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public String getPlannedEmissions(int rowIndex) {
         page.waitForLoadState();
         return getPlannedInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public boolean isPlannedInputEnabled(int rowIndex) {
         page.waitForLoadState();
         return getPlannedInput(rowIndex).isEnabled();
@@ -168,6 +181,7 @@ public class BuildingCarbonOffsetTab {
         return page.locator(String.format(ACTUAL_INPUT_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public void enterActualEmissions(int rowIndex, String value) {
         Locator actualInput = getActualInput(rowIndex);
         InputHelper.humanizedInput(page, actualInput, value);
@@ -175,11 +189,13 @@ public class BuildingCarbonOffsetTab {
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public String getActualEmissions(int rowIndex) {
         page.waitForLoadState();
         return getActualInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public boolean isActualInputEnabled(int rowIndex) {
         page.waitForLoadState();
         return getActualInput(rowIndex).isEnabled();
@@ -192,6 +208,7 @@ public class BuildingCarbonOffsetTab {
         return page.locator(String.format(CUMULATIVE_INPUT_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public String getCumulativeTotal(int rowIndex) {
         page.waitForLoadState();
         return getCumulativeInput(rowIndex).inputValue();
@@ -204,6 +221,7 @@ public class BuildingCarbonOffsetTab {
         return page.locator(String.format(ATTACH_ICON_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public void clickAttachIcon(int rowIndex) {
         page.waitForLoadState();
         Locator attachIcon = getAttachIcon(rowIndex);
@@ -219,6 +237,7 @@ public class BuildingCarbonOffsetTab {
         return page.locator(String.format(STATUS_SELECT_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public void selectStatus(int rowIndex, String status) {
         page.waitForLoadState();
         Locator statusSelect = getStatusSelect(rowIndex);
@@ -227,11 +246,13 @@ public class BuildingCarbonOffsetTab {
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public String getSelectedStatus(int rowIndex) {
         page.waitForLoadState();
         return getStatusSelect(rowIndex).inputValue();
     }
 
+    @AutoStep
     public boolean isStatusSelectEnabled(int rowIndex) {
         page.waitForLoadState();
         return getStatusSelect(rowIndex).isEnabled();
@@ -244,6 +265,7 @@ public class BuildingCarbonOffsetTab {
         return page.locator(String.format(CHAT_ICON_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public void clickChatIcon(int rowIndex) {
         page.waitForLoadState();
         Locator chatIcon = getChatIcon(rowIndex);
@@ -259,6 +281,7 @@ public class BuildingCarbonOffsetTab {
         return page.locator(String.format(REMOVE_ROW_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public void clickRemoveRow(int rowIndex) {
         page.waitForLoadState();
         Locator removeIcon = getRemoveRowIcon(rowIndex);
@@ -271,6 +294,7 @@ public class BuildingCarbonOffsetTab {
         return page.locator(String.format(ADD_ROW_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public void clickAddRow(int rowIndex) {
         page.waitForLoadState();
         Locator addIcon = getAddRowIcon(rowIndex);
@@ -282,6 +306,7 @@ public class BuildingCarbonOffsetTab {
     /**
      * Convenience method to fill a complete row
      */
+    @AutoStep
     public void fillRow(int rowIndex, String date, String plannedEmissions, String actualEmissions, String status) {
         enterDate(rowIndex, date);
         System.out.println("Entered date: " + date);
@@ -303,11 +328,13 @@ public class BuildingCarbonOffsetTab {
     /**
      * Table totals
      */
+    @AutoStep
     public String getTotalCumulative() {
         page.waitForLoadState();
         return totalCumulativeInput.inputValue();
     }
 
+    @AutoStep
     public boolean isTotalLabelVisible() {
         page.waitForLoadState();
         return totalLabel.isVisible();
@@ -316,6 +343,7 @@ public class BuildingCarbonOffsetTab {
     /**
      * Check if row exists
      */
+    @AutoStep
     public boolean isRowVisible(int rowIndex) {
         page.waitForLoadState();
         return page.locator(String.format(ROW_PATTERN, rowIndex)).isVisible();
@@ -324,6 +352,7 @@ public class BuildingCarbonOffsetTab {
     /**
      * Count visible rows
      */
+    @AutoStep
     public int getRowCount() {
         page.waitForLoadState();
         return page.locator("tr[id^='records_']").count();
@@ -332,16 +361,19 @@ public class BuildingCarbonOffsetTab {
     /**
      * Save button
      */
+    @AutoStep
     public boolean isSaveButtonVisible() {
         page.waitForLoadState();
         return saveButton.isVisible();
     }
 
+    @AutoStep
     public boolean isSaveButtonEnabled() {
         page.waitForLoadState();
         return saveButton.isEnabled();
     }
 
+    @AutoStep
     public void clickSave() {
         page.waitForLoadState();
         saveButton.scrollIntoViewIfNeeded();
@@ -349,6 +381,7 @@ public class BuildingCarbonOffsetTab {
         page.waitForTimeout(1000);
     }
 
+    @AutoStep
     public String getSaveButtonText() {
         page.waitForLoadState();
         return saveButton.textContent().trim();

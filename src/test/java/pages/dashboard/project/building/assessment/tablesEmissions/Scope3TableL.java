@@ -5,6 +5,7 @@ import com.microsoft.playwright.Page;
 
 import utils.InputHelper;
 
+import utils.AutoStep;
 /**
  * Scope3TableL - Table L for Scope 3 Emissions (Business Travel)
  *
@@ -64,27 +65,33 @@ public class Scope3TableL {
     // ========================================
     // Public action methods (slower inputs with more wait time)
     // ========================================
+    @AutoStep
     public void enterVehicleType(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getVehicleTypeInput(rowIndex), value);
     }
 
+    @AutoStep
     public void enterVehicleSize(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getVehicleSizeInput(rowIndex), value);
     }
 
+    @AutoStep
     public void enterFuel(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getFuelInput(rowIndex), value);
     }
 
+    @AutoStep
     public void enterEmissionFactor(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getEmissionFactorInput(rowIndex), value);
     }
 
+    @AutoStep
     public void enterTotalDistance(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getTotalDistanceInput(rowIndex), value);
     }
 
 
+    @AutoStep
     public void selectUnits(int rowIndex, String value) {
         page.waitForLoadState();
         Locator unitsSelect = getUnitsSelect(rowIndex);
@@ -97,34 +104,42 @@ public class Scope3TableL {
     // ========================================
     // Public getter methods
     // ========================================
+    @AutoStep
     public String getVehicleType(int rowIndex) {
         return getVehicleTypeInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getVehicleSize(int rowIndex) {
         return getVehicleSizeInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getFuel(int rowIndex) {
         return getFuelInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getEmissionFactor(int rowIndex) {
         return getEmissionFactorInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getTotalDistance(int rowIndex) {
         return getTotalDistanceInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getUnits(int rowIndex) {
         return getUnitsSelect(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getRowTotal(int rowIndex) {
         return getRowTotalLocator(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getTableTotal() {
         return tableTotal.inputValue();
     }
@@ -132,15 +147,18 @@ public class Scope3TableL {
     // ========================================
     // Row operations
     // ========================================
+    @AutoStep
     public void addRow(int rowIndex) {
         page.locator(String.format("[ftestcaseref='scope3_Business Travel_add_%d']", rowIndex)).click();
         page.waitForTimeout(500); // Wait for new row to be added
     }
 
+    @AutoStep
     public void removeRow(int rowIndex) {
         page.locator(String.format("[ftestcaseref='scope3_Business Travel_remove_%d']", rowIndex)).click();
     }
 
+    @AutoStep
     public void attach() {
         page.locator("[ftestcaseref='scope3_Business Travel_attach']").click();
     }

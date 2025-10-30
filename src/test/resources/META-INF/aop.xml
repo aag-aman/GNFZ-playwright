@@ -1,0 +1,18 @@
+<!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN" "https://www.eclipse.org/aspectj/dtd/aspectj.dtd">
+<aspectj>
+    <aspects>
+        <!-- Register the AutoStepAspect for processing @AutoStep annotations -->
+        <aspect name="utils.AutoStepAspect"/>
+    </aspects>
+
+    <weaver options="-verbose -showWeaveInfo">
+        <!-- Weave all classes in the pages package (Page Objects) -->
+        <include within="pages..*"/>
+
+        <!-- Weave all classes in the steps package (Workflow Steps) -->
+        <include within="steps..*"/>
+
+        <!-- Add more packages here if you want @AutoStep to work in other packages -->
+        <!-- Example: <include within="helpers..*"/> -->
+    </weaver>
+</aspectj>

@@ -38,51 +38,42 @@ public class LoginRegressionTest extends BaseTest {
         LoginPage loginPage = pageManager.getLoginPage();
         System.out.println("Running test: " + description);
 
-        // Navigate to login page
-        Allure.step("Navigate to login page", () -> {
-            loginPage.navigateToLogin();
-        });
+        // Navigate to login page - @AutoStep handles step creation
+        loginPage.navigateToLogin();
 
-        // Perform login
-        Allure.step("Enter login credentials", () -> {
-            loginPage.enterEmail(email);
-            loginPage.enterPassword(password);
-        });
+        // Enter login credentials - @AutoStep handles step creation with parameters visible
+        loginPage.enterEmail(email);
+        loginPage.enterPassword(password);
 
-        Allure.step("Click sign in button", () -> {
-            loginPage.clickSignInButton();
-        });
+        // Click sign in button - @AutoStep handles step creation
+        loginPage.clickSignInButton();
 
         if ("List of projects".equals(expectedSuccess)) {
             // Positive test case - expect successful login
-            Allure.step("Verify successful login", () -> {
-                assertTrue(loginPage.isLoginSuccess(), "Login should be successful");
+            assertTrue(loginPage.isLoginSuccess(), "Login should be successful");
 
-                // Take screenshot on success
-                takeScreenshot("Success Screenshot - " + description);
+            // Take screenshot on success
+            takeScreenshot("Success Screenshot - " + description);
 
-                System.out.println("✅ Success: " + description);
-            });
+            System.out.println("✅ Success: " + description);
         } else {
             // Negative test case - expect error
-            Allure.step("Verify error handling", () -> {
-                // Wait for error message to appear
-                page.waitForTimeout(2000);
+            // Wait for error message to appear
+            page.waitForTimeout(2000);
 
-                // Check for various error indicators
-                boolean hasError = page.locator(".error, .alert-danger, [role='alert']").count() > 0 ||
-                        page.content().contains("error") ||
-                        page.content().contains("invalid") ||
-                        page.content().contains("required");
+            // Check for various error indicators
+            boolean hasError = page.locator(".error, .alert-danger, [role='alert']").count() > 0 ||
+                    page.content().contains("error") ||
+                    page.content().contains("invalid") ||
+                    page.content().contains("required");
 
-                org.junit.jupiter.api.Assertions.assertTrue(hasError,
-                        "Expected error message for: " + description);
+            org.junit.jupiter.api.Assertions.assertTrue(hasError,
+                    "Expected error message for: " + description);
 
-                // Take screenshot on error validation
-                takeScreenshot("Error Screenshot - " + description);
+            // Take screenshot on error validation
+            takeScreenshot("Error Screenshot - " + description);
 
-                System.out.println("✅ Error handled correctly: " + description);
-            });
+            System.out.println("✅ Error handled correctly: " + description);
         }
     }
 
@@ -96,24 +87,20 @@ public class LoginRegressionTest extends BaseTest {
         String email = validUser.get("username");
         String password = validUser.get("password");
 
-        Allure.step("Navigate to login page", () -> {
-            pageManager.getLoginPage().navigateToLogin();
-        });
+        // Navigate to login page - @AutoStep handles step creation
+        pageManager.getLoginPage().navigateToLogin();
 
-        Allure.step("Enter valid credentials", () -> {
-            pageManager.getLoginPage().enterEmail(email);
-            pageManager.getLoginPage().enterPassword(password);
-        });
+        // Enter valid credentials - @AutoStep handles step creation with parameters visible
+        pageManager.getLoginPage().enterEmail(email);
+        pageManager.getLoginPage().enterPassword(password);
 
-        Allure.step("Click sign in button", () -> {
-            pageManager.getLoginPage().clickSignInButton();
-        });
+        // Click sign in button - @AutoStep handles step creation
+        pageManager.getLoginPage().clickSignInButton();
 
-        Allure.step("Verify successful login", () -> {
-            page.waitForURL("**/project/list", new Page.WaitForURLOptions().setTimeout(10000));
+        // Wait for navigation to complete after successful login
+        page.waitForURL("**/project/list", new Page.WaitForURLOptions().setTimeout(10000));
 
-            // Take success screenshot
-            takeScreenshot("Happy Path Success Screenshot");
-        });
+        // Take success screenshot
+        takeScreenshot("Happy Path Success Screenshot");
     }
 }

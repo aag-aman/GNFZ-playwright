@@ -4,6 +4,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.SelectOption;
 
+import utils.AutoStep;
 /**
  * BuildingOverviewTab - Overview tab for Building project
  * Displays the certification process with 4 main stages:
@@ -133,16 +134,19 @@ public class BuildingOverviewTab {
     /**
      * Tab visibility
      */
+    @AutoStep
     public boolean isTabDisplayed() {
         page.waitForLoadState();
         return tabContent.isVisible();
     }
 
+    @AutoStep
     public boolean isProcessStatusContainerVisible() {
         page.waitForLoadState();
         return processStatusContainer.isVisible();
     }
 
+    @AutoStep
     public boolean isCertificationTableVisible() {
         page.waitForLoadState();
         return certificationTable.isVisible();
@@ -151,16 +155,19 @@ public class BuildingOverviewTab {
     /**
      * Header elements
      */
+    @AutoStep
     public String getCertificationProcessHeader() {
         page.waitForLoadState();
         return certificationProcessHeader.textContent().trim();
     }
 
+    @AutoStep
     public boolean isActivityLogButtonVisible() {
         page.waitForLoadState();
         return activityLogButton.isVisible();
     }
 
+    @AutoStep
     public void clickActivityLogButton() {
         page.waitForLoadState();
         activityLogButton.click();
@@ -170,18 +177,21 @@ public class BuildingOverviewTab {
     /**
      * Stage 1: Provide basic info - Building Information
      */
+    @AutoStep
     public void clickBuildingInfoLink() {
         page.waitForLoadState();
         buildingInfoLink.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public void selectBuildingInfoStatus(String status) {
         page.waitForLoadState();
         buildingInfoSelect.selectOption(new SelectOption().setLabel(status));
         page.waitForTimeout(300);
     }
 
+    @AutoStep
     public String getBuildingInfoStatus() {
         page.waitForLoadState();
         return buildingInfoSelect.inputValue();
@@ -190,18 +200,21 @@ public class BuildingOverviewTab {
     /**
      * Stage 1: Provide basic info - Team Information
      */
+    @AutoStep
     public void clickTeamInfoLink() {
         page.waitForLoadState();
         teamInfoLink.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public void selectTeamInfoStatus(String status) {
         page.waitForLoadState();
         teamInfoSelect.selectOption(new SelectOption().setLabel(status));
         page.waitForTimeout(300);
     }
 
+    @AutoStep
     public String getTeamInfoStatus() {
         page.waitForLoadState();
         return teamInfoSelect.inputValue();
@@ -210,35 +223,41 @@ public class BuildingOverviewTab {
     /**
      * Stage 2: Complete assessment
      */
+    @AutoStep
     public void clickCompleteAssessmentLink() {
         page.waitForLoadState();
         completeAssessmentLink.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public void selectCompleteAssessmentStatus(String status) {
         page.waitForLoadState();
         completeAssessmentSelect.selectOption(new SelectOption().setLabel(status));
         page.waitForTimeout(300);
     }
 
+    @AutoStep
     public String getCompleteAssessmentStatus() {
         page.waitForLoadState();
         return completeAssessmentSelect.inputValue();
     }
 
+    @AutoStep
     public void hoverOverAssessmentTooltip() {
         page.waitForLoadState();
         assessmentTooltipIcon.hover();
         page.waitForTimeout(300);
     }
 
+    @AutoStep
     public String getAssessmentTooltipText() {
         page.waitForLoadState();
         hoverOverAssessmentTooltip();
         return assessmentTooltipText.textContent().trim();
     }
 
+    @AutoStep
     public void clickAssessmentChatIcon() {
         page.waitForLoadState();
         assessmentChatIcon.click();
@@ -248,23 +267,27 @@ public class BuildingOverviewTab {
     /**
      * Stage 3: Validate and certify - Net Zero Plans
      */
+    @AutoStep
     public void clickNetZeroPlanLink() {
         page.waitForLoadState();
         netZeroPlanLink.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public void selectNetZeroPlanStatus(String status) {
         page.waitForLoadState();
         netZeroPlanSelect.selectOption(new SelectOption().setLabel(status));
         page.waitForTimeout(300);
     }
 
+    @AutoStep
     public String getNetZeroPlanStatus() {
         page.waitForLoadState();
         return netZeroPlanSelect.inputValue();
     }
 
+    @AutoStep
     public void clickNetZeroPlanChatIcon() {
         page.waitForLoadState();
         netZeroPlanChatIcon.click();
@@ -274,23 +297,27 @@ public class BuildingOverviewTab {
     /**
      * Stage 3: Validate and certify - Carbon Offsets
      */
+    @AutoStep
     public void clickCarbonOffsetLink() {
         page.waitForLoadState();
         carbonOffsetLink.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public void clickCarbonOffsetNavigateIcon() {
         page.waitForLoadState();
         carbonOffsetNavigateIcon.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public String getCarbonOffsetValue() {
         page.waitForLoadState();
         return carbonOffsetInput.inputValue();
     }
 
+    @AutoStep
     public void clickCarbonOffsetChatIcon() {
         page.waitForLoadState();
         carbonOffsetChatIcon.click();
@@ -300,23 +327,27 @@ public class BuildingOverviewTab {
     /**
      * Stage 3: Validate and certify - Net Zero Milestone Targets
      */
+    @AutoStep
     public void clickNetZeroMilestoneLink() {
         page.waitForLoadState();
         netZeroMilestoneLink.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public void clickNetZeroMilestoneNavigateIcon() {
         page.waitForLoadState();
         netZeroMilestoneNavigateIcon.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public String getNetZeroMilestoneValue() {
         page.waitForLoadState();
         return netZeroMilestoneInput.inputValue();
     }
 
+    @AutoStep
     public void clickNetZeroMilestoneChatIcon() {
         page.waitForLoadState();
         netZeroMilestoneChatIcon.click();
@@ -326,11 +357,13 @@ public class BuildingOverviewTab {
     /**
      * Stage 4: Achieve net zero certification
      */
+    @AutoStep
     public String getNetZeroCertificationStatus() {
         page.waitForLoadState();
         return netZeroCertificationStatus.textContent().trim();
     }
 
+    @AutoStep
     public boolean isNetZeroCertificationHeaderVisible() {
         page.waitForLoadState();
         return netZeroCertificationHeader.isVisible();
@@ -339,17 +372,20 @@ public class BuildingOverviewTab {
     /**
      * Platform demo link
      */
+    @AutoStep
     public boolean isPlatformDemoLinkVisible() {
         page.waitForLoadState();
         return platformDemoLink.isVisible();
     }
 
+    @AutoStep
     public void clickPlatformDemoLink() {
         page.waitForLoadState();
         platformDemoLink.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public String getPlatformDemoLinkText() {
         page.waitForLoadState();
         return platformDemoLink.textContent().trim();
@@ -358,11 +394,13 @@ public class BuildingOverviewTab {
     /**
      * Modal dialogs - General
      */
+    @AutoStep
     public boolean isModalDialogVisible() {
         page.waitForLoadState();
         return modalDialog.isVisible();
     }
 
+    @AutoStep
     public void closeModalDialog() {
         page.waitForLoadState();
         if (modalCloseButton.isVisible()) {
@@ -374,16 +412,19 @@ public class BuildingOverviewTab {
     /**
      * Validation error modal - Appears when required fields are missing
      */
+    @AutoStep
     public boolean isValidationErrorModalVisible() {
         page.waitForLoadState();
         return validationErrorTitle.isVisible();
     }
 
+    @AutoStep
     public String getValidationErrorTitle() {
         page.waitForLoadState();
         return validationErrorTitle.textContent().trim();
     }
 
+    @AutoStep
     public String[] getValidationErrorMessages() {
         page.waitForLoadState();
         int itemCount = validationErrorList.locator("li").count();
@@ -394,11 +435,13 @@ public class BuildingOverviewTab {
         return messages;
     }
 
+    @AutoStep
     public int getValidationErrorCount() {
         page.waitForLoadState();
         return validationErrorList.locator("li").count();
     }
 
+    @AutoStep
     public void clickValidationErrorCloseButton() {
         page.waitForLoadState();
         validationErrorCloseButton.click();
@@ -408,33 +451,39 @@ public class BuildingOverviewTab {
     /**
      * Status change confirmation modal - Appears when changing status after filling required fields
      */
+    @AutoStep
     public boolean isStatusChangeConfirmationModalVisible() {
         page.waitForLoadState();
         return statusChangeConfirmationTitle.isVisible();
     }
 
+    @AutoStep
     public String getStatusChangeConfirmationTitle() {
         page.waitForLoadState();
         return statusChangeConfirmationTitle.textContent().trim();
     }
 
+    @AutoStep
     public void clickStatusChangeNoButton() {
         page.waitForLoadState();
         statusChangeNoButton.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public void clickStatusChangeYesButton() {
         page.waitForLoadState();
         statusChangeYesButton.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public boolean isStatusChangeNoButtonVisible() {
         page.waitForLoadState();
         return statusChangeNoButton.isVisible();
     }
 
+    @AutoStep
     public boolean isStatusChangeYesButtonVisible() {
         page.waitForLoadState();
         return statusChangeYesButton.isVisible();
@@ -444,6 +493,7 @@ public class BuildingOverviewTab {
      * Convenience method to change status and handle confirmation
      * Returns true if status was successfully changed, false if validation error occurred
      */
+    @AutoStep
     public boolean changeStatusWithConfirmation(String statusDropdownId, String newStatus) {
         page.waitForLoadState();
 
@@ -471,6 +521,7 @@ public class BuildingOverviewTab {
     /**
      * Convenience method for Building Info status change
      */
+    @AutoStep
     public boolean changeBuildingInfoStatusWithConfirmation(String newStatus) {
         return changeStatusWithConfirmation("#gnfz-building-info", newStatus);
     }
@@ -478,6 +529,7 @@ public class BuildingOverviewTab {
     /**
      * Convenience method for Team Info status change
      */
+    @AutoStep
     public boolean changeTeamInfoStatusWithConfirmation(String newStatus) {
         return changeStatusWithConfirmation("#gnfz-team-info", newStatus);
     }
@@ -485,6 +537,7 @@ public class BuildingOverviewTab {
     /**
      * Convenience method for Complete Assessment status change
      */
+    @AutoStep
     public boolean changeCompleteAssessmentStatusWithConfirmation(String newStatus) {
         return changeStatusWithConfirmation("#gnfz-complete-assessment", newStatus);
     }
@@ -492,6 +545,7 @@ public class BuildingOverviewTab {
     /**
      * Convenience method for Net Zero Plan status change
      */
+    @AutoStep
     public boolean changeNetZeroPlanStatusWithConfirmation(String newStatus) {
         return changeStatusWithConfirmation("#gnfz-nzp", newStatus);
     }

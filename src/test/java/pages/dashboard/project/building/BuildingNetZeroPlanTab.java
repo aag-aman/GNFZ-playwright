@@ -3,6 +3,7 @@ package pages.dashboard.project.building;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import utils.AutoStep;
 /**
  * BuildingNetZeroPlanTab - Net Zero Plan tab for Building project
  * This tab allows users to upload a plan of their emission reduction strategies
@@ -45,11 +46,13 @@ public class BuildingNetZeroPlanTab {
     /**
      * Tab visibility
      */
+    @AutoStep
     public boolean isTabDisplayed() {
         page.waitForLoadState();
         return tabContent.isVisible();
     }
 
+    @AutoStep
     public boolean isPlanTargetsSectionVisible() {
         page.waitForLoadState();
         return planTargetsSection.isVisible();
@@ -58,6 +61,7 @@ public class BuildingNetZeroPlanTab {
     /**
      * Get instruction text
      */
+    @AutoStep
     public String getInstructionText() {
         page.waitForLoadState();
         return instructionText.textContent().trim();
@@ -66,6 +70,7 @@ public class BuildingNetZeroPlanTab {
     /**
      * Check if info icon is visible
      */
+    @AutoStep
     public boolean isInfoIconVisible() {
         page.waitForLoadState();
         return infoIcon.isVisible();
@@ -74,6 +79,7 @@ public class BuildingNetZeroPlanTab {
     /**
      * Hover over info icon to show tooltip
      */
+    @AutoStep
     public void hoverOverInfoIcon() {
         page.waitForLoadState();
         infoIcon.hover();
@@ -83,6 +89,7 @@ public class BuildingNetZeroPlanTab {
     /**
      * Get tooltip text content
      */
+    @AutoStep
     public String getTooltipText() {
         page.waitForLoadState();
         hoverOverInfoIcon();
@@ -92,6 +99,7 @@ public class BuildingNetZeroPlanTab {
     /**
      * Check if template link is visible
      */
+    @AutoStep
     public boolean isTemplateLinkVisible() {
         page.waitForLoadState();
         hoverOverInfoIcon();
@@ -102,6 +110,7 @@ public class BuildingNetZeroPlanTab {
      * Click on the template link to view GNFZ's net zero plan template
      * Note: This will open in a new tab
      */
+    @AutoStep
     public void clickTemplateLink() {
         page.waitForLoadState();
         hoverOverInfoIcon();
@@ -111,6 +120,7 @@ public class BuildingNetZeroPlanTab {
     /**
      * Get template link URL
      */
+    @AutoStep
     public String getTemplateLinkUrl() {
         page.waitForLoadState();
         hoverOverInfoIcon();
@@ -120,6 +130,7 @@ public class BuildingNetZeroPlanTab {
     /**
      * Check if View/Upload link is visible
      */
+    @AutoStep
     public boolean isViewUploadLinkVisible() {
         page.waitForLoadState();
         return viewUploadLink.isVisible();
@@ -128,6 +139,7 @@ public class BuildingNetZeroPlanTab {
     /**
      * Click View/Upload link to open file upload dialog or view existing plan
      */
+    @AutoStep
     public void clickViewUploadLink() {
         page.waitForLoadState();
         viewUploadLink.click();
@@ -137,6 +149,7 @@ public class BuildingNetZeroPlanTab {
     /**
      * Check if save button is visible
      */
+    @AutoStep
     public boolean isSaveButtonVisible() {
         page.waitForLoadState();
         return saveButton.isVisible();
@@ -145,6 +158,7 @@ public class BuildingNetZeroPlanTab {
     /**
      * Check if save button is enabled
      */
+    @AutoStep
     public boolean isSaveButtonEnabled() {
         page.waitForLoadState();
         return saveButton.isEnabled();
@@ -153,6 +167,7 @@ public class BuildingNetZeroPlanTab {
     /**
      * Click save button
      */
+    @AutoStep
     public void clickSave() {
         page.waitForLoadState();
         saveButton.scrollIntoViewIfNeeded();
@@ -163,6 +178,7 @@ public class BuildingNetZeroPlanTab {
     /**
      * Get save button text
      */
+    @AutoStep
     public String getSaveButtonText() {
         page.waitForLoadState();
         return saveButton.textContent().trim();

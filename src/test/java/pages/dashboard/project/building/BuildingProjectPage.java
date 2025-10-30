@@ -3,6 +3,7 @@ package pages.dashboard.project.building;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import utils.AutoStep;
 /**
  * BuildingProjectPage - Main page for Building project
  *
@@ -112,6 +113,7 @@ public class BuildingProjectPage {
     /**
      * Page visibility
      */
+    @AutoStep
     public boolean isPageDisplayed() {
         page.waitForLoadState();
         //retry 3 times
@@ -128,38 +130,45 @@ public class BuildingProjectPage {
     /**
      * Breadcrumbs Navigation
      */
+    @AutoStep
     public boolean isBreadcrumbsVisible() {
         page.waitForLoadState();
         return breadcrumbsNav.isVisible();
     }
 
+    @AutoStep
     public void clickProjectsBreadcrumb() {
         page.waitForLoadState();
         projectsBreadcrumb.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public void clickBuildingTypeBreadcrumb() {
         page.waitForLoadState();
         buildingTypeBreadcrumb.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public String getCurrentProjectName() {
         page.waitForLoadState();
         return currentProjectBreadcrumb.textContent().trim();
     }
 
+    @AutoStep
     public String getProjectsBreadcrumbText() {
         page.waitForLoadState();
         return projectsBreadcrumb.textContent().trim();
     }
 
+    @AutoStep
     public String getBuildingTypeBreadcrumbText() {
         page.waitForLoadState();
         return buildingTypeBreadcrumb.textContent().trim();
     }
 
+    @AutoStep
     public int getBreadcrumbCount() {
         page.waitForLoadState();
         return breadcrumbsList.locator("li").count();
@@ -168,11 +177,13 @@ public class BuildingProjectPage {
     /**
      * Page Header
      */
+    @AutoStep
     public String getPageHeaderText() {
         page.waitForLoadState();
         return pageHeader.textContent().trim();
     }
 
+    @AutoStep
     public String getProjectTitle() {
         page.waitForLoadState();
         // Extract project name from "Net Zero certification for [Project Name]"
@@ -180,6 +191,7 @@ public class BuildingProjectPage {
         return fullTitle.replace("Net Zero certification for", "").trim();
     }
 
+    @AutoStep
     public boolean isPageHeaderVisible() {
         page.waitForLoadState();
         return pageHeader.isVisible();
@@ -188,41 +200,49 @@ public class BuildingProjectPage {
     /**
      * Tab Navigation - Navigate to specific tabs
      */
+    @AutoStep
     public void goToOverviewTab() {
         page.waitForLoadState();
         overviewTab.click();
     }
 
+    @AutoStep
     public void goToBasicInfoTab() {
         page.waitForLoadState();
         basicInfoTab.click();
     }
 
+    @AutoStep
     public void goToAssessmentTab() {
         page.waitForLoadState();
         assessmentTab.click();
     }
 
+    @AutoStep
     public void goToNetZeroPlanTab() {
         page.waitForLoadState();
         netZeroPlanTab.click();
     }
 
+    @AutoStep
     public void goToCarbonOffsetTab() {
         page.waitForLoadState();
         carbonOffsetTab.click();
     }
 
+    @AutoStep
     public void goToNetZeroMilestoneTab() {
         page.waitForLoadState();
         netZeroMilestoneTab.click();
     }
 
+    @AutoStep
     public void goToSummaryOfEmissionsTab() {
         page.waitForLoadState();
         summaryOfEmissionsTab.click();
     }
 
+    @AutoStep
     public void goToProjectFilesTab() {
         page.waitForLoadState();
         projectFilesTab.click();
@@ -231,34 +251,42 @@ public class BuildingProjectPage {
     /**
      * Tab Visibility - Check if tabs are visible
      */
+    @AutoStep
     public boolean isOverviewTabVisible() {
         return overviewTab.isVisible();
     }
 
+    @AutoStep
     public boolean isBasicInfoTabVisible() {
         return basicInfoTab.isVisible();
     }
 
+    @AutoStep
     public boolean isAssessmentTabVisible() {
         return assessmentTab.isVisible();
     }
 
+    @AutoStep
     public boolean isNetZeroPlanTabVisible() {
         return netZeroPlanTab.isVisible();
     }
 
+    @AutoStep
     public boolean isCarbonOffsetTabVisible() {
         return carbonOffsetTab.isVisible();
     }
 
+    @AutoStep
     public boolean isNetZeroMilestoneTabVisible() {
         return netZeroMilestoneTab.isVisible();
     }
 
+    @AutoStep
     public boolean isSummaryOfEmissionsTabVisible() {
         return summaryOfEmissionsTab.isVisible();
     }
 
+    @AutoStep
     public boolean isProjectFilesTabVisible() {
         return projectFilesTab.isVisible();
     }
@@ -267,41 +295,49 @@ public class BuildingProjectPage {
      * Active Tab State - Check which tab is currently active
      * Active tabs have their radio input checked
      */
+    @AutoStep
     public boolean isOverviewTabActive() {
         page.waitForLoadState();
         return tab1Input.isChecked();
     }
 
+    @AutoStep
     public boolean isBasicInfoTabActive() {
         page.waitForLoadState();
         return tab2Input.isChecked();
     }
 
+    @AutoStep
     public boolean isAssessmentTabActive() {
         page.waitForLoadState();
         return tab3Input.isChecked();
     }
 
+    @AutoStep
     public boolean isNetZeroPlanTabActive() {
         page.waitForLoadState();
         return tab4Input.isChecked();
     }
 
+    @AutoStep
     public boolean isCarbonOffsetTabActive() {
         page.waitForLoadState();
         return tab5Input.isChecked();
     }
 
+    @AutoStep
     public boolean isNetZeroMilestoneTabActive() {
         page.waitForLoadState();
         return tab6Input.isChecked();
     }
 
+    @AutoStep
     public boolean isSummaryOfEmissionsTabActive() {
         page.waitForLoadState();
         return tab7Input.isChecked();
     }
 
+    @AutoStep
     public boolean isProjectFilesTabActive() {
         page.waitForLoadState();
         return tab8Input.isChecked();
@@ -310,41 +346,49 @@ public class BuildingProjectPage {
     /**
      * Tab Content Visibility - Check if tab content is visible
      */
+    @AutoStep
     public boolean isOverviewTabContentVisible() {
         page.waitForLoadState();
         return overviewTabContent.isVisible();
     }
 
+    @AutoStep
     public boolean isBasicInfoTabContentVisible() {
         page.waitForLoadState();
         return basicInfoTabContent.isVisible();
     }
 
+    @AutoStep
     public boolean isAssessmentTabContentVisible() {
         page.waitForLoadState();
         return assessmentTabContent.isVisible();
     }
 
+    @AutoStep
     public boolean isNetZeroPlanTabContentVisible() {
         page.waitForLoadState();
         return netZeroPlanTabContent.isVisible();
     }
 
+    @AutoStep
     public boolean isCarbonOffsetTabContentVisible() {
         page.waitForLoadState();
         return carbonOffsetTabContent.isVisible();
     }
 
+    @AutoStep
     public boolean isNetZeroMilestoneTabContentVisible() {
         page.waitForLoadState();
         return netZeroMilestoneTabContent.isVisible();
     }
 
+    @AutoStep
     public boolean isSummaryOfEmissionsTabContentVisible() {
         page.waitForLoadState();
         return summaryOfEmissionsTabContent.isVisible();
     }
 
+    @AutoStep
     public boolean isProjectFilesTabContentVisible() {
         page.waitForLoadState();
         return projectFilesTabContent.isVisible();
@@ -353,6 +397,7 @@ public class BuildingProjectPage {
     /**
      * Get currently active tab name
      */
+    @AutoStep
     public String getActiveTabName() {
         page.waitForLoadState();
         if (isOverviewTabActive()) return "Overview";

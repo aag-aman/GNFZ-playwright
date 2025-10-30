@@ -10,6 +10,12 @@ import com.microsoft.playwright.Page;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * Login Test - demonstrates @AutoStep annotation usage
+ * All Page Object methods with @AutoStep automatically create Allure steps
+ * with parameter values visible in the report.
+ */
+
 
 @Epic("User Authentication")
 @Feature("Login Functionality")
@@ -25,31 +31,24 @@ public class LoginTest extends BaseTest {
         String email = validUser.get("username");
         String password = validUser.get("password");
         String expectedSuccess = validUser.get("expectedSuccess");
-        
 
-        // Navigate to login page
-        Allure.step("Navigate to login page", () -> {
-            pageManager.getLoginPage().navigateToLogin();
-        });
+        // Navigate to login page - @AutoStep handles step creation
+        pageManager.getLoginPage().navigateToLogin();
 
-        // Perform login using the verified working methods
-        Allure.step("Enter login credentials", () -> {
-            pageManager.getLoginPage().enterEmail(email);
-            pageManager.getLoginPage().enterPassword(password);
-        });
+        // Enter credentials - @AutoStep handles step creation with parameters visible
+        pageManager.getLoginPage().enterEmail(email);
+        pageManager.getLoginPage().enterPassword(password);
 
-        Allure.step("Click sign in button", () -> {
-            pageManager.getLoginPage().clickSignInButton();
-        });
+        // Click sign in - @AutoStep handles step creation
+        pageManager.getLoginPage().clickSignInButton();
 
+        // Verify login success
         if (expectedSuccess.equals("List of projects")) {
-            Allure.step("Verify successful login", () -> {
-                // Wait for navigation to complete after login
-                page.waitForURL("**/project/list", new Page.WaitForURLOptions().setTimeout(10000));
+            // Wait for navigation to complete after login
+            page.waitForURL("**/project/list", new Page.WaitForURLOptions().setTimeout(10000));
 
-                // Attach screenshot to report
-                takeScreenshot("Login Success Screenshot");
-            });
+            // Attach screenshot to report
+            takeScreenshot("Login Success Screenshot");
         }
     }
 }

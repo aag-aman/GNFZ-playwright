@@ -4,7 +4,9 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 import utils.InputHelper;
+import utils.WaitHelper;
 
+import utils.AutoStep;
 /**
  * Scope3TableI - Table I for Scope 3 Emissions (Waste Incinerated)
  *
@@ -22,6 +24,7 @@ public class Scope3TableI {
     private static final String ADD_ROW_BUTTON_PATTERN = "#scope3_WasteIncinerated_table_tr_row_add_%d";
     private static final String ATTACH_BUTTON_PATTERN = "#scope3_WasteIncinerated_table_tr_row_attach_%d";
     private static final String REMOVE_ROW_BUTTON_PATTERN = "#scope3_WasteIncinerated_table_tr_row_trash_%d";
+    private static final String ALL_ROWS_PATTERN = "input[ftestcaseref^='scope3_waste_incinerated_type_of_waste_']";
 
     // Table-level locators (not row-specific)
     private final Locator tableTotal;
@@ -68,22 +71,30 @@ public class Scope3TableI {
         return page.locator(String.format(REMOVE_ROW_BUTTON_PATTERN, rowIndex));
     }
 
+    private Locator getAllRows() {
+        return page.locator(ALL_ROWS_PATTERN);
+    }
+
     /**
      * Enter methods for specific columns
      */
+    @AutoStep
     public void enterTypeOfWaste(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getTypeOfWasteInput(rowIndex), value);
     }
 
+    @AutoStep
     public void enterEmissionFactor(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getEmissionFactorInput(rowIndex), value);
     }
 
 
+    @AutoStep
     public void enterQuantityOfWasteIncinerated(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getQuantityIncineratedInput(rowIndex), value);
     }
 
+    @AutoStep
     public void selectUnit(int rowIndex, String value) {
         page.waitForLoadState();
         Locator unitSelect = getUnitSelect(rowIndex);
@@ -96,26 +107,32 @@ public class Scope3TableI {
     /**
      * Get values
      */
+    @AutoStep
     public String getTypeOfWaste(int rowIndex) {
         return getTypeOfWasteInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getEmissionFactor(int rowIndex) {
         return getEmissionFactorInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getQuantityOfWasteIncinerated(int rowIndex) {
         return getQuantityIncineratedInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getUnit(int rowIndex) {
         return getUnitSelect(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getRowTotal(int rowIndex) {
         return getRowTotalLocator(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getTableTotal() {
         return this.tableTotal.inputValue();
     }
@@ -123,14 +140,17 @@ public class Scope3TableI {
     /**
      * Row operations
      */
+    @AutoStep
     public void addRow(int currentRowIndex) {
         page.waitForLoadState();
+        int initialCount = getAllRows().count();
         Locator addButton = getAddRowButton(currentRowIndex);
         addButton.waitFor();
         addButton.click();
-        page.waitForTimeout(500); // Wait for new row to be added
+        // WaitHelper.waitForNewRow(page, getAllRows(), initialCount, 30000); // Wait for new row to be added
     }
 
+    @AutoStep
     public void removeRow(int rowIndex) {
         page.waitForLoadState();
         Locator removeButton = getRemoveRowButton(rowIndex);
@@ -138,6 +158,7 @@ public class Scope3TableI {
         removeButton.click();
     }
 
+    @AutoStep
     public void attach(int rowIndex) {
         page.waitForLoadState();
         Locator attachButton = getAttachButton(rowIndex);
@@ -148,6 +169,7 @@ public class Scope3TableI {
     /**
      * Fill entire row at once
      */
+    @AutoStep
     public void fillRow(int rowIndex, String typeOfWaste, String emissionFactor, String quantityIncinerated, String unit) {
         enterTypeOfWaste(rowIndex, typeOfWaste);
         enterEmissionFactor(rowIndex, emissionFactor);

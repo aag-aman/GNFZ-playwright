@@ -6,6 +6,7 @@ import com.microsoft.playwright.options.SelectOption;
 
 import utils.InputHelper;
 
+import utils.AutoStep;
 /**
  * BuildingNetZeroMilestoneTab - Net Zero Milestone tab for Building project
  * This tab tracks planned and actual emission reduction milestones over time
@@ -74,11 +75,13 @@ public class BuildingNetZeroMilestoneTab {
     /**
      * Tab visibility
      */
+    @AutoStep
     public boolean isTabDisplayed() {
         page.waitForLoadState();
         return tabContent.isVisible();
     }
 
+    @AutoStep
     public boolean isMilestoneTableVisible() {
         page.waitForLoadState();
         return milestoneTable.isVisible();
@@ -87,6 +90,7 @@ public class BuildingNetZeroMilestoneTab {
     /**
      * Get instruction text
      */
+    @AutoStep
     public String getInstructionText() {
         page.waitForLoadState();
         return instructionText.textContent().trim();
@@ -95,24 +99,28 @@ public class BuildingNetZeroMilestoneTab {
     /**
      * Tooltip interactions
      */
+    @AutoStep
     public void hoverOverPlannedTooltip() {
         page.waitForLoadState();
         plannedTooltipIcon.hover();
         page.waitForTimeout(300);
     }
 
+    @AutoStep
     public String getPlannedTooltipText() {
         page.waitForLoadState();
         hoverOverPlannedTooltip();
         return plannedTooltipText.textContent().trim();
     }
 
+    @AutoStep
     public void hoverOverAttachTooltip() {
         page.waitForLoadState();
         attachTooltipIcon.hover();
         page.waitForTimeout(300);
     }
 
+    @AutoStep
     public String getAttachTooltipText() {
         page.waitForLoadState();
         hoverOverAttachTooltip();
@@ -122,6 +130,7 @@ public class BuildingNetZeroMilestoneTab {
     /**
      * Units header dropdown - controls units for all rows
      */
+    @AutoStep
     public void selectUnitsHeader(String units) {
         page.waitForLoadState();
         unitsHeaderSelect.scrollIntoViewIfNeeded();
@@ -129,11 +138,13 @@ public class BuildingNetZeroMilestoneTab {
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public String getSelectedUnitsHeader() {
         page.waitForLoadState();
         return unitsHeaderSelect.inputValue();
     }
 
+    @AutoStep
     public boolean isUnitsHeaderSelectVisible() {
         page.waitForLoadState();
         return unitsHeaderSelect.isVisible();
@@ -146,6 +157,7 @@ public class BuildingNetZeroMilestoneTab {
         return page.locator(String.format(YEAR_INPUT_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public void enterYear(int rowIndex, String year) {
         page.waitForLoadState();
         Locator yearInput = getYearInput(rowIndex);
@@ -162,6 +174,7 @@ public class BuildingNetZeroMilestoneTab {
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public String getYear(int rowIndex) {
         page.waitForLoadState();
         return getYearInput(rowIndex).inputValue();
@@ -174,6 +187,7 @@ public class BuildingNetZeroMilestoneTab {
         return page.locator(String.format(PLANNED_INPUT_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public void enterPlannedReduction(int rowIndex, String value) {
         Locator plannedInput = getPlannedInput(rowIndex);
         InputHelper.humanizedInput(page, plannedInput, value);
@@ -181,11 +195,13 @@ public class BuildingNetZeroMilestoneTab {
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public String getPlannedReduction(int rowIndex) {
         page.waitForLoadState();
         return getPlannedInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public boolean isPlannedInputEnabled(int rowIndex) {
         page.waitForLoadState();
         return getPlannedInput(rowIndex).isEnabled();
@@ -198,6 +214,7 @@ public class BuildingNetZeroMilestoneTab {
         return page.locator(String.format(ACTUAL_INPUT_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public void enterActualReduction(int rowIndex, String value) {
         Locator actualInput = getActualInput(rowIndex);
         InputHelper.humanizedInput(page, actualInput, value);
@@ -205,11 +222,13 @@ public class BuildingNetZeroMilestoneTab {
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public String getActualReduction(int rowIndex) {
         page.waitForLoadState();
         return getActualInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public boolean isActualInputEnabled(int rowIndex) {
         page.waitForLoadState();
         return getActualInput(rowIndex).isEnabled();
@@ -222,6 +241,7 @@ public class BuildingNetZeroMilestoneTab {
         return page.locator(String.format(CUMULATIVE_INPUT_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public String getCumulativeReduction(int rowIndex) {
         page.waitForLoadState();
         return getCumulativeInput(rowIndex).inputValue();
@@ -234,6 +254,7 @@ public class BuildingNetZeroMilestoneTab {
         return page.locator(String.format(UNITS_TEXT_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public String getUnits(int rowIndex) {
         page.waitForLoadState();
         return getUnitsText(rowIndex).textContent().trim();
@@ -246,6 +267,7 @@ public class BuildingNetZeroMilestoneTab {
         return page.locator(String.format(ATTACH_ICON_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public void clickAttachIcon(int rowIndex) {
         page.waitForLoadState();
         Locator attachIcon = getAttachIcon(rowIndex);
@@ -261,6 +283,7 @@ public class BuildingNetZeroMilestoneTab {
         return page.locator(String.format(STATUS_SELECT_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public void selectStatus(int rowIndex, String status) {
         page.waitForLoadState();
         Locator statusSelect = getStatusSelect(rowIndex);
@@ -269,11 +292,13 @@ public class BuildingNetZeroMilestoneTab {
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public String getSelectedStatus(int rowIndex) {
         page.waitForLoadState();
         return getStatusSelect(rowIndex).inputValue();
     }
 
+    @AutoStep
     public boolean isStatusSelectEnabled(int rowIndex) {
         page.waitForLoadState();
         return getStatusSelect(rowIndex).isEnabled();
@@ -286,6 +311,7 @@ public class BuildingNetZeroMilestoneTab {
         return page.locator(String.format(CHAT_ICON_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public void clickChatIcon(int rowIndex) {
         page.waitForLoadState();
         Locator chatIcon = getChatIcon(rowIndex);
@@ -301,6 +327,7 @@ public class BuildingNetZeroMilestoneTab {
         return page.locator(String.format(REMOVE_ROW_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public void clickRemoveRow(int rowIndex) {
         page.waitForLoadState();
         Locator removeIcon = getRemoveRowIcon(rowIndex);
@@ -313,6 +340,7 @@ public class BuildingNetZeroMilestoneTab {
         return page.locator(String.format(ADD_ROW_PATTERN, rowIndex));
     }
 
+    @AutoStep
     public void clickAddRow(int rowIndex) {
         page.waitForLoadState();
         Locator addIcon = getAddRowIcon(rowIndex);
@@ -324,6 +352,7 @@ public class BuildingNetZeroMilestoneTab {
     /**
      * Convenience method to fill a complete row
      */
+    @AutoStep
     public void fillRow(int rowIndex, String year, String plannedReduction, String actualReduction, String status) {
         enterYear(rowIndex, year);
         System.out.println("Entered year: " + year);
@@ -349,16 +378,19 @@ public class BuildingNetZeroMilestoneTab {
     /**
      * Table totals
      */
+    @AutoStep
     public String getTotalCumulative() {
         page.waitForLoadState();
         return totalCumulativeInput.inputValue();
     }
 
+    @AutoStep
     public String getTotalUnits() {
         page.waitForLoadState();
         return totalUnitsText.textContent().trim();
     }
 
+    @AutoStep
     public boolean isTotalLabelVisible() {
         page.waitForLoadState();
         return totalLabel.isVisible();
@@ -367,6 +399,7 @@ public class BuildingNetZeroMilestoneTab {
     /**
      * Check if row exists
      */
+    @AutoStep
     public boolean isRowVisible(int rowIndex) {
         page.waitForLoadState();
         return page.locator(String.format(ROW_PATTERN, rowIndex)).isVisible();
@@ -375,6 +408,7 @@ public class BuildingNetZeroMilestoneTab {
     /**
      * Count visible rows
      */
+    @AutoStep
     public int getRowCount() {
         page.waitForLoadState();
         return page.locator("#netZeroTargets tr[id^='records_']").count();
@@ -383,16 +417,19 @@ public class BuildingNetZeroMilestoneTab {
     /**
      * Save button
      */
+    @AutoStep
     public boolean isSaveButtonVisible() {
         page.waitForLoadState();
         return saveButton.isVisible();
     }
 
+    @AutoStep
     public boolean isSaveButtonEnabled() {
         page.waitForLoadState();
         return saveButton.isEnabled();
     }
 
+    @AutoStep
     public void clickSave() {
         page.waitForLoadState();
         saveButton.scrollIntoViewIfNeeded();
@@ -400,6 +437,7 @@ public class BuildingNetZeroMilestoneTab {
         page.waitForTimeout(1000);
     }
 
+    @AutoStep
     public String getSaveButtonText() {
         page.waitForLoadState();
         return saveButton.textContent().trim();

@@ -51,3 +51,8 @@ videos/
 node_modules/
 package-lock.json
 CLAUDE.md
+AUTOSTEP_USAGE.md
+LOCATOR_CHANGES_SUMMARY.md
+WAIT_MIGRATION.md
+html/
+page-object-generator copy/

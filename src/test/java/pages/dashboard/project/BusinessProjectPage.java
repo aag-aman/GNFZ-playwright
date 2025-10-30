@@ -3,6 +3,7 @@ package pages.dashboard.project;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import utils.AutoStep;
 /**
  * BusinessProjectPage - Page object for Business project creation/editing
  */
@@ -22,6 +23,7 @@ public class BusinessProjectPage {
     /**
      * Page visibility
      */
+    @AutoStep
     public boolean isPageDisplayed() {
         page.waitForLoadState();
         return pageHeader.isVisible();

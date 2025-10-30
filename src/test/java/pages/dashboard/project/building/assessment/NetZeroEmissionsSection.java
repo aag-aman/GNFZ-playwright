@@ -5,7 +5,8 @@ import com.microsoft.playwright.Page;
 
 import pages.dashboard.project.building.assessment.tablesEmissions.*;
 import utils.InputHelper;
-
+import utils.WaitHelper;
+import utils.AutoStep;
 /**
  * NetZeroEmissionsSection - Net Zero Emissions section in Assessment tab
  * Handles emissions-related data entry for Scope 1, 2, and 3
@@ -169,17 +170,15 @@ public class NetZeroEmissionsSection {
      * SECTION VISIBILITY
      * ========================================
      */
+    @AutoStep
     public boolean isSectionDisplayed() {
         page.waitForLoadState();
-
-        //retry 3 times
-        for (int i = 0; i < 3; i++) {
-            if (sectionHeader.isVisible()) {
-                return true;
-            }
-            page.waitForTimeout(3000);
-        }
-        return false;
+        return WaitHelper.waitForCondition(
+            () -> sectionHeader.isVisible(),
+            value -> value == true,
+            9000,
+            "Section header not displayed"
+        );
     }
 
     /**
@@ -187,29 +186,35 @@ public class NetZeroEmissionsSection {
      * REPORTING PERIOD
      * ========================================
      */
+    @AutoStep
     public void enterReportingPeriodFrom(String fromDate) {
         InputHelper.selectDateFromDatepicker(page, reportingPeriodFrom, fromDate);
     }
 
+    @AutoStep
     public String getReportingPeriodFrom() {
         page.waitForLoadState();
         return reportingPeriodFrom.inputValue().trim();
     }
 
+    @AutoStep
     public void enterReportingPeriodTo(String toDate) {
         InputHelper.selectDateFromDatepicker(page, reportingPeriodTo, toDate);
     }
 
+    @AutoStep
     public String getReportingPeriodTo() {
         page.waitForLoadState();
         return reportingPeriodTo.inputValue().trim();
     }
 
+    @AutoStep
     public void checkBaseline() {
         page.waitForLoadState();
         baselineCheck.check();
     }
 
+    @AutoStep
     public void uncheckBaseline() {
         page.waitForLoadState();
         baselineCheck.uncheck();
@@ -220,26 +225,32 @@ public class NetZeroEmissionsSection {
      * SCOPE VIEW TOGGLES
      * ========================================
      */
+    @AutoStep
     public void switchToScope1DetailedView() {
         scope1DetailedView.click();
     }
 
+    @AutoStep
     public void switchToScope1SummaryView() {
         scope1SummaryView.click();
     }
 
+    @AutoStep
     public void switchToScope2DetailedView() {
         scope2DetailedView.click();
     }
 
+    @AutoStep
     public void switchToScope2SummaryView() {
         scope2SummaryView.click();
     }
 
+    @AutoStep
     public void switchToScope3DetailedView() {
         scope3DetailedView.click();
     }
 
+    @AutoStep
     public void switchToScope3SummaryView() {
         scope3SummaryView.click();
     }
@@ -249,12 +260,14 @@ public class NetZeroEmissionsSection {
      * SCOPE VISIBILITY
      * ========================================
      */
+    @AutoStep
     public void expandScope1() {
         page.waitForLoadState();
         scope1Section.click();
         page.waitForLoadState();
     }
 
+    @AutoStep
     public boolean isScope1SectionDisplayed() {
         page.waitForLoadState();
         //retry 3 times
@@ -267,12 +280,14 @@ public class NetZeroEmissionsSection {
         return false;
     }
 
+    @AutoStep
     public void expandScope2() {
         page.waitForLoadState();
         scope2Section.click();
         page.waitForLoadState();
     }
 
+    @AutoStep
     public boolean isScope2SectionDisplayed() {
         page.waitForLoadState();
         //retry 3 times
@@ -285,12 +300,14 @@ public class NetZeroEmissionsSection {
         return false;
     }
 
+    @AutoStep
     public void expandScope3() {
         page.waitForLoadState();
         scope3Section.click();
         page.waitForLoadState();
     }
 
+    @AutoStep
     public boolean isScope3SectionDisplayed() {
         page.waitForLoadState();
         //retry 3 times
@@ -303,12 +320,14 @@ public class NetZeroEmissionsSection {
         return false;
     }
 
+    @AutoStep
     public void expandSummaryOfScopes() {
         page.waitForLoadState();
         summaryOfScopes.click();
         page.waitForLoadState();
     }
 
+    @AutoStep
     public boolean isSummaryOfScopesDisplayed() {
         page.waitForLoadState();
         //retry 3 times
@@ -326,14 +345,17 @@ public class NetZeroEmissionsSection {
      * SCOPE TOTALS (Read-only, auto-populated)
      * ========================================
      */
+    @AutoStep
     public String getScope1Total() {
         return scope1TotalEmissions.inputValue();
     }
 
+    @AutoStep
     public String getScope2Total() {
         return scope2TotalEmissions.inputValue();
     }
 
+    @AutoStep
     public String getScope3Total() {
         return scope3TotalEmissions.inputValue();
     }
@@ -343,41 +365,49 @@ public class NetZeroEmissionsSection {
      * SUMMARY OF SCOPES TABLE (Read-only totals)
      * ========================================
      */
+    @AutoStep
     public String getSummaryScope1KgCO2e() {
         page.waitForLoadState();
         return summaryScope1KgCO2e.textContent().trim();
     }
 
+    @AutoStep
     public String getSummaryScope1MtCO2e() {
         page.waitForLoadState();
         return summaryScope1MtCO2e.textContent().trim();
     }
 
+    @AutoStep
     public String getSummaryScope2KgCO2e() {
         page.waitForLoadState();
         return summaryScope2KgCO2e.textContent().trim();
     }
 
+    @AutoStep
     public String getSummaryScope2MtCO2e() {
         page.waitForLoadState();
         return summaryScope2MtCO2e.textContent().trim();
     }
 
+    @AutoStep
     public String getSummaryScope3KgCO2e() {
         page.waitForLoadState();
         return summaryScope3KgCO2e.textContent().trim();
     }
 
+    @AutoStep
     public String getSummaryScope3MtCO2e() {
         page.waitForLoadState();
         return summaryScope3MtCO2e.textContent().trim();
     }
 
+    @AutoStep
     public String getSummaryTotalKgCO2e() {
         page.waitForLoadState();
         return summaryTotalKgCO2e.textContent().trim();
     }
 
+    @AutoStep
     public String getSummaryTotalMtCO2e() {
         page.waitForLoadState();
         return summaryTotalMtCO2e.textContent().trim();
@@ -388,19 +418,22 @@ public class NetZeroEmissionsSection {
      * SUMMARY SECTION ACTIONS
      * ========================================
      */
+    @AutoStep
     public void enterMoreStandards(String standards) {
         InputHelper.humanizedInput(page, moreStandardsInput, standards);
     }
 
+    @AutoStep
     public void clickViewUpload() {
         page.waitForLoadState();
         viewUploadLink.click();
     }
 
+    @AutoStep
     public void clickSave() {
         page.waitForLoadState();
         saveButton.click();
-        page.waitForTimeout(1000);
+        WaitHelper.waitForSaveComplete(page, saveButton);
     }
 
     /**
@@ -410,76 +443,94 @@ public class NetZeroEmissionsSection {
      */
 
     // Scope 1 Tables
+    @AutoStep
     public Scope1TableA tableA() {
         return tableA;
     }
 
+    @AutoStep
     public Scope1TableB tableB() {
         return tableB;
     }
 
+    @AutoStep
     public Scope1TableC tableC() {
         return tableC;
     }
 
     // Scope 2 Table
+    @AutoStep
     public Scope2TableD tableD() {
         return tableD;
     }
 
     // Scope 3 Tables
+    @AutoStep
     public Scope3TableE tableE() {
         return tableE;
     }
 
+    @AutoStep
     public Scope3TableF tableF() {
         return tableF;
     }
 
+    @AutoStep
     public Scope3TableG tableG() {
         return tableG;
     }
 
+    @AutoStep
     public Scope3TableH tableH() {
         return tableH;
     }
 
+    @AutoStep
     public Scope3TableI tableI() {
         return tableI;
     }
 
+    @AutoStep
     public Scope3TableJ tableJ() {
         return tableJ;
     }
 
+    @AutoStep
     public Scope3TableK tableK() {
         return tableK;
     }
 
+    @AutoStep
     public Scope3TableL tableL() {
         return tableL;
     }
 
+    @AutoStep
     public Scope3TableM tableM() {
         return tableM;
     }
 
+    @AutoStep
     public Scope3TableN tableN() {
         return tableN;
     }
 
+    @AutoStep
     public Scope3TableO tableO() {
         return tableO;
     }
 
+    @AutoStep
     public Scope3TableP tableP() {
         return tableP;
     }
 
+    @AutoStep
     public Scope3TableQ tableQ() {
         return tableQ;
     }
 
+    @AutoStep
     public Scope3TableR tableR() {
         return tableR;
     }
@@ -489,6 +540,7 @@ public class NetZeroEmissionsSection {
      * HELPER METHOD - Get any Scope 3 table by letter
      * ========================================
      */
+    @AutoStep
     public Object getScope3Table(char tableLetter) {
         return switch (Character.toLowerCase(tableLetter)) {
             case 'e' -> tableE;

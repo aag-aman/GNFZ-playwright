@@ -2,6 +2,7 @@ package pages.authentication;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import utils.AutoStep;
 
 public class LoginPage {
     private final Page page;
@@ -22,6 +23,7 @@ public class LoginPage {
         this.signInButton = page.locator("button[type='submit']");
     }
 
+    @AutoStep
     public void navigateToLogin() {
         String currentUrl = page.url();
         String expectedUrl = baseUrl + "/login";
@@ -31,18 +33,22 @@ public class LoginPage {
         }
     }
 
+    @AutoStep
     public void enterEmail(String email) {
         this.emailField.fill(email); // Clear existing text
     }
 
+    @AutoStep
     public void enterPassword(String password) {
         this.passwordField.fill(password);
     }
 
+    @AutoStep("Click the sign-in button")
     public void clickSignInButton() {
         signInButton.click();
     }
 
+    @AutoStep
     public void login(String email, String password) {
         enterEmail(email);
         enterPassword(password);
@@ -62,6 +68,7 @@ public class LoginPage {
         return signInButton;
     }
 
+    @AutoStep("Verify login success")
     public boolean isLoginSuccess(){
         page.waitForURL("**/project/list", new Page.WaitForURLOptions().setTimeout(10000));
         return page.url().contains("/project/list");

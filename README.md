@@ -288,6 +288,9 @@ java-playwright/
 │   │
 │   ├── utils/                          # Utility classes
 │   │   ├── BrowserManager.java        # Browser configuration
+│   │   ├── InputHelper.java           # Humanized input for form fields
+│   │   ├── WaitHelper.java            # Intelligent waiting utilities
+│   │   ├── AssertLogger.java          # Assertions with Allure logging
 │   │   ├── ReportUtils.java           # Allure helpers
 │   │   └── TestDataManager.java       # JSON test data loader
 │   │
@@ -309,6 +312,7 @@ java-playwright/
 │
 ├── pom.xml                            # Maven configuration
 ├── CLAUDE.md                          # Developer guide for AI assistants
+├── WAIT_MIGRATION.md                  # Wait migration guide and patterns
 ├── debug-failures.sh                  # Helper script for traces
 └── README.md                          # This file
 ```
@@ -414,7 +418,33 @@ public LoginPage getLoginPage() {
 }
 ```
 
-### 4. Add Test Data (JSON)
+### 4. Use WaitHelper for Dynamic Content
+
+Always use `WaitHelper` instead of hardcoded `page.waitForTimeout()` for waiting on dynamic content:
+
+```java
+// Wait for auto-calculated totals
+String total = WaitHelper.waitForCalculationComplete(page, totalLocator, 30000);
+
+// Wait for new table row after add
+int newCount = WaitHelper.waitForNewRow(page, tableRows, initialCount, 30000);
+
+// Wait for custom condition
+String value = WaitHelper.waitForCondition(
+    () -> getTotal(),
+    val -> val != null && !val.equals("0.00"),
+    30000,
+    "Total calculation timed out"
+);
+
+// Short animation waits (≤500ms) are still acceptable
+section.expand();
+page.waitForTimeout(500); // OK for UI animation
+```
+
+**See also:** `WAIT_MIGRATION.md` for comprehensive guide on wait patterns.
+
+### 5. Add Test Data (JSON)
 
 Create file in `src/test/java/data/`:
 

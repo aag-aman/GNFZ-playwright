@@ -6,6 +6,7 @@ import pages.authentication.ForgotPasswordPage;
 import pages.authentication.SignUpPage;
 import pages.dashboard.ProjectListPage;
 import pages.dashboard.ProjectSelectionPage;
+import pages.dashboard.ActivityLogPage;
 import pages.dashboard.project.building.BuildingProjectPage;
 import pages.dashboard.project.building.BuildingOverviewTab;
 import pages.dashboard.project.building.BuildingBasicInfoTab;
@@ -20,6 +21,8 @@ import pages.dashboard.project.building.assessment.NetZeroWasteSection;
 import pages.dashboard.project.building.assessment.NetZeroEnergySection;
 import pages.dashboard.project.building.assessment.NetZeroWaterSection;
 import pages.common.NavbarPage;
+import pages.notifications.NotificationsPage;
+import pages.profile.ProfilePage;
 
 /**
  * PageManager - Singleton pattern for Page Object instantiation
@@ -36,6 +39,7 @@ public class PageManager {
     // Dashboard page objects - lazy initialization
     private ProjectListPage projectListPage;
     private ProjectSelectionPage projectSelectionPage;
+    private ActivityLogPage activityLogPage;
 
     // Building project page objects - lazy initialization
     private BuildingProjectPage buildingProjectPage;
@@ -56,6 +60,8 @@ public class PageManager {
 
     // Common page objects - lazy initialization
     private NavbarPage navbarPage;
+    private NotificationsPage notificationsPage;
+    private ProfilePage profilePage;
 
     public PageManager(Page page) {
         this.page = page;
@@ -100,6 +106,13 @@ public class PageManager {
             projectSelectionPage = new ProjectSelectionPage(page);
         }
         return projectSelectionPage;
+    }
+
+    public ActivityLogPage getActivityLogPage() {
+        if (activityLogPage == null) {
+            activityLogPage = new ActivityLogPage(page);
+        }
+        return activityLogPage;
     }
 
     /**
@@ -209,6 +222,20 @@ public class PageManager {
         return navbarPage;
     }
 
+    public NotificationsPage getNotificationsPage() {
+        if (notificationsPage == null) {
+            notificationsPage = new NotificationsPage(page);
+        }
+        return notificationsPage;
+    }
+
+    public ProfilePage getProfilePage() {
+        if (profilePage == null) {
+            profilePage = new ProfilePage(page);
+        }
+        return profilePage;
+    }
+
     /**
      * Reset all page objects (useful for new test contexts)
      */
@@ -218,6 +245,7 @@ public class PageManager {
         signUpPage = null;
         projectListPage = null;
         projectSelectionPage = null;
+        activityLogPage = null;
         buildingProjectPage = null;
         buildingOverviewTab = null;
         buildingBasicInfoTab = null;
@@ -232,6 +260,8 @@ public class PageManager {
         netZeroEnergySection = null;
         netZeroWaterSection = null;
         navbarPage = null;
+        notificationsPage = null;
+        profilePage = null;
     }
 
     /**
@@ -254,6 +284,7 @@ public class PageManager {
     public void resetDashboardPages() {
         projectListPage = null;
         projectSelectionPage = null;
+        activityLogPage = null;
     }
 
     public void resetBuildingProjectPages() {
@@ -274,5 +305,7 @@ public class PageManager {
 
     public void resetCommonPages() {
         navbarPage = null;
+        notificationsPage = null;
+        profilePage = null;
     }
 }

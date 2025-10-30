@@ -3,6 +3,7 @@ package pages.dashboard.project.building;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import utils.AutoStep;
 /**
  * BuildingProjectFilesTab - Project Files tab for Building project
  * This tab organizes files into categories:
@@ -78,16 +79,19 @@ public class BuildingProjectFilesTab {
     /**
      * Tab visibility
      */
+    @AutoStep
     public boolean isTabDisplayed() {
         page.waitForLoadState();
         return tabContent.isVisible();
     }
 
+    @AutoStep
     public boolean isFilePanelVisible() {
         page.waitForLoadState();
         return filePanel.isVisible();
     }
 
+    @AutoStep
     public boolean isFileListVisible() {
         page.waitForLoadState();
         return folderContainerTable.isVisible();
@@ -96,42 +100,49 @@ public class BuildingProjectFilesTab {
     /**
      * Category navigation - Click on categories
      */
+    @AutoStep
     public void clickBuildingInfoCategory() {
         page.waitForLoadState();
         buildingInfoCategory.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public void clickInventoryOfEmissionsCategory() {
         page.waitForLoadState();
         inventoryOfEmissionsCategory.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public void clickNetZeroPlanCategory() {
         page.waitForLoadState();
         netZeroPlanCategory.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public void clickCarbonOffsetCategory() {
         page.waitForLoadState();
         carbonOffsetCategory.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public void clickNetZeroMilestoneCategory() {
         page.waitForLoadState();
         netZeroMilestoneCategory.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public void clickCertificatesCategory() {
         page.waitForLoadState();
         certificatesCategory.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public void clickReportsGeneratedCategory() {
         page.waitForLoadState();
         reportsGeneratedCategory.click();
@@ -141,36 +152,43 @@ public class BuildingProjectFilesTab {
     /**
      * Check which category is active
      */
+    @AutoStep
     public boolean isBuildingInfoCategoryActive() {
         page.waitForLoadState();
         return buildingInfoCategory.getAttribute("class").contains("bg-readonly");
     }
 
+    @AutoStep
     public boolean isInventoryOfEmissionsCategoryActive() {
         page.waitForLoadState();
         return inventoryOfEmissionsCategory.getAttribute("class").contains("bg-readonly");
     }
 
+    @AutoStep
     public boolean isNetZeroPlanCategoryActive() {
         page.waitForLoadState();
         return netZeroPlanCategory.getAttribute("class").contains("bg-readonly");
     }
 
+    @AutoStep
     public boolean isCarbonOffsetCategoryActive() {
         page.waitForLoadState();
         return carbonOffsetCategory.getAttribute("class").contains("bg-readonly");
     }
 
+    @AutoStep
     public boolean isNetZeroMilestoneCategoryActive() {
         page.waitForLoadState();
         return netZeroMilestoneCategory.getAttribute("class").contains("bg-readonly");
     }
 
+    @AutoStep
     public boolean isCertificatesCategoryActive() {
         page.waitForLoadState();
         return certificatesCategory.getAttribute("class").contains("bg-readonly");
     }
 
+    @AutoStep
     public boolean isReportsGeneratedCategoryActive() {
         page.waitForLoadState();
         return reportsGeneratedCategory.getAttribute("class").contains("bg-readonly");
@@ -179,16 +197,19 @@ public class BuildingProjectFilesTab {
     /**
      * Breadcrumbs navigation
      */
+    @AutoStep
     public boolean isBreadcrumbsVisible() {
         page.waitForLoadState();
         return breadcrumbsContainer.isVisible();
     }
 
+    @AutoStep
     public String getActiveFolderName() {
         page.waitForLoadState();
         return activeFolderBreadcrumb.last().textContent().trim();
     }
 
+    @AutoStep
     public void clickFilesRootBreadcrumb() {
         page.waitForLoadState();
         filesRootBreadcrumb.click();
@@ -198,22 +219,26 @@ public class BuildingProjectFilesTab {
     /**
      * File operations
      */
+    @AutoStep
     public boolean isAddFilesButtonVisible() {
         page.waitForLoadState();
         return addFilesButton.isVisible();
     }
 
+    @AutoStep
     public void clickAddFilesButton() {
         page.waitForLoadState();
         addFilesButton.click();
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public boolean isSelectAllCheckboxVisible() {
         page.waitForLoadState();
         return selectAllCheckbox.isVisible();
     }
 
+    @AutoStep
     public void clickSelectAllCheckbox() {
         page.waitForLoadState();
         selectAllCheckbox.click();
@@ -223,21 +248,25 @@ public class BuildingProjectFilesTab {
     /**
      * File list checks
      */
+    @AutoStep
     public boolean isNoRecordsMessageVisible() {
         page.waitForLoadState();
         return noRecordsMessage.isVisible();
     }
 
+    @AutoStep
     public String getNoRecordsMessage() {
         page.waitForLoadState();
         return noRecordsMessage.textContent().trim();
     }
 
+    @AutoStep
     public boolean hasFiles() {
         page.waitForLoadState();
         return !isNoRecordsMessageVisible();
     }
 
+    @AutoStep
     public int getFileCount() {
         page.waitForLoadState();
         if (isNoRecordsMessageVisible()) {
@@ -250,6 +279,7 @@ public class BuildingProjectFilesTab {
     /**
      * Get active folder name from the Files label
      */
+    @AutoStep
     public String getActiveFolder() {
         page.waitForLoadState();
         return activeFolderNameText.last().textContent().trim();
@@ -259,6 +289,7 @@ public class BuildingProjectFilesTab {
      * Upload file (when file input is available)
      * Note: The actual file input selector may vary based on implementation
      */
+    @AutoStep
     public void uploadFile(String filePath) {
         page.waitForLoadState();
         // This assumes a file input exists after clicking add files
@@ -273,6 +304,7 @@ public class BuildingProjectFilesTab {
     /**
      * Check if a specific category is visible
      */
+    @AutoStep
     public boolean isCategoryVisible(String categoryName) {
         page.waitForLoadState();
         Locator category = page.locator(String.format("#gnfz-%s", categoryName));
@@ -282,6 +314,7 @@ public class BuildingProjectFilesTab {
     /**
      * Click a category by name
      */
+    @AutoStep
     public void clickCategory(String categoryName) {
         page.waitForLoadState();
         Locator category = page.locator(String.format("#gnfz-%s", categoryName));
@@ -292,6 +325,7 @@ public class BuildingProjectFilesTab {
     /**
      * Get all category names
      */
+    @AutoStep
     public int getCategoryCount() {
         page.waitForLoadState();
         return categoryMenuList.locator("li").count();

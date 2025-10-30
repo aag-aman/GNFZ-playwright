@@ -48,52 +48,44 @@ public class SignUpRegressionTest extends BaseTest {
         String password = testData.get("password");
         String confirmPassword = testData.get("confirmPassword");
 
-        // Navigate to sign-up page
-        Allure.step("Navigate to sign-up page", () -> {
-            signUpPage.navigateToSignUp();
-        });
+        // Navigate to sign-up page - @AutoStep handles step creation
+        signUpPage.navigateToSignUp();
 
-        // Verify page loaded
-        Allure.step("Verify sign-up page is displayed", () -> {
-            assertTrue(signUpPage.isPageDisplayed(),
-                    "Sign-up page should be displayed");
-        });
+        // Verify page loaded - @AutoStep handles step creation
+        assertTrue(signUpPage.isPageDisplayed(),
+                "Sign-up page should be displayed");
 
-        // Fill in form
-        Allure.step("Fill in sign-up form: " + email, () -> {
-            signUpPage.clearAllFields();
+        // Clear all fields first
+        signUpPage.clearAllFields();
 
-            signUpPage.enterFirstName(firstName);
-            signUpPage.enterLastName(lastName);
-            signUpPage.enterEmail(email);
-            signUpPage.enterPassword(password);
-            signUpPage.enterConfirmPassword(confirmPassword);
+        // Fill in form - @AutoStep handles step creation with parameters visible
+        signUpPage.enterFirstName(firstName);
+        signUpPage.enterLastName(lastName);
+        signUpPage.enterEmail(email);
+        signUpPage.enterPassword(password);
+        signUpPage.enterConfirmPassword(confirmPassword);
 
-            // Verify data entered correctly
-            assertEquals(firstName, signUpPage.getFirstNameFieldValue(),
-                    "First name should be entered correctly");
-            assertEquals(lastName, signUpPage.getLastNameFieldValue(),
-                    "Last name should be entered correctly");
-            assertEquals(email, signUpPage.getEmailFieldValue(),
-                    "Email should be entered correctly");
-        });
+        // Verify data entered correctly
+        assertEquals(firstName, signUpPage.getFirstNameFieldValue(),
+                "First name should be entered correctly");
+        assertEquals(lastName, signUpPage.getLastNameFieldValue(),
+                "Last name should be entered correctly");
+        assertEquals(email, signUpPage.getEmailFieldValue(),
+                "Email should be entered correctly");
 
-        // Submit form
-        Allure.step("Submit sign-up form", () -> {
-            signUpPage.clickSignUpButton();
-        });
+        // Submit form - @AutoStep handles step creation
+        signUpPage.clickSignUpButton();
+
+        // Wait for any validation to complete
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
         // Verify no error for valid data
-        Allure.step("Verify no error message for valid data", () -> {
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-
-            assertFalse(!signUpPage.isConfirmPasswordFieldVisible(),
-                    "No error message should be displayed for valid data: " + email);
-        });
+        assertFalse(!signUpPage.isConfirmPasswordFieldVisible(),
+                "No error message should be displayed for valid data: " + email);
 
         // Take screenshot
         takeScreenshot("Sign Up Valid Test - " + description.replaceAll("[^a-zA-Z0-9]", "_"));
@@ -131,61 +123,51 @@ public class SignUpRegressionTest extends BaseTest {
         String confirmPassword = testData.get("confirmPassword");
         String expectedError = testData.get("expectedError");
 
-        // Navigate to sign-up page
-        Allure.step("Navigate to sign-up page", () -> {
-            signUpPage.navigateToSignUp();
-        });
+        // Navigate to sign-up page - @AutoStep handles step creation
+        signUpPage.navigateToSignUp();
 
-        // Verify page loaded
-        Allure.step("Verify sign-up page is displayed", () -> {
-            assertTrue(signUpPage.isPageDisplayed(),
-                    "Sign-up page should be displayed");
-        });
+        // Verify page loaded - @AutoStep handles step creation
+        assertTrue(signUpPage.isPageDisplayed(),
+                "Sign-up page should be displayed");
 
-        // Fill in form with invalid data
-        Allure.step("Fill in sign-up form with invalid data", () -> {
-            signUpPage.clearAllFields();
+        // Clear all fields and fill with invalid data
+        signUpPage.clearAllFields();
 
-            if (!firstName.isEmpty())
-                signUpPage.enterFirstName(firstName);
-            if (!lastName.isEmpty())
-                signUpPage.enterLastName(lastName);
-            if (!email.isEmpty())
-                signUpPage.enterEmail(email);
-            if (!password.isEmpty())
-                signUpPage.enterPassword(password);
-            if (!confirmPassword.isEmpty())
-                signUpPage.enterConfirmPassword(confirmPassword);
-        });
+        if (!firstName.isEmpty())
+            signUpPage.enterFirstName(firstName);
+        if (!lastName.isEmpty())
+            signUpPage.enterLastName(lastName);
+        if (!email.isEmpty())
+            signUpPage.enterEmail(email);
+        if (!password.isEmpty())
+            signUpPage.enterPassword(password);
+        if (!confirmPassword.isEmpty())
+            signUpPage.enterConfirmPassword(confirmPassword);
 
-        // Submit form
-        Allure.step("Submit sign-up form with invalid data", () -> {
-            signUpPage.clickSignUpButton();
-        });
+        // Submit form with invalid data - @AutoStep handles step creation
+        signUpPage.clickSignUpButton();
 
-        // Verify error handling
-        Allure.step("Verify error handling for invalid data", () -> {
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+        // Wait for validation to complete
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
-            // Check if error message is displayed
-            if (signUpPage.getEmailErrorVisible()) {
-                String actualError = signUpPage.getEmailError();
-                assertNotNull(actualError,
-                        "Error message should be displayed for invalid data");
+        // Check if error message is displayed
+        if (signUpPage.getEmailErrorVisible()) {
+            String actualError = signUpPage.getEmailError();
+            assertNotNull(actualError,
+                    "Error message should be displayed for invalid data");
 
-                // Attach errors to report
-                Allure.addAttachment("Expected Error", expectedError);
-                Allure.addAttachment("Actual Error", actualError);
-            } else {
-                // If no error message, verify no success
-                assertFalse(signUpPage.isSuccessMessageDisplayed(),
-                        "Success message should not be displayed for invalid data");
-            }
-        });
+            // Attach errors to report
+            Allure.addAttachment("Expected Error", expectedError);
+            Allure.addAttachment("Actual Error", actualError);
+        } else {
+            // If no error message, verify no success
+            assertFalse(signUpPage.isSuccessMessageDisplayed(),
+                    "Success message should not be displayed for invalid data");
+        }
 
         // Take screenshot
         takeScreenshot("Sign Up Invalid Test - " + description.replaceAll("[^a-zA-Z0-9]", "_"));
@@ -214,31 +196,26 @@ public class SignUpRegressionTest extends BaseTest {
         // Get the sign-up page object
         SignUpPage signUpPage = pageManager.getSignUpPage();
 
-        // Navigate to sign-up page
-        Allure.step("Navigate to sign-up page", () -> {
-            signUpPage.navigateToSignUp();
-        });
+        // Navigate to sign-up page - @AutoStep handles step creation
+        signUpPage.navigateToSignUp();
 
-        // Test field interactions
-        Allure.step("Test form field interactions", () -> {
-            // Test entering and clearing data
-            signUpPage.enterFirstName("Test");
-            assertEquals("Test", signUpPage.getFirstNameFieldValue(),
-                    "First name should be entered");
+        // Test entering and clearing data - @AutoStep handles step creation
+        signUpPage.enterFirstName("Test");
+        assertEquals("Test", signUpPage.getFirstNameFieldValue(),
+                "First name should be entered");
 
-            signUpPage.clearFirstNameField();
-            String cleared = signUpPage.getFirstNameFieldValue();
-            assertTrue(cleared == null || cleared.isEmpty(),
-                    "First name should be cleared");
+        signUpPage.clearFirstNameField();
+        String cleared = signUpPage.getFirstNameFieldValue();
+        assertTrue(cleared == null || cleared.isEmpty(),
+                "First name should be cleared");
 
-            // Test password fields
-            signUpPage.enterPassword("Password123!");
-            signUpPage.enterConfirmPassword("Password123!");
+        // Test password fields
+        signUpPage.enterPassword("Password123!");
+        signUpPage.enterConfirmPassword("Password123!");
 
-            // Verify button state
-            assertTrue(signUpPage.isSignUpButtonEnabled(),
-                    "Sign-up button should be enabled");
-        });
+        // Verify button state
+        assertTrue(signUpPage.isSignUpButtonEnabled(),
+                "Sign-up button should be enabled");
 
         // Take screenshot
         takeScreenshot("Sign Up Form Validation");
@@ -256,19 +233,15 @@ public class SignUpRegressionTest extends BaseTest {
         // Get the sign-up page object
         SignUpPage signUpPage = pageManager.getSignUpPage();
 
-        // Test direct navigation
-        Allure.step("Test direct navigation to sign-up page", () -> {
-            signUpPage.navigateToSignUp();
-            assertTrue(signUpPage.isPageDisplayed(),
-                    "Should be able to navigate to sign-up page");
-        });
+        // Test direct navigation - @AutoStep handles step creation
+        signUpPage.navigateToSignUp();
+        assertTrue(signUpPage.isPageDisplayed(),
+                "Should be able to navigate to sign-up page");
 
         // Test page reload
-        Allure.step("Test page reload", () -> {
-            page.reload();
-            assertTrue(signUpPage.isPageDisplayed(),
-                    "Page should still be displayed after reload");
-        });
+        page.reload();
+        assertTrue(signUpPage.isPageDisplayed(),
+                "Page should still be displayed after reload");
 
         // Take screenshot
         takeScreenshot("Sign Up Navigation Test");

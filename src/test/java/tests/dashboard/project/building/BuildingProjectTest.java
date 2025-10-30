@@ -16,6 +16,8 @@ import tests.base.BaseTest;
 import utils.TestLogger;
 import utils.AssertLogger;
 import utils.StepLogger;
+import utils.NumberParser;
+import utils.WaitHelper;
 
 import java.io.IOException;
 import com.microsoft.playwright.Page;
@@ -40,7 +42,7 @@ public class BuildingProjectTest extends BaseTest {
         @Severity(SeverityLevel.CRITICAL)
         void testBuildingOptionVisible() throws IOException {
                 // Get page objects
-                
+
                 ProjectListPage projectListPage = pageManager.getProjectListPage();
                 ProjectSelectionPage projectSelectionPage = pageManager.getProjectSelectionPage();
                 BuildingProjectPage buildingProjectPage = pageManager.getBuildingProjectPage();
@@ -48,7 +50,7 @@ public class BuildingProjectTest extends BaseTest {
                 // Login and navigate to project selection
                 StepLogger.step("Login and navigate to project selection", () -> {
                         authSteps.loginAsProjectOwner();
-                        page.waitForTimeout(3000);
+                        // Wait removed - authSteps.loginAsProjectOwner() already handles page load
                 });
 
                 // Verify Building option is visible
@@ -73,9 +75,9 @@ public class BuildingProjectTest extends BaseTest {
                 });
                 String projectTitle = "Test Building - " + System.currentTimeMillis();
                 StepLogger.step("Enter Building project details", () -> {
-                        
+
                         buildingBasicInfoTab.enterProjectTitle(projectTitle);
-                        // 
+                        //
                         buildingBasicInfoTab.clickSave();
                         // Wait for url to update baseUrl/project/building/projectId format, get
                         // projectID from url
@@ -115,7 +117,8 @@ public class BuildingProjectTest extends BaseTest {
 
                         String projectTitleBreadcrumb = buildingProjectPage.getCurrentProjectName();
                         TestLogger.info("Project Title Breadcrumb: " + projectTitleBreadcrumb);
-                        AssertLogger.assertNotNull(projectTitleBreadcrumb, "Project title breadcrumb text should not be null");
+                        AssertLogger.assertNotNull(projectTitleBreadcrumb,
+                                        "Project title breadcrumb text should not be null");
                         AssertLogger.assertTrue(projectTitleBreadcrumb.equals(projectTitle),
                                         "Project title breadcrumb should be the entered project title");
                         TestLogger.info("Project Title Breadcrumb verified: " + projectTitleBreadcrumb);
@@ -133,7 +136,7 @@ public class BuildingProjectTest extends BaseTest {
         @Severity(SeverityLevel.CRITICAL)
         void testSelectBuildingProject() throws IOException {
                 // Get page objects
-                
+
                 ProjectListPage projectListPage = pageManager.getProjectListPage();
                 ProjectSelectionPage projectSelectionPage = pageManager.getProjectSelectionPage();
                 BuildingProjectPage buildingProjectPage = pageManager.getBuildingProjectPage();
@@ -198,7 +201,7 @@ public class BuildingProjectTest extends BaseTest {
          * Test complete Building creation flow
          */
         @Test
-        @DisplayName("Create Building with Basic Info")
+        @DisplayName("Create Building with All Sections")
         @Description("Complete flow: Login -> Create Project -> Select Building -> Enter Basic Info -> Save")
         @Story("Building Project Creation")
         @Severity(SeverityLevel.CRITICAL)
@@ -328,7 +331,7 @@ public class BuildingProjectTest extends BaseTest {
                         netZeroEmissionsSection.expandScope1();
                         // Verify Scope 1 section is expanded
                         // AssertLogger.assertTrue(netZeroEmissionsSection.isScope1SectionDisplayed(),
-                        //                 "Scope 1 section should be expanded");
+                        // "Scope 1 section should be expanded");
                         // ========================================
                         // Table A (Fuels)
                         // ========================================
@@ -361,7 +364,8 @@ public class BuildingProjectTest extends BaseTest {
 
                                 emissionFactorA[0] = netZeroEmissionsSection.tableA()
                                                 .getEmissionFactor(0);
-                                AssertLogger.assertEquals(String.valueOf(expectedEmissionFactorA), emissionFactorA[0],
+                                AssertLogger.assertNumberEquals(String.valueOf(expectedEmissionFactorA),
+                                                emissionFactorA[0],
                                                 "Table A: Emission factor should persist after manual entry");
                         } else {
                                 TestLogger.info("Table A: Emission factor auto-populated: " + emissionFactorA[0]);
@@ -371,35 +375,33 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Entering consumption: " + consumptionA[0]);
                         netZeroEmissionsSection.tableA().enterConsumption(0,
                                         consumptionA[0]);
-                        // Verify consumption persisted
-                        AssertLogger.assertEquals(consumptionA[0], netZeroEmissionsSection.tableA().getConsumption(0),
+                        // Verify consumption persisted (numeric comparison handles "100" vs "100.00")
+                        String actualConsumption = netZeroEmissionsSection.tableA().getConsumption(0);
+                        AssertLogger.assertNumberEquals(consumptionA[0], actualConsumption,
                                         "Table A: Consumption should persist after entry");
 
                         // Check units auto-population
                         unitsA[0] = netZeroEmissionsSection.tableA().getUnits(0);
                         TestLogger.info("Table A: Units auto-populated: " + unitsA[0]);
 
-
                         // Get and verify totals
                         rowTotalA[0] = netZeroEmissionsSection.tableA().getRowTotal(0);
                         tableTotalA[0] = netZeroEmissionsSection.tableA().getTableTotal();
 
-
                         // Verify calculation: emission_factor × consumption
-                        double actualEmissionFactorA = Double.parseDouble(emissionFactorA[0].replace(",", ""));
-                        double consumptionValueA = Double.parseDouble(consumptionA[0]);
+                        double actualEmissionFactorA = NumberParser.parseDouble(emissionFactorA[0]);
+                        double consumptionValueA = NumberParser.parseDouble(consumptionA[0]);
                         double calculatedRowTotalA = actualEmissionFactorA * consumptionValueA;
-                        String expectedRowTotalA = String.format("%,.2f", calculatedRowTotalA);
 
                         AssertLogger.assertNotNull(rowTotalA[0], "Table A: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalA, rowTotalA[0].trim(),
-                                        String.format("Table A: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                                                        actualEmissionFactorA, consumptionValueA, expectedRowTotalA,
-                                                        rowTotalA));
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalA), rowTotalA[0],
+                                        String.format("Table A: Row total calculation incorrect (%.2f × %.2f = %.2f, Got: %s)",
+                                                        actualEmissionFactorA, consumptionValueA, calculatedRowTotalA,
+                                                        rowTotalA[0]));
 
                         AssertLogger.assertNotNull(tableTotalA[0], "Table A: Table total should be calculated");
 
-                        AssertLogger.assertEquals(expectedRowTotalA, tableTotalA[0].trim(),
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalA), tableTotalA[0],
                                         "Table A: Table total should equal row total for single row");
 
                         TestLogger.info(String.format("Table A verified: %s, EF=%.2f × Consumption=%.2f = %s ✓",
@@ -435,7 +437,8 @@ public class BuildingProjectTest extends BaseTest {
                                 emissionFactorB = netZeroEmissionsSection.tableB()
                                                 .getEmissionFactor(0);
                                 // Verify emission factor persisted
-                                AssertLogger.assertEquals(String.valueOf(expectedEmissionFactorB), emissionFactorB,
+                                AssertLogger.assertNumberEquals(String.valueOf(expectedEmissionFactorB),
+                                                emissionFactorB,
                                                 "Table B: Emission factor should persist after manual entry");
                         } else {
                                 TestLogger.info("Table B: Emission factor auto-populated: " + emissionFactorB);
@@ -445,59 +448,43 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Entering consumption: " + consumptionB);
                         netZeroEmissionsSection.tableB().enterConsumption(0, consumptionB);
 
-                        // Verify consumption persisted
-                        AssertLogger.assertEquals(consumptionB, netZeroEmissionsSection.tableB().getConsumption(0),
+                        // Verify consumption persisted (numeric comparison)
+                        AssertLogger.assertNumberEquals(consumptionB,
+                                        netZeroEmissionsSection.tableB().getConsumption(0),
                                         "Table B: Consumption should persist after entry");
 
                         // Check unit auto-population
                         String unitB = netZeroEmissionsSection.tableB().getUnit(0);
                         TestLogger.info("Table B: Unit auto-populated: " + unitB);
 
-                        // Get and verify totals
-                        // retry 3 times if row total is not yet calculated
-                        String rowTotalB = null;
-                        String tableTotalB = null;
-                        int retriesB = 3;
+                        // Get and verify totals using intelligent waits
+                        String rowTotalB = WaitHelper.waitForCondition(
+                                        () -> netZeroEmissionsSection.tableB().getRowTotal(0),
+                                        value -> value != null && !value.trim().isEmpty() && !value.equals("0.00"),
+                                        30000,
+                                        "Table B: Row total calculation timed out");
+                        TestLogger.info("Table B: Row total calculated: " + rowTotalB);
 
-                        for (int i = 0; i < retriesB; i++) {
-                                rowTotalB = netZeroEmissionsSection.tableB().getRowTotal(0);
-                                TestLogger.info("Table B: Row total calculated: " + rowTotalB);
-                                if ((rowTotalB == null || rowTotalB.trim().isEmpty() || rowTotalB.equals("0.00"))) {
-                                        TestLogger.info("Table B: Row total not yet calculated, retrying... ("
-                                                        + (2 - i) + " retries left)");
-                                        page.waitForTimeout(5000);
-                                } else {
-                                        break;
-                                }
-                        }
-                        for (int i = 0; i < retriesB; i++) {
-                                tableTotalB = netZeroEmissionsSection.tableB()
-                                                .getTableTotal();
-                                TestLogger.info("Table B: Table total calculated: " + tableTotalB);
-                                if (tableTotalB == null || tableTotalB.trim().isEmpty()
-                                                || tableTotalB.equals("0.00")) {
-                                        TestLogger.info("Table B: Table total not yet calculated, retrying... ("
-                                                        + (2 - i) + " retries left)");
-                                        page.waitForTimeout(5000);
-                                } else {
-                                        break;
-                                }
-                        }
+                        String tableTotalB = WaitHelper.waitForCondition(
+                                        () -> netZeroEmissionsSection.tableB().getTableTotal(),
+                                        value -> value != null && !value.trim().isEmpty() && !value.equals("0.00"),
+                                        30000,
+                                        "Table B: Table total calculation timed out");
+                        TestLogger.info("Table B: Table total calculated: " + tableTotalB);
 
                         // Verify calculation: emission_factor × consumption
-                        double actualEmissionFactorB = Double.parseDouble(emissionFactorB.replace(",", ""));
-                        double consumptionValueB = Double.parseDouble(consumptionB);
+                        double actualEmissionFactorB = NumberParser.parseDouble(emissionFactorB);
+                        double consumptionValueB = NumberParser.parseDouble(consumptionB);
                         double calculatedRowTotalB = actualEmissionFactorB * consumptionValueB;
-                        String expectedRowTotalB = String.format("%,.2f", calculatedRowTotalB);
 
                         AssertLogger.assertNotNull(rowTotalB, "Table B: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalB, rowTotalB.trim(),
-                                        String.format("Table B: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                                                        actualEmissionFactorB, consumptionValueB, expectedRowTotalB,
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalB), rowTotalB,
+                                        String.format("Table B: Row total calculation incorrect (%.2f × %.2f = %.2f, Got: %s)",
+                                                        actualEmissionFactorB, consumptionValueB, calculatedRowTotalB,
                                                         rowTotalB));
 
                         AssertLogger.assertNotNull(tableTotalB, "Table B: Table total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalB, tableTotalB.trim(),
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalB), tableTotalB,
                                         "Table B: Table total should equal row total for single row");
 
                         TestLogger.info(String.format("Table B verified: %s, EF=%.2f × Consumption=%.2f = %s ✓",
@@ -534,7 +521,8 @@ public class BuildingProjectTest extends BaseTest {
                                 emissionFactorC[0] = netZeroEmissionsSection.tableC()
                                                 .getEmissionFactor(0);
                                 // Verify emission factor persisted
-                                AssertLogger.assertEquals(String.valueOf(expectedEmissionFactorC), emissionFactorC[0],
+                                AssertLogger.assertNumberEquals(String.valueOf(expectedEmissionFactorC),
+                                                emissionFactorC[0],
                                                 "Table C: Emission factor should persist after manual entry");
                         } else {
                                 TestLogger.info("Table C: Emission factor auto-populated: " + emissionFactorC[0]);
@@ -545,8 +533,9 @@ public class BuildingProjectTest extends BaseTest {
                         netZeroEmissionsSection.tableC().enterConsumption(0,
                                         consumptionC[0]);
 
-                        // Verify consumption persisted
-                        AssertLogger.assertEquals(consumptionC[0], netZeroEmissionsSection.tableC().getConsumption(0),
+                        // Verify consumption persisted (numeric comparison)
+                        AssertLogger.assertNumberEquals(consumptionC[0],
+                                        netZeroEmissionsSection.tableC().getConsumption(0),
                                         "Table C: Consumption should persist after entry");
 
                         // Check units auto-population
@@ -560,19 +549,18 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Table C: Table total calculated: " + tableTotalC[0]);
 
                         // Verify calculation: emission_factor × consumption
-                        double actualEmissionFactorC = Double.parseDouble(emissionFactorC[0].replace(",", ""));
-                        double consumptionValueC = Double.parseDouble(consumptionC[0]);
+                        double actualEmissionFactorC = NumberParser.parseDouble(emissionFactorC[0]);
+                        double consumptionValueC = NumberParser.parseDouble(consumptionC[0]);
                         double calculatedRowTotalC = actualEmissionFactorC * consumptionValueC;
-                        String expectedRowTotalC = String.format("%,.2f", calculatedRowTotalC);
 
                         AssertLogger.assertNotNull(rowTotalC[0], "Table C: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalC, rowTotalC[0].trim(),
-                                        String.format("Table C: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                                                        actualEmissionFactorC, consumptionValueC, expectedRowTotalC,
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalC), rowTotalC[0],
+                                        String.format("Table C: Row total calculation incorrect (%.2f × %.2f = %.2f, Got: %s)",
+                                                        actualEmissionFactorC, consumptionValueC, calculatedRowTotalC,
                                                         rowTotalC));
 
                         AssertLogger.assertNotNull(tableTotalC[0], "Table C: Table total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalC, tableTotalC[0].trim(),
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalC), tableTotalC[0],
                                         "Table C: Table total should equal row total for single row");
 
                         TestLogger.info(String.format("Table C verified: %s, EF=%.2f × Consumption=%.2f = %s ✓",
@@ -584,22 +572,21 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("\n=== Verifying Scope 1 Total ===");
 
                         // Parse table totals (remove commas and convert to double)
-                        double tableTotalAValue = Double.parseDouble(tableTotalA[0].replace(",", ""));
-                        double tableTotalBValue = Double.parseDouble(tableTotalB.replace(",", ""));
-                        double tableTotalCValue = Double.parseDouble(tableTotalC[0].replace(",", ""));
+                        double tableTotalAValue = NumberParser.parseDouble(tableTotalA[0]);
+                        double tableTotalBValue = NumberParser.parseDouble(tableTotalB);
+                        double tableTotalCValue = NumberParser.parseDouble(tableTotalC[0]);
 
                         // Calculate expected Scope 1 total
                         double calculatedScope1Total = tableTotalAValue + tableTotalBValue + tableTotalCValue;
-                        String expectedScope1Total = String.format("%,.2f", calculatedScope1Total);
 
                         // Get actual Scope 1 total from UI
                         String actualScope1Total = netZeroEmissionsSection.getScope1Total();
                         AssertLogger.assertNotNull(actualScope1Total, "Scope 1 total should be calculated");
 
-                        AssertLogger.assertEquals(expectedScope1Total, actualScope1Total.trim(),
-                                        String.format("Scope 1 Total calculation incorrect (%.2f + %.2f + %.2f = %s, Got: %s)",
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedScope1Total), actualScope1Total,
+                                        String.format("Scope 1 Total calculation incorrect (%.2f + %.2f + %.2f = %.2f, Got: %s)",
                                                         tableTotalAValue, tableTotalBValue, tableTotalCValue,
-                                                        expectedScope1Total,
+                                                        calculatedScope1Total,
                                                         actualScope1Total));
 
                         TestLogger.info(String.format("Scope 1 Total Verified: %.2f + %.2f + %.2f = %s",
@@ -617,9 +604,8 @@ public class BuildingProjectTest extends BaseTest {
                         // Expand Scope 2 section
                         TestLogger.info("Expanding Scope 2");
                         netZeroEmissionsSection.expandScope2();
-                        //Verify Scope 2 section is expanded
+                        // Verify Scope 2 section is expanded
 
-                        
                         // Define test data
                         activityD[0] = "Non Renewable Electricity from Grid​";
                         consumptionD[0] = "100";
@@ -662,15 +648,14 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Table D: Table total calculated: " + tableTotalD[0]);
 
                         // Verify calculation: emission_factor × consumption
-                        double actualEmissionFactorD = Double.parseDouble(emissionFactorD[0].replace(",", ""));
-                        double consumptionValueD = Double.parseDouble(consumptionD[0]);
+                        double actualEmissionFactorD = NumberParser.parseDouble(emissionFactorD[0]);
+                        double consumptionValueD = NumberParser.parseDouble(consumptionD[0]);
                         double calculatedRowTotalD = actualEmissionFactorD * consumptionValueD;
-                        String expectedRowTotalD = String.format("%,.2f", calculatedRowTotalD);
 
                         AssertLogger.assertNotNull(rowTotalD[0], "Table D: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalD, rowTotalD[0].trim(),
-                                        String.format("Table D: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                                                        actualEmissionFactorD, consumptionValueD, expectedRowTotalD,
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalD), rowTotalD[0],
+                                        String.format("Table D: Row total calculation incorrect (%.2f × %.2f = %.2f, Got: %s)",
+                                                        actualEmissionFactorD, consumptionValueD, calculatedRowTotalD,
                                                         rowTotalD));
 
                         // Retry 5 times if table total is not yet calculated
@@ -687,7 +672,7 @@ public class BuildingProjectTest extends BaseTest {
                                 retries--;
                         }
                         AssertLogger.assertNotNull(tableTotalD[0], "Table D: Table total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalD, tableTotalD[0].trim(),
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalD), tableTotalD[0],
                                         "Table D: Table total should equal row total for single row");
 
                         TestLogger.info(String.format("Table D verified: %s, EF=%.2f × Consumption=%.2f = %s ✓",
@@ -704,7 +689,7 @@ public class BuildingProjectTest extends BaseTest {
                         AssertLogger.assertNotNull(actualScope2Total, "Scope 2 total should be calculated");
 
                         // Scope 2 total should equal Table D total (only table in Scope 2)
-                        AssertLogger.assertEquals(tableTotalD[0].trim(), actualScope2Total.trim(),
+                        AssertLogger.assertNumberEquals(tableTotalD[0], actualScope2Total,
                                         String.format("Scope 2 Total should equal Table D total (Got Table D: %s, Scope 2: %s)",
                                                         tableTotalD, actualScope2Total));
 
@@ -775,19 +760,18 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Table F: Table total calculated: " + tableTotalF);
 
                         // Verify calculation: emission_factor × quantity_sent_to_landfill
-                        double actualEmissionFactorF = Double.parseDouble(emissionFactorF.replace(",", ""));
-                        double quantityLandfillValueF = Double.parseDouble(quantityLandfillF);
+                        double actualEmissionFactorF = NumberParser.parseDouble(emissionFactorF);
+                        double quantityLandfillValueF = NumberParser.parseDouble(quantityLandfillF);
                         double calculatedRowTotalF = actualEmissionFactorF * quantityLandfillValueF;
-                        String expectedRowTotalF = String.format("%,.2f", calculatedRowTotalF);
 
                         AssertLogger.assertNotNull(rowTotalF, "Table F: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalF, rowTotalF.trim(),
-                                        String.format("Table F: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalF), rowTotalF,
+                                        String.format("Table F: Row total calculation incorrect (%.2f × %.2f = %.2f, Got: %s)",
                                                         actualEmissionFactorF, quantityLandfillValueF,
-                                                        expectedRowTotalF, rowTotalF));
+                                                        calculatedRowTotalF, rowTotalF));
 
                         AssertLogger.assertNotNull(tableTotalF, "Table F: Table total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalF, tableTotalF.trim(),
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalF), tableTotalF,
                                         "Table F: Table total should equal row total for single row");
 
                         TestLogger.info(String.format("Table F verified: %s, EF=%.2f × Landfill Qty=%.2f = %s ✓",
@@ -841,19 +825,18 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Table G: Table total calculated: " + tableTotalG);
 
                         // Verify calculation: emission_factor × quantity_composted
-                        double actualEmissionFactorG = Double.parseDouble(emissionFactorG.replace(",", ""));
-                        double quantityCompostedValueG = Double.parseDouble(quantityCompostedG);
+                        double actualEmissionFactorG = NumberParser.parseDouble(emissionFactorG);
+                        double quantityCompostedValueG = NumberParser.parseDouble(quantityCompostedG);
                         double calculatedRowTotalG = actualEmissionFactorG * quantityCompostedValueG;
-                        String expectedRowTotalG = String.format("%,.2f", calculatedRowTotalG);
 
                         AssertLogger.assertNotNull(rowTotalG, "Table G: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalG, rowTotalG.trim(),
-                                        String.format("Table G: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalG), rowTotalG,
+                                        String.format("Table G: Row total calculation incorrect (%.2f × %.2f = %.2f, Got: %s)",
                                                         actualEmissionFactorG, quantityCompostedValueG,
-                                                        expectedRowTotalG, rowTotalG));
+                                                        calculatedRowTotalG, rowTotalG));
 
                         AssertLogger.assertNotNull(tableTotalG, "Table G: Table total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalG, tableTotalG.trim(),
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalG), tableTotalG,
                                         "Table G: Table total should equal row total for single row");
 
                         TestLogger.info(String.format(
@@ -908,19 +891,18 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Table H: Table total calculated: " + tableTotalH);
 
                         // Verify calculation: emission_factor × quantity_recycled
-                        double actualEmissionFactorH = Double.parseDouble(emissionFactorH.replace(",", ""));
-                        double quantityRecycledValueH = Double.parseDouble(quantityRecycledH);
+                        double actualEmissionFactorH = NumberParser.parseDouble(emissionFactorH);
+                        double quantityRecycledValueH = NumberParser.parseDouble(quantityRecycledH);
                         double calculatedRowTotalH = actualEmissionFactorH * quantityRecycledValueH;
-                        String expectedRowTotalH = String.format("%,.2f", calculatedRowTotalH);
 
                         AssertLogger.assertNotNull(rowTotalH, "Table H: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalH, rowTotalH.trim(),
-                                        String.format("Table H: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalH), rowTotalH,
+                                        String.format("Table H: Row total calculation incorrect (%.2f × %.2f = %.2f, Got: %s)",
                                                         actualEmissionFactorH, quantityRecycledValueH,
-                                                        expectedRowTotalH, rowTotalH));
+                                                        calculatedRowTotalH, rowTotalH));
 
                         AssertLogger.assertNotNull(tableTotalH, "Table H: Table total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalH, tableTotalH.trim(),
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalH), tableTotalH,
                                         "Table H: Table total should equal row total for single row");
 
                         TestLogger.info(String.format(
@@ -975,19 +957,18 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Table I: Table total calculated: " + tableTotalI);
 
                         // Verify calculation: emission_factor × quantity_incinerated
-                        double actualEmissionFactorI = Double.parseDouble(emissionFactorI.replace(",", ""));
-                        double quantityIncineratedValueI = Double.parseDouble(quantityIncineratedI);
+                        double actualEmissionFactorI = NumberParser.parseDouble(emissionFactorI);
+                        double quantityIncineratedValueI = NumberParser.parseDouble(quantityIncineratedI);
                         double calculatedRowTotalI = actualEmissionFactorI * quantityIncineratedValueI;
-                        String expectedRowTotalI = String.format("%,.2f", calculatedRowTotalI);
 
                         AssertLogger.assertNotNull(rowTotalI, "Table I: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalI, rowTotalI.trim(),
-                                        String.format("Table I: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalI), rowTotalI,
+                                        String.format("Table I: Row total calculation incorrect (%.2f × %.2f = %.2f, Got: %s)",
                                                         actualEmissionFactorI, quantityIncineratedValueI,
-                                                        expectedRowTotalI, rowTotalI));
+                                                        calculatedRowTotalI, rowTotalI));
 
                         AssertLogger.assertNotNull(tableTotalI, "Table I: Table total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalI, tableTotalI.trim(),
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalI), tableTotalI,
                                         "Table I: Table total should equal row total for single row");
 
                         TestLogger.info(String.format(
@@ -1041,19 +1022,18 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Table J: Table total calculated: " + tableTotalJ);
 
                         // Verify calculation: emission_factor × consumption
-                        double actualEmissionFactorJ = Double.parseDouble(emissionFactorJ.replace(",", ""));
-                        double consumptionValueJ = Double.parseDouble(consumptionJ);
+                        double actualEmissionFactorJ = NumberParser.parseDouble(emissionFactorJ);
+                        double consumptionValueJ = NumberParser.parseDouble(consumptionJ);
                         double calculatedRowTotalJ = actualEmissionFactorJ * consumptionValueJ;
-                        String expectedRowTotalJ = String.format("%,.2f", calculatedRowTotalJ);
 
                         AssertLogger.assertNotNull(rowTotalJ, "Table J: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalJ, rowTotalJ.trim(),
-                                        String.format("Table J: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                                                        actualEmissionFactorJ, consumptionValueJ, expectedRowTotalJ,
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalJ), rowTotalJ,
+                                        String.format("Table J: Row total calculation incorrect (%.2f × %.2f = %.2f, Got: %s)",
+                                                        actualEmissionFactorJ, consumptionValueJ, calculatedRowTotalJ,
                                                         rowTotalJ));
 
                         AssertLogger.assertNotNull(tableTotalJ, "Table J: Table total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalJ, tableTotalJ.trim(),
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalJ), tableTotalJ,
                                         "Table J: Table total should equal row total for single row");
 
                         TestLogger.info(String.format("Table J verified: %s, EF=%.2f × Consumption=%.2f = %s ✓",
@@ -1111,17 +1091,16 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Table K Row 0: Row total calculated: " + rowTotalK0);
 
                         // Row 0: Verify calculation: distance × emission_factor
-                        double actualEmissionFactorK0 = Double.parseDouble(emissionFactorK0.replace(",", ""));
+                        double actualEmissionFactorK0 = NumberParser.parseDouble(emissionFactorK0);
                         String actualDistanceK0 = netZeroEmissionsSection.tableK()
                                         .getTotalDistance(0);
-                        double distanceValueK0 = Double.parseDouble(actualDistanceK0);
+                        double distanceValueK0 = NumberParser.parseDouble(actualDistanceK0);
                         double calculatedRowTotalK0 = distanceValueK0 * actualEmissionFactorK0;
-                        String expectedRowTotalK0 = String.format("%,.2f", calculatedRowTotalK0);
 
                         AssertLogger.assertNotNull(rowTotalK0, "Table K Row 0: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalK0, rowTotalK0.trim(),
-                                        String.format("Table K Row 0: calculation incorrect (%.2f × %.5f = %s, Got: %s)",
-                                                        distanceValueK0, actualEmissionFactorK0, expectedRowTotalK0,
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalK0), rowTotalK0,
+                                        String.format("Table K Row 0: calculation incorrect (%.2f × %.5f = %.2f, Got: %s)",
+                                                        distanceValueK0, actualEmissionFactorK0, calculatedRowTotalK0,
                                                         rowTotalK0));
 
                         TestLogger.info(String.format(
@@ -1166,17 +1145,16 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Table K Row 1: Row total calculated: " + rowTotalK1);
 
                         // Row 1: Verify calculation: distance × emission_factor
-                        double actualEmissionFactorK1 = Double.parseDouble(emissionFactorK1.replace(",", ""));
+                        double actualEmissionFactorK1 = NumberParser.parseDouble(emissionFactorK1);
                         String actualDistanceK1 = netZeroEmissionsSection.tableK()
                                         .getTotalDistance(1);
-                        double distanceValueK1 = Double.parseDouble(actualDistanceK1);
+                        double distanceValueK1 = NumberParser.parseDouble(actualDistanceK1);
                         double calculatedRowTotalK1 = distanceValueK1 * actualEmissionFactorK1;
-                        String expectedRowTotalK1 = String.format("%,.2f", calculatedRowTotalK1);
 
                         AssertLogger.assertNotNull(rowTotalK1, "Table K Row 1: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalK1, rowTotalK1.trim(),
-                                        String.format("Table K Row 1: calculation incorrect (%.2f × %.5f = %s, Got: %s)",
-                                                        distanceValueK1, actualEmissionFactorK1, expectedRowTotalK1,
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalK1), rowTotalK1,
+                                        String.format("Table K Row 1: calculation incorrect (%.2f × %.5f = %.2f, Got: %s)",
+                                                        distanceValueK1, actualEmissionFactorK1, calculatedRowTotalK1,
                                                         rowTotalK1));
 
                         TestLogger.info(String.format(
@@ -1187,14 +1165,13 @@ public class BuildingProjectTest extends BaseTest {
                         // Verify Table K total = row0 + row1
                         String tableTotalK = netZeroEmissionsSection.tableK()
                                         .getTableTotal();
-                        double row0ValueK = Double.parseDouble(rowTotalK0.replace(",", ""));
-                        double row1ValueK = Double.parseDouble(rowTotalK1.replace(",", ""));
+                        double row0ValueK = NumberParser.parseDouble(rowTotalK0);
+                        double row1ValueK = NumberParser.parseDouble(rowTotalK1);
                         double calculatedTableTotalK = row0ValueK + row1ValueK;
-                        String expectedTableTotalK = String.format("%,.2f", calculatedTableTotalK);
 
-                        AssertLogger.assertEquals(expectedTableTotalK, tableTotalK.trim(),
-                                        String.format("Table K: Table total should equal sum of rows (%.2f + %.2f = %s, Got: %s)",
-                                                        row0ValueK, row1ValueK, expectedTableTotalK, tableTotalK));
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedTableTotalK), tableTotalK,
+                                        String.format("Table K: Table total should equal sum of rows (%.2f + %.2f = %.2f, Got: %s)",
+                                                        row0ValueK, row1ValueK, calculatedTableTotalK, tableTotalK));
 
                         TestLogger.info("Table K: Table total verified (sum of rows): " + tableTotalK);
 
@@ -1250,17 +1227,16 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Table L Row 0: Row total calculated: " + rowTotalL0);
 
                         // Row 0: Verify calculation: distance × emission_factor
-                        double actualEmissionFactorL0 = Double.parseDouble(emissionFactorL0.replace(",", ""));
+                        double actualEmissionFactorL0 = NumberParser.parseDouble(emissionFactorL0);
                         String actualDistanceL0 = netZeroEmissionsSection.tableL()
                                         .getTotalDistance(0);
-                        double distanceValueL0 = Double.parseDouble(actualDistanceL0);
+                        double distanceValueL0 = NumberParser.parseDouble(actualDistanceL0);
                         double calculatedRowTotalL0 = distanceValueL0 * actualEmissionFactorL0;
-                        String expectedRowTotalL0 = String.format("%,.2f", calculatedRowTotalL0);
 
                         AssertLogger.assertNotNull(rowTotalL0, "Table L Row 0: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalL0, rowTotalL0.trim(),
-                                        String.format("Table L Row 0: calculation incorrect (%.2f × %.6f = %s, Got: %s)",
-                                                        distanceValueL0, actualEmissionFactorL0, expectedRowTotalL0,
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalL0), rowTotalL0,
+                                        String.format("Table L Row 0: calculation incorrect (%.2f × %.6f = %.2f, Got: %s)",
+                                                        distanceValueL0, actualEmissionFactorL0, calculatedRowTotalL0,
                                                         rowTotalL0));
 
                         TestLogger.info(String.format(
@@ -1305,17 +1281,16 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Table L Row 1: Row total calculated: " + rowTotalL1);
 
                         // Row 1: Verify calculation: distance × emission_factor
-                        double actualEmissionFactorL1 = Double.parseDouble(emissionFactorL1.replace(",", ""));
+                        double actualEmissionFactorL1 = NumberParser.parseDouble(emissionFactorL1);
                         String actualDistanceL1 = netZeroEmissionsSection.tableL()
                                         .getTotalDistance(1);
-                        double distanceValueL1 = Double.parseDouble(actualDistanceL1);
+                        double distanceValueL1 = NumberParser.parseDouble(actualDistanceL1);
                         double calculatedRowTotalL1 = distanceValueL1 * actualEmissionFactorL1;
-                        String expectedRowTotalL1 = String.format("%,.2f", calculatedRowTotalL1);
 
                         AssertLogger.assertNotNull(rowTotalL1, "Table L Row 1: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalL1, rowTotalL1.trim(),
-                                        String.format("Table L Row 1: calculation incorrect (%.2f × %.5f = %s, Got: %s)",
-                                                        distanceValueL1, actualEmissionFactorL1, expectedRowTotalL1,
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalL1), rowTotalL1,
+                                        String.format("Table L Row 1: calculation incorrect (%.2f × %.5f = %.2f, Got: %s)",
+                                                        distanceValueL1, actualEmissionFactorL1, calculatedRowTotalL1,
                                                         rowTotalL1));
 
                         TestLogger.info(String.format(
@@ -1326,14 +1301,13 @@ public class BuildingProjectTest extends BaseTest {
                         // Verify Table L total = row0 + row1
                         String tableTotalL = netZeroEmissionsSection.tableL()
                                         .getTableTotal();
-                        double row0ValueL = Double.parseDouble(rowTotalL0.replace(",", ""));
-                        double row1ValueL = Double.parseDouble(rowTotalL1.replace(",", ""));
+                        double row0ValueL = NumberParser.parseDouble(rowTotalL0);
+                        double row1ValueL = NumberParser.parseDouble(rowTotalL1);
                         double calculatedTableTotalL = row0ValueL + row1ValueL;
-                        String expectedTableTotalL = String.format("%,.2f", calculatedTableTotalL);
 
-                        AssertLogger.assertEquals(expectedTableTotalL, tableTotalL.trim(),
-                                        String.format("Table L: Table total should equal sum of rows (%.2f + %.2f = %s, Got: %s)",
-                                                        row0ValueL, row1ValueL, expectedTableTotalL, tableTotalL));
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedTableTotalL), tableTotalL,
+                                        String.format("Table L: Table total should equal sum of rows (%.2f + %.2f = %.2f, Got: %s)",
+                                                        row0ValueL, row1ValueL, calculatedTableTotalL, tableTotalL));
 
                         TestLogger.info("Table L: Table total verified (sum of rows): " + tableTotalL);
 
@@ -1389,19 +1363,18 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Table M: Table total calculated: " + tableTotalM);
 
                         // Verify calculation: emission_factor × quantity
-                        double actualEmissionFactorM = Double.parseDouble(emissionFactorM.replace(",", ""));
-                        double quantityValueM = Double.parseDouble(quantityM);
+                        double actualEmissionFactorM = NumberParser.parseDouble(emissionFactorM);
+                        double quantityValueM = NumberParser.parseDouble(quantityM);
                         double calculatedRowTotalM = actualEmissionFactorM * quantityValueM;
-                        String expectedRowTotalM = String.format("%,.2f", calculatedRowTotalM);
 
                         AssertLogger.assertNotNull(rowTotalM, "Table M: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalM, rowTotalM.trim(),
-                                        String.format("Table M: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                                                        actualEmissionFactorM, quantityValueM, expectedRowTotalM,
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalM), rowTotalM,
+                                        String.format("Table M: Row total calculation incorrect (%.2f × %.2f = %.2f, Got: %s)",
+                                                        actualEmissionFactorM, quantityValueM, calculatedRowTotalM,
                                                         rowTotalM));
 
                         AssertLogger.assertNotNull(tableTotalM, "Table M: Table total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalM, tableTotalM.trim(),
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalM), tableTotalM,
                                         "Table M: Table total should equal row total for single row");
 
                         TestLogger.info(String.format("Table M verified: %s, EF=%.2f × Quantity=%.2f = %s ✓",
@@ -1413,7 +1386,7 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("=== Testing Table N (Logistics & Supply) ===");
 
                         // Define test data
-                        String vehicleO = "HGV";
+                        String vehicleO = "HGV (all diesel)";
                         String typeO = "Rigid";
                         String fuelO = "Diesel";
                         String weightO = "10";
@@ -1460,20 +1433,19 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Table O: Table total calculated: " + tableTotalO);
 
                         // Verify calculation: weight × distance × emission_factor
-                        double actualEmissionFactorO = Double.parseDouble(emissionFactorO.replace(",", ""));
-                        double weightValueO = Double.parseDouble(weightO);
-                        double distanceValueO = Double.parseDouble(distanceO);
+                        double actualEmissionFactorO = NumberParser.parseDouble(emissionFactorO);
+                        double weightValueO = NumberParser.parseDouble(weightO);
+                        double distanceValueO = NumberParser.parseDouble(distanceO);
                         double calculatedRowTotalO = weightValueO * distanceValueO * actualEmissionFactorO;
-                        String expectedRowTotalO = String.format("%,.2f", calculatedRowTotalO);
 
                         AssertLogger.assertNotNull(rowTotalO, "Table O: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalO, rowTotalO.trim(),
-                                        String.format("Table O: Row total calculation incorrect (%.2f × %.2f × %.2f = %s, Got: %s)",
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalO), rowTotalO,
+                                        String.format("Table O: Row total calculation incorrect (%.2f × %.2f × %.2f = %.2f, Got: %s)",
                                                         weightValueO, distanceValueO, actualEmissionFactorO,
-                                                        expectedRowTotalO, rowTotalO));
+                                                        calculatedRowTotalO, rowTotalO));
 
                         AssertLogger.assertNotNull(tableTotalO, "Table O: Table total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalO, tableTotalO.trim(),
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalO), tableTotalO,
                                         "Table O: Table total should equal row total for single row");
 
                         TestLogger.info(String.format(
@@ -1529,19 +1501,18 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Table P: Table total calculated: " + tableTotalP);
 
                         // Verify calculation: emission_factor × quantity
-                        double actualEmissionFactorP = Double.parseDouble(emissionFactorP.replace(",", ""));
-                        double quantityValueP = Double.parseDouble(quantityP);
+                        double actualEmissionFactorP = NumberParser.parseDouble(emissionFactorP);
+                        double quantityValueP = NumberParser.parseDouble(quantityP);
                         double calculatedRowTotalP = actualEmissionFactorP * quantityValueP;
-                        String expectedRowTotalP = String.format("%,.2f", calculatedRowTotalP);
 
                         AssertLogger.assertNotNull(rowTotalP, "Table P: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalP, rowTotalP.trim(),
-                                        String.format("Table P: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                                                        actualEmissionFactorP, quantityValueP, expectedRowTotalP,
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalP), rowTotalP,
+                                        String.format("Table P: Row total calculation incorrect (%.2f × %.2f = %.2f, Got: %s)",
+                                                        actualEmissionFactorP, quantityValueP, calculatedRowTotalP,
                                                         rowTotalP));
 
                         AssertLogger.assertNotNull(tableTotalP, "Table P: Table total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalP, tableTotalP.trim(),
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalP), tableTotalP,
                                         "Table P: Table total should equal row total for single row");
 
                         TestLogger.info(String.format("Table P verified: %s, EF=%.2f × Quantity=%.2f = %s ✓",
@@ -1595,19 +1566,18 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Table Q: Table total calculated: " + tableTotalQ);
 
                         // Verify calculation: emission_factor × quantity
-                        double actualEmissionFactorQ = Double.parseDouble(emissionFactorQ.replace(",", ""));
-                        double quantityValueQ = Double.parseDouble(quantityQ);
+                        double actualEmissionFactorQ = NumberParser.parseDouble(emissionFactorQ);
+                        double quantityValueQ = NumberParser.parseDouble(quantityQ);
                         double calculatedRowTotalQ = actualEmissionFactorQ * quantityValueQ;
-                        String expectedRowTotalQ = String.format("%,.2f", calculatedRowTotalQ);
 
                         AssertLogger.assertNotNull(rowTotalQ, "Table Q: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalQ, rowTotalQ.trim(),
-                                        String.format("Table Q: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
-                                                        actualEmissionFactorQ, quantityValueQ, expectedRowTotalQ,
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalQ), rowTotalQ,
+                                        String.format("Table Q: Row total calculation incorrect (%.2f × %.2f = %.2f, Got: %s)",
+                                                        actualEmissionFactorQ, quantityValueQ, calculatedRowTotalQ,
                                                         rowTotalQ));
 
                         AssertLogger.assertNotNull(tableTotalQ, "Table Q: Table total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalQ, tableTotalQ.trim(),
+                        AssertLogger.assertNumberEquals(String.valueOf(calculatedRowTotalQ), tableTotalQ,
                                         "Table Q: Table total should equal row total for single row");
 
                         TestLogger.info(String.format("Table Q verified: %s, EF=%.2f × Quantity=%.2f = %s ✓",
@@ -1662,19 +1632,19 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Table R: Table total calculated: " + tableTotalR);
 
                         // Verify calculation: emission_factor × quantity
-                        double actualEmissionFactorR = Double.parseDouble(emissionFactorR.replace(",", ""));
+                        double actualEmissionFactorR = NumberParser.parseDouble(emissionFactorR);
                         double quantityValueR = Double.parseDouble(quantityR);
                         double calculatedRowTotalR = actualEmissionFactorR * quantityValueR;
-                        String expectedRowTotalR = String.format("%,.2f", calculatedRowTotalR);
+                        String expectedRowTotalR = String.valueOf(calculatedRowTotalR);
 
                         AssertLogger.assertNotNull(rowTotalR, "Table R: Row total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalR, rowTotalR.trim(),
+                        AssertLogger.assertNumberEquals(expectedRowTotalR, rowTotalR,
                                         String.format("Table R: Row total calculation incorrect (%.2f × %.2f = %s, Got: %s)",
                                                         actualEmissionFactorR, quantityValueR, expectedRowTotalR,
                                                         rowTotalR));
 
                         AssertLogger.assertNotNull(tableTotalR, "Table R: Table total should be calculated");
-                        AssertLogger.assertEquals(expectedRowTotalR, tableTotalR.trim(),
+                        AssertLogger.assertNumberEquals(expectedRowTotalR, tableTotalR,
                                         "Table R: Table total should equal row total for single row");
 
                         TestLogger.info(String.format("Table R verified: %s, EF=%.2f × Quantity=%.2f = %s ✓",
@@ -1754,14 +1724,9 @@ public class BuildingProjectTest extends BaseTest {
                                 double totalKg = parseEmissionValue(summaryTotalKgCO2e);
 
                                 double calculatedTotal = scope1Kg + scope2Kg + scope3Kg;
-                                AssertLogger.assertEquals(calculatedTotal, totalKg, 0.01,
-                                                String.format("Summary total should equal sum of scopes: %.2f + %.2f + %.2f = %.2f (Got: %.2f)",
-                                                                scope1Kg, scope2Kg, scope3Kg, calculatedTotal,
-                                                                totalKg));
-
-                                TestLogger.info(String.format(
-                                                "✓ Total emissions validation: %.2f + %.2f + %.2f = %.2f KgCO2e",
-                                                scope1Kg, scope2Kg, scope3Kg, totalKg));
+                                AssertLogger.assertNumberEquals(String.valueOf(calculatedTotal),
+                                                String.valueOf(totalKg), 0.01,
+                                                "Summary total should equal sum of scopes");
                         } catch (NumberFormatException e) {
                                 TestLogger.info("⚠ Could not parse emission values for numeric validation: "
                                                 + e.getMessage());
@@ -1827,17 +1792,17 @@ public class BuildingProjectTest extends BaseTest {
 
                         // Numeric comparisons for number fields (parse to handle formatting differences
                         // like "100" vs "100.00")
-                        AssertLogger.assertEquals(Double.parseDouble(emissionFactorA[0].replace(",", "")),
-                                        Double.parseDouble(energyTableA_EmissionFactor.replace(",", "")), 0.01,
+                        AssertLogger.assertNumberEquals(String.valueOf(NumberParser.parseDouble(emissionFactorA[0])),
+                                        String.valueOf(NumberParser.parseDouble(energyTableA_EmissionFactor)), 0.01,
                                         "Energy Table A: Emission Factor should match Emissions Table A");
-                        AssertLogger.assertEquals(Double.parseDouble(consumptionA[0]),
-                                        Double.parseDouble(energyTableA_Consumption.replace(",", "")), 0.01,
+                        AssertLogger.assertNumberEquals(String.valueOf(NumberParser.parseDouble(consumptionA[0])),
+                                        String.valueOf(NumberParser.parseDouble(energyTableA_Consumption)), 0.01,
                                         "Energy Table A: Consumption should match Emissions Table A");
-                        AssertLogger.assertEquals(Double.parseDouble(rowTotalA[0].replace(",", "")),
-                                        Double.parseDouble(energyTableA_RowTotal.replace(",", "")), 0.01,
+                        AssertLogger.assertNumberEquals(String.valueOf(NumberParser.parseDouble(rowTotalA[0])),
+                                        String.valueOf(NumberParser.parseDouble(energyTableA_RowTotal)), 0.01,
                                         "Energy Table A: Row Total should match Emissions Table A");
-                        AssertLogger.assertEquals(Double.parseDouble(tableTotalA[0].replace(",", "")),
-                                        Double.parseDouble(energyTableA_TableTotal.replace(",", "")), 0.01,
+                        AssertLogger.assertNumberEquals(String.valueOf(NumberParser.parseDouble(tableTotalA[0])),
+                                        String.valueOf(NumberParser.parseDouble(energyTableA_TableTotal)), 0.01,
                                         "Energy Table A: Table Total should match Emissions Table A");
 
                         TestLogger.info("✓ Energy Table A data matches Emissions Table A");
@@ -1878,17 +1843,17 @@ public class BuildingProjectTest extends BaseTest {
 
                         // Numeric comparisons for number fields (parse to handle formatting differences
                         // like "100" vs "100.00")
-                        AssertLogger.assertEquals(Double.parseDouble(emissionFactorC[0].replace(",", "")),
-                                        Double.parseDouble(energyTableB_EmissionFactor.replace(",", "")), 0.01,
+                        AssertLogger.assertNumberEquals(String.valueOf(NumberParser.parseDouble(emissionFactorC[0])),
+                                        String.valueOf(NumberParser.parseDouble(energyTableB_EmissionFactor)), 0.01,
                                         "Energy Table B: Emission Factor should match Emissions Table C");
-                        AssertLogger.assertEquals(Double.parseDouble(consumptionC[0]),
-                                        Double.parseDouble(energyTableB_Consumption.replace(",", "")), 0.01,
+                        AssertLogger.assertNumberEquals(String.valueOf(NumberParser.parseDouble(consumptionC[0])),
+                                        String.valueOf(NumberParser.parseDouble(energyTableB_Consumption)), 0.01,
                                         "Energy Table B: Consumption should match Emissions Table C");
-                        AssertLogger.assertEquals(Double.parseDouble(rowTotalC[0].replace(",", "")),
-                                        Double.parseDouble(energyTableB_RowTotal.replace(",", "")), 0.01,
+                        AssertLogger.assertNumberEquals(String.valueOf(NumberParser.parseDouble(rowTotalC[0])),
+                                        String.valueOf(NumberParser.parseDouble(energyTableB_RowTotal)), 0.01,
                                         "Energy Table B: Row Total should match Emissions Table C");
-                        AssertLogger.assertEquals(Double.parseDouble(tableTotalC[0].replace(",", "")),
-                                        Double.parseDouble(energyTableB_TableTotal.replace(",", "")), 0.01,
+                        AssertLogger.assertNumberEquals(String.valueOf(NumberParser.parseDouble(tableTotalC[0])),
+                                        String.valueOf(NumberParser.parseDouble(energyTableB_TableTotal)), 0.01,
                                         "Energy Table B: Table Total should match Emissions Table C");
 
                         TestLogger.info("✓ Energy Table B data matches Emissions Table C");
@@ -1934,17 +1899,17 @@ public class BuildingProjectTest extends BaseTest {
 
                         // Numeric comparisons for number fields (parse to handle formatting differences
                         // like "100" vs "100.00")
-                        AssertLogger.assertEquals(Double.parseDouble(emissionFactorD[0].replace(",", "")),
-                                        Double.parseDouble(energyTableC_EmissionFactor.replace(",", "")), 0.01,
+                        AssertLogger.assertNumberEquals(String.valueOf(NumberParser.parseDouble(emissionFactorD[0])),
+                                        String.valueOf(NumberParser.parseDouble(energyTableC_EmissionFactor)), 0.01,
                                         "Energy Table C: Emission Factor should match Emissions Table D");
-                        AssertLogger.assertEquals(Double.parseDouble(consumptionD[0]),
-                                        Double.parseDouble(energyTableC_Consumption.replace(",", "")), 0.01,
+                        AssertLogger.assertNumberEquals(String.valueOf(NumberParser.parseDouble(consumptionD[0])),
+                                        String.valueOf(NumberParser.parseDouble(energyTableC_Consumption)), 0.01,
                                         "Energy Table C: Consumption should match Emissions Table D");
-                        AssertLogger.assertEquals(Double.parseDouble(rowTotalD[0].replace(",", "")),
-                                        Double.parseDouble(energyTableC_RowTotal.replace(",", "")), 0.01,
+                        AssertLogger.assertNumberEquals(String.valueOf(NumberParser.parseDouble(rowTotalD[0])),
+                                        String.valueOf(NumberParser.parseDouble(energyTableC_RowTotal)), 0.01,
                                         "Energy Table C: Row Total should match Emissions Table D");
-                        AssertLogger.assertEquals(Double.parseDouble(tableTotalD[0].replace(",", "")),
-                                        Double.parseDouble(energyTableC_TableTotal.replace(",", "")), 0.01,
+                        AssertLogger.assertNumberEquals(String.valueOf(NumberParser.parseDouble(tableTotalD[0])),
+                                        String.valueOf(NumberParser.parseDouble(energyTableC_TableTotal)), 0.01,
                                         "Energy Table C: Table Total should match Emissions Table D");
 
                         TestLogger.info("✓ Energy Table C data matches Emissions Table D");
@@ -1959,24 +1924,20 @@ public class BuildingProjectTest extends BaseTest {
                         TestLogger.info("Energy Scope 1 Total: " + energyScope1Total);
 
                         // Calculate expected Scope 1 Total (Energy Table A + Energy Table B)
-                        double energyTableATotal = Double.parseDouble(energyTableA_TableTotal.replace(",", ""));
-                        double energyTableBTotal = Double.parseDouble(energyTableB_TableTotal.replace(",", ""));
+                        double energyTableATotal = NumberParser.parseDouble(energyTableA_TableTotal);
+                        double energyTableBTotal = NumberParser.parseDouble(energyTableB_TableTotal);
                         double expectedEnergyScope1Total = energyTableATotal + energyTableBTotal;
-                        String expectedEnergyScope1TotalStr = String.format("%,.2f", expectedEnergyScope1Total);
+                        String expectedEnergyScope1TotalStr = String.valueOf(expectedEnergyScope1Total);
 
-                        AssertLogger.assertEquals(expectedEnergyScope1TotalStr, energyScope1Total.trim(),
-                                        String.format("Energy Scope 1 Total should equal Table A + Table B (%.2f + %.2f = %s, Got: %s)",
-                                                        energyTableATotal, energyTableBTotal,
-                                                        expectedEnergyScope1TotalStr, energyScope1Total));
-
-                        TestLogger.info(String.format("✓ Energy Scope 1 Total verified: %.2f + %.2f = %s",
-                                        energyTableATotal, energyTableBTotal, energyScope1Total));
+                        AssertLogger.assertNumberEquals(String.valueOf(expectedEnergyScope1Total),
+                                        String.valueOf(NumberParser.parseDouble(energyScope1Total)), 0.01,
+                                        "Energy Scope 1 Total should equal Table A + Table B");
 
                         // Get Energy Scope 2 Total (should equal Energy Table C)
                         String energyScope2Total = buildingAssessmentTab.getNetZeroEnergySection().getScope2Total();
                         TestLogger.info("Energy Scope 2 Total: " + energyScope2Total);
 
-                        AssertLogger.assertEquals(energyTableC_TableTotal.trim(), energyScope2Total.trim(),
+                        AssertLogger.assertNumberEquals(energyTableC_TableTotal.trim(), energyScope2Total.trim(),
                                         String.format("Energy Scope 2 Total should equal Table C total (Got Table C: %s, Scope 2: %s)",
                                                         energyTableC_TableTotal, energyScope2Total));
 
@@ -2019,9 +1980,12 @@ public class BuildingProjectTest extends BaseTest {
                                                         + energySummaryTotalMtCO2e + " MtCO2e");
 
                         // Validate summary values are not null/empty
-                        AssertLogger.assertNotNull(energySummaryScope1KgCO2e, "Energy Summary Scope 1 KgCO2e should not be null");
-                        AssertLogger.assertNotNull(energySummaryScope2KgCO2e, "Energy Summary Scope 2 KgCO2e should not be null");
-                        AssertLogger.assertNotNull(energySummaryTotalKgCO2e, "Energy Summary Total KgCO2e should not be null");
+                        AssertLogger.assertNotNull(energySummaryScope1KgCO2e,
+                                        "Energy Summary Scope 1 KgCO2e should not be null");
+                        AssertLogger.assertNotNull(energySummaryScope2KgCO2e,
+                                        "Energy Summary Scope 2 KgCO2e should not be null");
+                        AssertLogger.assertNotNull(energySummaryTotalKgCO2e,
+                                        "Energy Summary Total KgCO2e should not be null");
 
                         assertFalse(energySummaryScope1KgCO2e.isEmpty(),
                                         "Energy Summary Scope 1 KgCO2e should not be empty");
@@ -2037,17 +2001,14 @@ public class BuildingProjectTest extends BaseTest {
                                 double energyTotalKg = parseEmissionValue(energySummaryTotalKgCO2e);
 
                                 double calculatedEnergyTotal = energyScope1Kg + energyScope2Kg;
-                                AssertLogger.assertEquals(calculatedEnergyTotal, energyTotalKg, 0.01,
+                                AssertLogger.assertNumberEquals(String.valueOf(calculatedEnergyTotal),
+                                                String.valueOf(energyTotalKg), 0.01,
                                                 String.format("Energy Summary total should equal sum of scopes: %.2f + %.2f = %.2f (Got: %.2f)",
                                                                 energyScope1Kg, energyScope2Kg, calculatedEnergyTotal,
                                                                 energyTotalKg));
-
-                                TestLogger.info(String.format("✓ Energy Total validation: %.2f + %.2f = %.2f KgCO2e",
-                                                energyScope1Kg, energyScope2Kg, energyTotalKg));
                         } catch (NumberFormatException e) {
-                                System.out
-                                                .println("⚠ Could not parse energy emission values for numeric validation: "
-                                                                + e.getMessage());
+                                TestLogger.info("⚠ Could not parse energy emission values for numeric validation: "
+                                                + e.getMessage());
                         }
 
                         TestLogger.info("\n✓ Energy Summary of Scopes Validation Complete");
@@ -2389,7 +2350,8 @@ public class BuildingProjectTest extends BaseTest {
                         buildingProjectPage.goToCarbonOffsetTab();
                         page.waitForTimeout(1000);
 
-                        AssertLogger.assertTrue(buildingCarbonOffsetTab.isTabDisplayed(), "Carbon Offset tab should be displayed");
+                        AssertLogger.assertTrue(buildingCarbonOffsetTab.isTabDisplayed(),
+                                        "Carbon Offset tab should be displayed");
                         TestLogger.info("✓ Navigated to Carbon Offset Tab");
 
                         TestLogger.info("\n=== Filling Carbon Offset Data ===");

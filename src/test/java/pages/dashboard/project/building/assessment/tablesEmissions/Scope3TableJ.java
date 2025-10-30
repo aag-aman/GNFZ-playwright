@@ -4,7 +4,9 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 import utils.InputHelper;
+import utils.WaitHelper;
 
+import utils.AutoStep;
 /**
  * Scope3TableJ - Table J for Scope 3 Emissions (WTT - Well-to-Tank)
  *
@@ -22,6 +24,7 @@ public class Scope3TableJ {
     private static final String ADD_ROW_BUTTON_PATTERN = "#scope3_WTT_table_tr_row_add_%d";
     private static final String ATTACH_BUTTON_PATTERN = "#scope3_WTT_table_tr_row_attach_%d";
     private static final String REMOVE_ROW_BUTTON_PATTERN = "#scope3_WTT_table_tr_row_trash_%d";
+    private static final String ALL_ROWS_PATTERN = "input[ftestcaseref^='scope3_wtt_fuel_']";
 
     // Table-level locators (not row-specific)
     private final Locator tableTotal;
@@ -68,22 +71,30 @@ public class Scope3TableJ {
         return page.locator(String.format(REMOVE_ROW_BUTTON_PATTERN, rowIndex));
     }
 
+    private Locator getAllRows() {
+        return page.locator(ALL_ROWS_PATTERN);
+    }
+
     /**
      * Enter methods for specific columns
      */
+    @AutoStep
     public void enterFuel(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getFuelInput(rowIndex), value);
     }
 
+    @AutoStep
     public void enterEmissionFactor(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getEmissionFactorInput(rowIndex), value);
     }
 
+    @AutoStep
     public void enterConsumption(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getConsumptionInput(rowIndex), value);
     }
 
 
+    @AutoStep
     public void selectUnits(int rowIndex, String value) {
         page.waitForLoadState();
         Locator unitsSelect = getUnitsSelect(rowIndex);
@@ -96,26 +107,32 @@ public class Scope3TableJ {
     /**
      * Get values
      */
+    @AutoStep
     public String getFuel(int rowIndex) {
         return getFuelInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getEmissionFactor(int rowIndex) {
         return getEmissionFactorInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getConsumption(int rowIndex) {
         return getConsumptionInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getUnits(int rowIndex) {
         return getUnitsSelect(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getRowTotal(int rowIndex) {
         return getRowTotalLocator(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getTableTotal() {
         return this.tableTotal.inputValue();
     }
@@ -123,14 +140,17 @@ public class Scope3TableJ {
     /**
      * Row operations
      */
+    @AutoStep
     public void addRow(int currentRowIndex) {
         page.waitForLoadState();
+        int initialCount = getAllRows().count();
         Locator addButton = getAddRowButton(currentRowIndex);
         addButton.waitFor();
         addButton.click();
-        page.waitForTimeout(500); // Wait for new row to be added
+        // WaitHelper.waitForNewRow(page, getAllRows(), initialCount, 30000); // Wait for new row to be added
     }
 
+    @AutoStep
     public void removeRow(int rowIndex) {
         page.waitForLoadState();
         Locator removeButton = getRemoveRowButton(rowIndex);
@@ -138,6 +158,7 @@ public class Scope3TableJ {
         removeButton.click();
     }
 
+    @AutoStep
     public void attach(int rowIndex) {
         page.waitForLoadState();
         Locator attachButton = getAttachButton(rowIndex);
@@ -148,6 +169,7 @@ public class Scope3TableJ {
     /**
      * Fill entire row at once
      */
+    @AutoStep
     public void fillRow(int rowIndex, String fuel, String emissionFactor, String consumption, String units) {
         enterFuel(rowIndex, fuel);
         enterEmissionFactor(rowIndex, emissionFactor);

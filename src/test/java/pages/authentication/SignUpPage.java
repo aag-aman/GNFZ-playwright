@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import utils.AutoStep;
 import utils.InputHelper;
 
 /**
@@ -65,6 +66,7 @@ public class SignUpPage {
     // NAVIGATION METHODS
     // =============================================================================
 
+    @AutoStep
     public void navigateToSignUp() {
         String baseUrl = System.getProperty("baseUrl", "https://dev-platform.globalnetworkforzero.com");
         String currentUrl = page.url();
@@ -79,26 +81,32 @@ public class SignUpPage {
     // FORM INTERACTION METHODS
     // =============================================================================
 
+    @AutoStep
     public void enterFirstName(String firstName) {
         InputHelper.humanizedInputNoEnter(page, firstNameField, firstName);
     }
 
+    @AutoStep
     public void enterLastName(String lastName) {
         InputHelper.humanizedInputNoEnter(page, lastNameField, lastName);
     }
 
+    @AutoStep
     public void enterEmail(String email) {
         InputHelper.humanizedInputNoEnter(page, emailField, email);
     }
 
+    @AutoStep
     public void enterPassword(String password) {
         InputHelper.humanizedInputNoEnter(page, passwordField, password);
     }
 
+    @AutoStep
     public void enterConfirmPassword(String confirmPassword) {
         InputHelper.humanizedInputNoEnter(page, confirmPasswordField, confirmPassword);
     }
 
+    @AutoStep
     public void clickSignUpButton() {
         signUpButton.click();
     }
@@ -106,6 +114,7 @@ public class SignUpPage {
     /**
      * Complete sign-up process with all required fields
      */
+    @AutoStep
     public void signUp(String firstName, String lastName, String email, String password, String confirmPassword) {
         enterFirstName(firstName);
         enterLastName(lastName);
@@ -118,6 +127,7 @@ public class SignUpPage {
     /**
      * Click the login link to navigate to login page
      */
+    @AutoStep
     public void clickLoginLink() {
         loginLink.click();
     }
@@ -126,26 +136,32 @@ public class SignUpPage {
     // FIELD MANIPULATION METHODS
     // =============================================================================
 
+    @AutoStep
     public void clearFirstNameField() {
         firstNameField.clear();
     }
 
+    @AutoStep
     public void clearLastNameField() {
         lastNameField.clear();
     }
 
+    @AutoStep
     public void clearEmailField() {
         emailField.clear();
     }
 
+    @AutoStep
     public void clearPasswordField() {
         passwordField.clear();
     }
 
+    @AutoStep
     public void clearConfirmPasswordField() {
         confirmPasswordField.clear();
     }
 
+    @AutoStep
     public void clearAllFields() {
         clearFirstNameField();
         clearLastNameField();
@@ -158,54 +174,67 @@ public class SignUpPage {
     // TEXT RETRIEVAL METHODS
     // =============================================================================
 
+    @AutoStep
     public String getFirstNameFieldValue() {
         return firstNameField.inputValue();
     }
 
+    @AutoStep
     public String getLastNameFieldValue() {
         return lastNameField.inputValue();
     }
 
+    @AutoStep
     public String getEmailFieldValue() {
         return emailField.inputValue();
     }
 
+    @AutoStep
     public String getPasswordFieldValue() {
         return passwordField.inputValue();
     }
 
+    @AutoStep
     public String getConfirmPasswordFieldValue() {
         return confirmPasswordField.inputValue();
     }
 
+    @AutoStep
     public String getFirstNameError() {
         return firstNameError.textContent();
     }
 
+    @AutoStep
     public String getEmailError() {
         return emailError.textContent();
     }
 
+    @AutoStep
     public String getPasswordError() {
         return passwordError.textContent();
     }
 
+    @AutoStep
     public String getConfirmPasswordError() {
         return confirmPasswordError.textContent();
     }
 
+    @AutoStep
     public boolean getEmailErrorVisible() {
         return emailError.isVisible();
     }
 
+    @AutoStep
     public boolean getPasswordErrorVisible() {
         return passwordError.isVisible();
     }
 
+    @AutoStep
     public boolean getConfirmPasswordErrorVisible() {
         return confirmPasswordError.isVisible();
     }
 
+    @AutoStep
     public String getErrorMessage() {
         page.waitForLoadState();
         if (errorMessage.isVisible()) {
@@ -214,19 +243,23 @@ public class SignUpPage {
         return "";
     }
 
+    @AutoStep
     public boolean isErrorMessageVisible() {
         page.waitForLoadState();
         return errorMessage.isVisible();
     }
 
+    @AutoStep
     public String getSuccessMessage() {
         return successMessage.textContent();
     }
 
+    @AutoStep
     public String getPageHeader() {
         return pageHeader.textContent();
     }
 
+    @AutoStep
     public String getPageSubHeader() {
         return pageSubHeader.textContent();
     }
@@ -238,44 +271,54 @@ public class SignUpPage {
     /**
      * Check if the sign-up page is displayed
      */
+    @AutoStep
     public boolean isPageDisplayed() {
         page.waitForLoadState();
         emailField.waitFor();
         return emailField.isVisible();
     }
 
+    @AutoStep
     public boolean isFirstNameFieldVisible() {
         return firstNameField.isVisible();
     }
 
+    @AutoStep
     public boolean isLastNameFieldVisible() {
         return lastNameField.isVisible();
     }
 
+    @AutoStep
     public boolean isEmailFieldVisible() {
         return emailField.isVisible();
     }
 
+    @AutoStep
     public boolean isPasswordFieldVisible() {
         return passwordField.isVisible();
     }
 
+    @AutoStep
     public boolean isConfirmPasswordFieldVisible() {
         return confirmPasswordField.isVisible();
     }
 
+    @AutoStep
     public boolean isSignUpButtonVisible() {
         return signUpButton.isVisible();
     }
 
+    @AutoStep
     public boolean isSignUpButtonEnabled() {
         return signUpButton.isEnabled();
     }
 
+    @AutoStep
     public boolean isSuccessMessageDisplayed() {
         return successMessage.isVisible();
     }
 
+    @AutoStep
     public boolean isLoginLinkVisible() {
         return loginLink.isVisible();
     }

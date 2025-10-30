@@ -4,7 +4,9 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 import utils.InputHelper;
+import utils.WaitHelper;
 
+import utils.AutoStep;
 /**
  * Scope3TableO - Table O for Scope 3 Emissions (Logistics & Supply)
  *
@@ -26,6 +28,7 @@ public class Scope3TableO {
     private static final String ADD_ROW_BUTTON_PATTERN = "#scope3_Logistics_&_Supply_table_tr_row_add_%d";
     private static final String ATTACH_BUTTON_PATTERN = "#scope3_Logistics_&_Supply_table_tr_row_attach_%d";
     private static final String REMOVE_ROW_BUTTON_PATTERN = "#scope3_Logistics_&_Supply_table_tr_row_trash_%d";
+    private static final String ALL_ROWS_PATTERN = "input[ftestcaseref^='scope3_logistics_&_supply_vehicle_']";
 
     // Table-level locators (not row-specific)
     private final Locator tableTotal;
@@ -83,35 +86,46 @@ public class Scope3TableO {
         return page.locator(String.format(REMOVE_ROW_BUTTON_PATTERN, rowIndex));
     }
 
+    private Locator getAllRows() {
+        return page.locator(ALL_ROWS_PATTERN);
+    }
+
     /**
      * Enter methods for specific columns
      */
+    @AutoStep
     public void enterVehicle(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getVehicleInput(rowIndex), value);
     }
 
+    @AutoStep
     public void enterType(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getTypeInput(rowIndex), value);
     }
 
+    @AutoStep
     public void enterFuel(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getFuelInput(rowIndex), value);
     }
 
 
+    @AutoStep
     public void enterEmissionFactor(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getEmissionFactorInput(rowIndex), value);
     }
 
+    @AutoStep
     public void enterWeightTonnes(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getWeightTonnesInput(rowIndex), value);
     }
 
 
+    @AutoStep
     public void enterDistanceKm(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getDistanceKmInput(rowIndex), value);
     }
 
+    @AutoStep
     public void selectUnits(int rowIndex, String value) {
         page.waitForLoadState();
         Locator unitsSelect = getUnitsSelect(rowIndex);
@@ -123,34 +137,42 @@ public class Scope3TableO {
     /**
      * Get values
      */
+    @AutoStep
     public String getVehicle(int rowIndex) {
         return getVehicleInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getType(int rowIndex) {
         return getTypeInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getFuel(int rowIndex) {
         return getFuelInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getEmissionFactor(int rowIndex) {
         return getEmissionFactorInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getWeightTonnes(int rowIndex) {
         return getWeightTonnesInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getDistanceKm(int rowIndex) {
         return getDistanceKmInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getRowTotal(int rowIndex) {
         return getRowTotalLocator(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getTableTotal() {
         return this.tableTotal.inputValue();
     }
@@ -158,14 +180,17 @@ public class Scope3TableO {
     /**
      * Row operations
      */
+    @AutoStep
     public void addRow(int currentRowIndex) {
         page.waitForLoadState();
+        int initialCount = getAllRows().count();
         Locator addButton = getAddRowButton(currentRowIndex);
         addButton.waitFor();
         addButton.click();
-        page.waitForTimeout(500);
+        // WaitHelper.waitForNewRow(page, getAllRows(), initialCount, 30000);
     }
 
+    @AutoStep
     public void removeRow(int rowIndex) {
         page.waitForLoadState();
         Locator removeButton = getRemoveRowButton(rowIndex);
@@ -173,6 +198,7 @@ public class Scope3TableO {
         removeButton.click();
     }
 
+    @AutoStep
     public void attach(int rowIndex) {
         page.waitForLoadState();
         Locator attachButton = getAttachButton(rowIndex);

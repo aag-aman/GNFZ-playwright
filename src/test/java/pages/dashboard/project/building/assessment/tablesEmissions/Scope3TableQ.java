@@ -4,7 +4,9 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 import utils.InputHelper;
+import utils.WaitHelper;
 
+import utils.AutoStep;
 /**
  * Scope3TableQ - Table Q for Scope 3 Emissions (Recycled Materials)
  *
@@ -22,6 +24,7 @@ public class Scope3TableQ {
     private static final String ADD_ROW_BUTTON_PATTERN = "#scope3_Recycled_Materials_table_tr_row_add_%d";
     private static final String ATTACH_BUTTON_PATTERN = "#scope3_Recycled_Materials_table_tr_row_attach_%d";
     private static final String REMOVE_ROW_BUTTON_PATTERN = "#scope3_Recycled_Materials_table_tr_row_trash_%d";
+    private static final String ALL_ROWS_PATTERN = "input[ftestcaseref^='scope3_recycled_materials_type_of_material_']";
 
     // Table-level locators (not row-specific)
     private final Locator tableTotal;
@@ -67,21 +70,29 @@ public class Scope3TableQ {
         return page.locator(String.format(REMOVE_ROW_BUTTON_PATTERN, rowIndex));
     }
 
+    private Locator getAllRows() {
+        return page.locator(ALL_ROWS_PATTERN);
+    }
+
     /**
      * Enter methods for specific columns
      */
+    @AutoStep
     public void enterTypeOfMaterial(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getTypeOfMaterialInput(rowIndex), value);
     }
 
+    @AutoStep
     public void enterEmissionFactor(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getEmissionFactorInput(rowIndex), value);
     }
 
+    @AutoStep
     public void enterQuantity(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getQuantityInput(rowIndex), value);
     }
 
+    @AutoStep
     public void selectUnits(int rowIndex, String value) {
         page.waitForLoadState();
         Locator unitsSelect = getUnitsSelect(rowIndex);
@@ -93,22 +104,27 @@ public class Scope3TableQ {
     /**
      * Get values
      */
+    @AutoStep
     public String getTypeOfMaterial(int rowIndex) {
         return getTypeOfMaterialInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getEmissionFactor(int rowIndex) {
         return getEmissionFactorInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getQuantity(int rowIndex) {
         return getQuantityInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getRowTotal(int rowIndex) {
         return getRowTotalLocator(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getTableTotal() {
         return this.tableTotal.inputValue();
     }
@@ -116,6 +132,7 @@ public class Scope3TableQ {
     /**
      * Row operations
      */
+    @AutoStep
     public void addRow(int currentRowIndex) {
         page.waitForLoadState();
         Locator addButton = getAddRowButton(currentRowIndex);
@@ -124,6 +141,7 @@ public class Scope3TableQ {
         page.waitForTimeout(1500);
     }
 
+    @AutoStep
     public void removeRow(int rowIndex) {
         page.waitForLoadState();
         Locator removeButton = getRemoveRowButton(rowIndex);
@@ -131,6 +149,7 @@ public class Scope3TableQ {
         removeButton.click();
     }
 
+    @AutoStep
     public void attach(int rowIndex) {
         page.waitForLoadState();
         Locator attachButton = getAttachButton(rowIndex);
@@ -141,6 +160,7 @@ public class Scope3TableQ {
     /**
      * Fill entire row at once
      */
+    @AutoStep
     public void fillRow(int rowIndex, String typeOfMaterial, String emissionFactor, String quantity, String units) {
         enterTypeOfMaterial(rowIndex, typeOfMaterial);
         enterEmissionFactor(rowIndex, emissionFactor);

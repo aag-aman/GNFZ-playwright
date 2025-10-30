@@ -5,6 +5,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import utils.InputHelper;
 
+import utils.AutoStep;
 /**
  * BuildingBasicInfoTab - Basic Info tab for Building project
  * Contains basic project information fields
@@ -35,49 +36,59 @@ public class BuildingBasicInfoTab {
     /**
      * Form field visibility
      */
+    @AutoStep
     public boolean isFormDisplayed() {
         page.waitForLoadState();
         projectTitleField.waitFor();
         return projectTitleField.isVisible();
     }
 
+    @AutoStep
     public void enterProjectTitle(String title) {
         page.waitForLoadState();
         InputHelper.humanizedInputNoEnter(page, projectTitleField, title);
     }
 
+    @AutoStep
     public String getProjectTitle() {
         page.waitForLoadState();
         return projectTitleField.inputValue();
     }
 
+    @AutoStep
     public void enterTargetCertificationArea(String area) {
         InputHelper.humanizedInputNoEnter(page, targetCertificationArea, area);
     }
 
+    @AutoStep
     public String getTargetCertificationArea() {
         page.waitForLoadState();
         return targetCertificationArea.inputValue();
     }
 
+    @AutoStep
     public void enterGrossArea(String area) {
         InputHelper.humanizedInputNoEnter(page, grossArea, area);
     }
 
+    @AutoStep
     public String getGrossArea() {
         page.waitForLoadState();
         return grossArea.inputValue();
     }
 
+    @AutoStep
     public void enterStartDate(String date) {
         InputHelper.selectDateFromDatepicker(page, startDate, date);
     }
 
+    @AutoStep
     public String getStartDate() {
         page.waitForLoadState();
         return startDate.inputValue();
     }
 
+    @AutoStep
     public void clickSave() {
         page.waitForLoadState();
         saveButton.click();
@@ -86,12 +97,14 @@ public class BuildingBasicInfoTab {
     /**
      * Wait for Project ID field to be visible (indicates project has been created)
      */
+    @AutoStep
     public boolean isProjectIdFieldVisible() {
         page.waitForLoadState();
         projectIdField.waitFor(new Locator.WaitForOptions().setTimeout(30000));
         return projectIdField.isVisible();
     }
 
+    @AutoStep
     public String getProjectId() {
         page.waitForLoadState();
         return projectIdField.inputValue();

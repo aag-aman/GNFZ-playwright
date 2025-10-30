@@ -8,6 +8,7 @@ import pages.dashboard.project.building.assessment.tablesEnergy.Scope1TableB;
 import pages.dashboard.project.building.assessment.tablesEnergy.Scope2TableC;
 import utils.InputHelper;
 
+import utils.AutoStep;
 /**
  * NetZeroEnergySection - Net Zero Energy section in Assessment tab
  * Handles energy-related data entry for Scope 1 and 2
@@ -123,6 +124,7 @@ public class NetZeroEnergySection {
      * SECTION VISIBILITY
      * ========================================
      */
+    @AutoStep
     public boolean isSectionDisplayed() {
         page.waitForLoadState();
         return sectionHeader.isVisible();
@@ -133,19 +135,23 @@ public class NetZeroEnergySection {
      * REPORTING PERIOD
      * ========================================
      */
+    @AutoStep
     public void enterReportingPeriodFrom(String fromDate) {
         InputHelper.selectDateFromDatepicker(page, reportingPeriodFrom, fromDate);
     }
 
+    @AutoStep
     public void enterReportingPeriodTo(String toDate) {
         InputHelper.selectDateFromDatepicker(page, reportingPeriodTo, toDate);
     }
 
+    @AutoStep
     public void checkBaseline() {
         page.waitForLoadState();
         baselineCheck.check();
     }
 
+    @AutoStep
     public void uncheckBaseline() {
         page.waitForLoadState();
         baselineCheck.uncheck();
@@ -156,18 +162,22 @@ public class NetZeroEnergySection {
      * SCOPE VIEW TOGGLES
      * ========================================
      */
+    @AutoStep
     public void switchToScope1DetailedView() {
         scope1DetailedView.click();
     }
 
+    @AutoStep
     public void switchToScope1SummaryView() {
         scope1SummaryView.click();
     }
 
+    @AutoStep
     public void switchToScope2DetailedView() {
         scope2DetailedView.click();
     }
 
+    @AutoStep
     public void switchToScope2SummaryView() {
         scope2SummaryView.click();
     }
@@ -177,18 +187,21 @@ public class NetZeroEnergySection {
      * SCOPE VISIBILITY
      * ========================================
      */
+    @AutoStep
     public void expandScope1() {
         page.waitForLoadState();
         scope1Section.click();
         page.waitForLoadState();
     }
 
+    @AutoStep
     public void expandScope2() {
         page.waitForLoadState();
         scope2Section.click();
         page.waitForLoadState();
     }
 
+    @AutoStep
     public void expandSummaryOfScopes() {
         page.waitForLoadState();
         summaryOfScopes.click();
@@ -200,10 +213,12 @@ public class NetZeroEnergySection {
      * SCOPE TOTALS (Read-only, auto-populated)
      * ========================================
      */
+    @AutoStep
     public String getScope1Total() {
         return scope1TotalEnergy.inputValue();
     }
 
+    @AutoStep
     public String getScope2Total() {
         return scope2TotalEnergy.inputValue();
     }
@@ -213,31 +228,37 @@ public class NetZeroEnergySection {
      * SUMMARY OF SCOPES TABLE (Read-only totals)
      * ========================================
      */
+    @AutoStep
     public String getSummaryScope1KgCO2e() {
         page.waitForLoadState();
         return summaryScope1KgCO2e.textContent().trim();
     }
 
+    @AutoStep
     public String getSummaryScope1MtCO2e() {
         page.waitForLoadState();
         return summaryScope1MtCO2e.textContent().trim();
     }
 
+    @AutoStep
     public String getSummaryScope2KgCO2e() {
         page.waitForLoadState();
         return summaryScope2KgCO2e.textContent().trim();
     }
 
+    @AutoStep
     public String getSummaryScope2MtCO2e() {
         page.waitForLoadState();
         return summaryScope2MtCO2e.textContent().trim();
     }
 
+    @AutoStep
     public String getSummaryTotalKgCO2e() {
         page.waitForLoadState();
         return summaryTotalKgCO2e.textContent().trim();
     }
 
+    @AutoStep
     public String getSummaryTotalMtCO2e() {
         page.waitForLoadState();
         return summaryTotalMtCO2e.textContent().trim();
@@ -250,15 +271,18 @@ public class NetZeroEnergySection {
      */
 
     // Scope 1 Tables
+    @AutoStep
     public Scope1TableA tableA() {
         return tableA;
     }
 
+    @AutoStep
     public Scope1TableB tableB() {
         return tableB;
     }
 
     // Scope 2 Table
+    @AutoStep
     public Scope2TableC tableC() {
         return tableC;
     }
@@ -268,6 +292,7 @@ public class NetZeroEnergySection {
      * SAVE BUTTON
      * ========================================
      */
+    @AutoStep
     public void clickSave() {
         page.waitForLoadState();
         saveButton.scrollIntoViewIfNeeded();

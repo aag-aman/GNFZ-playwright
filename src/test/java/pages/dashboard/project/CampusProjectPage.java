@@ -3,6 +3,7 @@ package pages.dashboard.project;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import utils.AutoStep;
 /**
  * CampusProjectPage - Page object for Campus project creation/editing
  */
@@ -22,6 +23,7 @@ public class CampusProjectPage {
     /**
      * Page visibility
      */
+    @AutoStep
     public boolean isPageDisplayed() {
         page.waitForLoadState();
         return pageHeader.isVisible();

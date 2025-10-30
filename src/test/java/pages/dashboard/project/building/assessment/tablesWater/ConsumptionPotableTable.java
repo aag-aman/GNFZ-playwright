@@ -4,7 +4,8 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 import utils.InputHelper;
-
+import utils.WaitHelper;
+import utils.AutoStep;
 /**
  * ConsumptionPotableTable - Table A for Water Consumption (Potable)
  *
@@ -24,6 +25,7 @@ public class ConsumptionPotableTable {
     private static final String ADD_ROW_BUTTON_PATTERN = "#scope1_Potable_table_tr_row_add_%d";
     private static final String ATTACH_BUTTON_PATTERN = "#scope1_Potable_table_tr_row_upload_%d";
     private static final String REMOVE_ROW_BUTTON_PATTERN = "#scope1_Potable_table_tr_row_trash_%d";
+    private static final String ALL_ROWS_PATTERN = "input[ftestcaseref^='scope1_potable_type_']";
 
     // Table-level locators
     private final Locator tableTotal;
@@ -78,30 +80,40 @@ public class ConsumptionPotableTable {
         return page.locator(String.format(REMOVE_ROW_BUTTON_PATTERN, rowIndex));
     }
 
+    private Locator getAllRows() {
+        return page.locator(ALL_ROWS_PATTERN);
+    }
+
     /**
      * Enter methods for specific columns
      */
+    @AutoStep
     public void enterType(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getTypeInput(rowIndex), value);
     }
 
+    @AutoStep
     public void enterSource(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getSourceInput(rowIndex), value);
     }
 
+    @AutoStep
     public void enterQuality(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getQualityInput(rowIndex), value);
     }
 
+    @AutoStep
     public void enterQuantity(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getQuantityInput(rowIndex), value);
     }
 
+    @AutoStep
     public void enterAvgPeak(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getAvgPeakInput(rowIndex), value);
     }
 
 
+    @AutoStep
     public void enterNoOfDays(int rowIndex, String value) {
         InputHelper.humanizedInput(page, getNoOfDaysInput(rowIndex), value);
     }
@@ -110,34 +122,42 @@ public class ConsumptionPotableTable {
     /**
      * Get values
      */
+    @AutoStep
     public String getType(int rowIndex) {
         return getTypeInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getSource(int rowIndex) {
         return getSourceInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getQuality(int rowIndex) {
         return getQualityInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getQuantity(int rowIndex) {
         return getQuantityInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getAvgPeak(int rowIndex) {
         return getAvgPeakInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getNoOfDays(int rowIndex) {
         return getNoOfDaysInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getKlAnnum(int rowIndex) {
         return getKlAnnumInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getTableTotal() {
         return this.tableTotal.inputValue();
     }
@@ -145,14 +165,17 @@ public class ConsumptionPotableTable {
     /**
      * Row operations
      */
+    @AutoStep
     public void addRow(int currentRowIndex) {
         page.waitForLoadState();
+        int initialCount = getAllRows().count();
         Locator addButton = getAddRowButton(currentRowIndex);
         addButton.waitFor();
         addButton.click();
-        page.waitForTimeout(500); // Wait for new row to be added
+        // WaitHelper.waitForNewRow(page, getAllRows(), initialCount, 30000);
     }
 
+    @AutoStep
     public void removeRow(int rowIndex) {
         page.waitForLoadState();
         Locator removeButton = getRemoveRowButton(rowIndex);
@@ -160,6 +183,7 @@ public class ConsumptionPotableTable {
         removeButton.click();
     }
 
+    @AutoStep
     public void attach(int rowIndex) {
         page.waitForLoadState();
         Locator attachButton = getAttachButton(rowIndex);
@@ -170,6 +194,7 @@ public class ConsumptionPotableTable {
     /**
      * Fill entire row at once
      */
+    @AutoStep
     public void fillRow(int rowIndex, String type, String source, String quality, String quantity, String avgPeak, String noOfDays) {
         enterType(rowIndex, type);
         enterSource(rowIndex, source);

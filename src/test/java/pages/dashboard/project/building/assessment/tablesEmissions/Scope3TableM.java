@@ -4,7 +4,9 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 import utils.InputHelper;
+import utils.WaitHelper;
 
+import utils.AutoStep;
 /**
  * Scope3TableM - Table M for Scope 3 Emissions (Flights)
  *
@@ -26,6 +28,7 @@ public class Scope3TableM {
     private static final String ADD_ROW_BUTTON_PATTERN = "#scope3_Flights_table_tr_row_add_%d";
     private static final String ATTACH_BUTTON_PATTERN = "#scope3_Flights_table_tr_row_attach_%d";
     private static final String REMOVE_ROW_BUTTON_PATTERN = "#scope3_Flights_table_tr_row_trash_%d";
+    private static final String ALL_ROWS_PATTERN = "input[ftestcaseref^='scope3_flights_origin_']";
 
     // Table-level locators (not row-specific)
     private final Locator tableTotal;
@@ -46,6 +49,10 @@ public class Scope3TableM {
 
     private Locator getRemoveRowButton(int rowIndex) {
         return page.locator(String.format(REMOVE_ROW_BUTTON_PATTERN, rowIndex));
+    }
+
+    private Locator getAllRows() {
+        return page.locator(ALL_ROWS_PATTERN);
     }
 
     /**
@@ -82,14 +89,17 @@ public class Scope3TableM {
     /**
      * Enter methods for specific columns - with humanlike delays for autocomplete
      */
+    @AutoStep
     public void enterOrigin(int rowIndex, String iataCode) {
         InputHelper.humanizedInput(page, getOriginInput(rowIndex), iataCode);
     }
 
+    @AutoStep
     public void enterDestination(int rowIndex, String iataCode) {
         InputHelper.humanizedInput(page, getDestinationInput(rowIndex), iataCode);
     }
 
+    @AutoStep
     public void selectClass(int rowIndex, String flightClass) {
         page.waitForLoadState();
         Locator classSelect = getClassSelect(rowIndex);
@@ -99,6 +109,7 @@ public class Scope3TableM {
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public void selectTripType(int rowIndex, String tripType) {
         page.waitForLoadState();
         Locator tripTypeSelect = getTripTypeSelect(rowIndex);
@@ -108,10 +119,12 @@ public class Scope3TableM {
         page.waitForTimeout(500);
     }
 
+    @AutoStep
     public void enterNoOfPassengers(int rowIndex, String passengers) {
         InputHelper.humanizedInput(page, getNoOfPassengersInput(rowIndex), passengers);
     }
 
+    @AutoStep
     public void enterTotalEmissions(int rowIndex, String totalEmissions) {
         InputHelper.humanizedInput(page, getTotalEmissionsInput(rowIndex), totalEmissions);
     }
@@ -119,26 +132,32 @@ public class Scope3TableM {
     /**
      * Get values
      */
+    @AutoStep
     public String getOrigin(int rowIndex) {
         return getOriginInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getDestination(int rowIndex) {
         return getDestinationInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getNoOfPassengers(int rowIndex) {
         return getNoOfPassengersInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getTotalEmissions(int rowIndex) {
         return getTotalEmissionsInput(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getRowTotal(int rowIndex) {
         return getRowTotalLocator(rowIndex).inputValue();
     }
 
+    @AutoStep
     public String getTableTotal() {
         return this.tableTotal.inputValue();
     }
@@ -146,14 +165,17 @@ public class Scope3TableM {
     /**
      * Row operations
      */
+    @AutoStep
     public void addRow(int currentRowIndex) {
         page.waitForLoadState();
+        int initialCount = getAllRows().count();
         Locator addButton = getAddRowButton(currentRowIndex);
         addButton.waitFor();
         addButton.click();
-        page.waitForTimeout(500);
+        // WaitHelper.waitForNewRow(page, getAllRows(), initialCount, 30000);
     }
 
+    @AutoStep
     public void removeRow(int rowIndex) {
         page.waitForLoadState();
         Locator removeButton = getRemoveRowButton(rowIndex);
@@ -161,6 +183,7 @@ public class Scope3TableM {
         removeButton.click();
     }
 
+    @AutoStep
     public void attach(int rowIndex) {
         page.waitForLoadState();
         Locator attachButton = getAttachButton(rowIndex);

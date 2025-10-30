@@ -39,27 +39,23 @@ public class CreateProjectTest extends BaseTest {
 
         // Login first
         Map<String, String> user = TestDataManager.getSmokeUser();
-        Allure.step("Login with valid user", () -> {
-            loginPage.navigateToLogin();
-            loginPage.enterEmail(user.get("username"));
-            loginPage.enterPassword(user.get("password"));
-            loginPage.clickSignInButton();
-        });
+
+        // Navigate to login and enter credentials - @AutoStep handles step creation with parameters visible
+        loginPage.navigateToLogin();
+        loginPage.enterEmail(user.get("username"));
+        loginPage.enterPassword(user.get("password"));
+        loginPage.clickSignInButton();
 
         // Verify on dashboard
         // Does not work because of non robust locator
-        // Allure.step("Verify dashboard is displayed", () -> {
         // assertTrue(projectListPage.isProjectListVisible(),
-        // "Project list should be visible after login");
-        // });
+        //     "Project list should be visible after login");
 
         // Verify create project button is visible
-        Allure.step("Verify create project button is visible", () -> {
-            assertTrue(projectListPage.isCreateNewProjectButtonVisible(),
-                    "Create new project button should be visible");
-            assertTrue(projectListPage.isCreateNewProjectButtonEnabled(),
-                    "Create new project button should be enabled");
-        });
+        assertTrue(projectListPage.isCreateNewProjectButtonVisible(),
+                "Create new project button should be visible");
+        assertTrue(projectListPage.isCreateNewProjectButtonEnabled(),
+                "Create new project button should be enabled");
 
         takeScreenshot("Create Project Button Visible");
     }
@@ -80,25 +76,21 @@ public class CreateProjectTest extends BaseTest {
 
         // Login first
         Map<String, String> user = TestDataManager.getSmokeUser();
-        Allure.step("Login with valid user", () -> {
-            loginPage.navigateToLogin();
-            loginPage.enterEmail(user.get("username"));
-            loginPage.enterPassword(user.get("password"));
-            loginPage.clickSignInButton();
-        });
 
-        // Click create new project
-        Allure.step("Click create new project button", () -> {
-            projectListPage.clickCreateNewProject();
-        });
+        // Navigate to login and enter credentials - @AutoStep handles step creation with parameters visible
+        loginPage.navigateToLogin();
+        loginPage.enterEmail(user.get("username"));
+        loginPage.enterPassword(user.get("password"));
+        loginPage.clickSignInButton();
+
+        // Click create new project - @AutoStep handles step creation
+        projectListPage.clickCreateNewProject();
 
         // Verify project selection page is displayed
-        Allure.step("Verify project selection page is displayed", () -> {
-            assertTrue(projectSelectionPage.isPageDisplayed(),
-                    "Project selection page should be displayed");
-            assertTrue(projectSelectionPage.isProjectOptionsVisible(),
-                    "Project options should be visible");
-        });
+        assertTrue(projectSelectionPage.isPageDisplayed(),
+                "Project selection page should be displayed");
+        assertTrue(projectSelectionPage.isProjectOptionsVisible(),
+                "Project options should be visible");
 
         takeScreenshot("Project Selection Page");
     }
@@ -119,32 +111,27 @@ public class CreateProjectTest extends BaseTest {
 
         // Login and navigate to project selection
         Map<String, String> user = TestDataManager.getSmokeUser();
-        Allure.step("Login and navigate to project selection", () -> {
-            loginPage.navigateToLogin();
-            loginPage.enterEmail(user.get("username"));
-            loginPage.enterPassword(user.get("password"));
-            loginPage.clickSignInButton();
-            projectListPage.clickCreateNewProject();
-        });
+
+        // Navigate to login and enter credentials - @AutoStep handles step creation with parameters visible
+        loginPage.navigateToLogin();
+        loginPage.enterEmail(user.get("username"));
+        loginPage.enterPassword(user.get("password"));
+        loginPage.clickSignInButton();
+        projectListPage.clickCreateNewProject();
 
         // Verify page is displayed
-        Allure.step("Verify project selection page is displayed", () -> {
-            assertTrue(projectSelectionPage.isPageDisplayed(),
-                    "Project selection page should be displayed");
-        });
+        assertTrue(projectSelectionPage.isPageDisplayed(),
+                "Project selection page should be displayed");
 
-        // Verify project options - update assertions based on actual number of options
-        Allure.step("Verify project options are visible", () -> {
-            // Check visible options count
-            int optionsCount = projectSelectionPage.getVisibleOptionsCount();
-            assertTrue(optionsCount > 0,
-                    "At least one project option should be visible");
+        // Check visible options count
+        int optionsCount = projectSelectionPage.getVisibleOptionsCount();
+        assertTrue(optionsCount > 0,
+                "At least one project option should be visible");
 
-            // Add specific option visibility checks as needed
-            // Example:
-            // assertTrue(projectSelectionPage.isProjectOption1Visible(),
-            // "Project option 1 should be visible");
-        });
+        // Add specific option visibility checks as needed
+        // Example:
+        // assertTrue(projectSelectionPage.isProjectOption1Visible(),
+        //     "Project option 1 should be visible");
 
         takeScreenshot("Project Selection Elements");
     }
